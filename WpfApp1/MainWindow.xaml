@@ -1,0 +1,19 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Audio Player with auto loop" Height="450" Width="800">
+    <Grid Margin="-5,0,5,0">
+        <TextBlock x:Name="StartField" TextAlignment="Left" HorizontalAlignment="Center" Margin="0,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="53" Width="326"/>
+        <Button x:Name="start" Content="Start" HorizontalAlignment="Left" Margin="300,197,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="start_Click"/>
+        <Button x:Name="loop" Content="Loop" HorizontalAlignment="Left" Margin="405,197,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="loop_Click"/>
+        <Button x:Name="play_button" Content="Play" HorizontalAlignment="Center" Margin="0,283,0,0" VerticalAlignment="Top" Height="34" Width="94" Click="play_Click"/>
+        <TextBlock x:Name="LoopField" TextAlignment="Left" HorizontalAlignment="Center" Margin="0,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="326" Height="51"/>
+        <Button x:Name="stop_button" Content="Stop" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="Stop_Click"/>
+        <Label Content="Start file location" HorizontalAlignment="Left" Margin="115,57,0,0" VerticalAlignment="Top"/>
+        <Label Content="Loop file location" HorizontalAlignment="Left" Margin="113,115,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>
