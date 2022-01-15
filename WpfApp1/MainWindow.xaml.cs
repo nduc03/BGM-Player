@@ -20,6 +20,7 @@ namespace WpfApp1
         private OpenFileDialog loopPath;
         private OpenFileDialog startPath;
         private PathData? pathData;
+        private bool isPause = false;
 
         public MainWindow()
         {
@@ -30,6 +31,7 @@ namespace WpfApp1
             startPath.Filter = "Music files (*.mp3, *.wav)|*.mp3; *.wav";
             loopPath.Filter = "Music files (*.mp3, *.wav)|*.mp3; *.wav";
             stop_button.IsEnabled = false;
+            pause_button.IsEnabled = false;
 
             if (pathData != null)
             {
@@ -72,10 +74,19 @@ namespace WpfApp1
                 return;
             }
 
-            AudioManager.InitAudio();
-            AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
             play_button.IsEnabled = false;
             stop_button.IsEnabled = true;
+            pause_button.IsEnabled = true;
+
+            if (isPause)
+            {
+                AudioManager.ContinueAudio();
+                isPause = false;
+                return;
+            }
+
+            AudioManager.InitAudio();
+            AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)
@@ -83,6 +94,16 @@ namespace WpfApp1
             AudioManager.StopAudio();
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
+            pause_button.IsEnabled = false;
+        }
+
+        private void pause_Click(object sender, RoutedEventArgs e)
+        {
+            isPause = true;
+            AudioManager.PauseAudio();
+            pause_button.IsEnabled = false;
+            play_button.IsEnabled = true;
+            stop_button.IsEnabled = true;
         }
     }
 
@@ -180,6 +201,24 @@ namespace WpfApp1
             BGMLoopStream bGMLoopStream = new BGMLoopStream(new AudioFileReader(startPath), new AudioFileReader(loopPath));
             outputDevice.Init(bGMLoopStream);
             outputDevice.Play();
+        }
+
+        /// <summary>
+        /// Continue the paused audio.
+        /// </summary>
+        public static void ContinueAudio()
+        {
+            if (outputDevice == null) return;
+            outputDevice.Play();
+        }
+
+        /// <summary>
+        /// Pause audio.
+        /// </summary>
+        public static void PauseAudio()
+        {
+            if (outputDevice == null) return;
+            outputDevice.Pause();
         }
 
         /// <summary>

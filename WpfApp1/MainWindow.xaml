@@ -11,9 +11,10 @@
         <Button x:Name="loop" Content="Loop" HorizontalAlignment="Left" Margin="405,197,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="loop_Click"/>
         <Button x:Name="play_button" Content="Play" HorizontalAlignment="Center" Margin="0,283,0,0" VerticalAlignment="Top" Height="34" Width="94" Click="play_Click"/>
         <TextBlock x:Name="LoopField" TextAlignment="Left" HorizontalAlignment="Center" Margin="0,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="326" Height="51"/>
-        <Button x:Name="stop_button" Content="Stop" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="Stop_Click"/>
+        <Button x:Name="stop_button" Content="Stop" HorizontalAlignment="Center" Margin="0,376,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="Stop_Click"/>
         <Label Content="Start file location" HorizontalAlignment="Left" Margin="115,57,0,0" VerticalAlignment="Top"/>
         <Label Content="Loop file location" HorizontalAlignment="Left" Margin="113,115,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="pause_button" Content="Pause" HorizontalAlignment="Center" Margin="0,331,0,0" VerticalAlignment="Top" Height="32" Width="94" Click="pause_Click"/>
 
     </Grid>
 </Window>
