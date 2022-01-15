@@ -96,6 +96,11 @@ namespace WpfApp1
 
         public static void InitAudio()
         {
+            if (outputDevice != null)
+            {
+                outputDevice.Dispose();
+                outputDevice = null;
+            }
             outputDevice = new WaveOutEvent();
         }
 
