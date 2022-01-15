@@ -1,7 +1,7 @@
-﻿using NAudio.Extras;
-using NAudio.Wave;
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
+using NAudio.Wave;
+using NAudio.Extras;
 
 namespace WpfApp1
 {

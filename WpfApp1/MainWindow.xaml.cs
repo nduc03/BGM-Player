@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
-using System.Text.Json;
 using Microsoft.Win32;
 using NAudio.Wave;
 using NAudio.Extras;
