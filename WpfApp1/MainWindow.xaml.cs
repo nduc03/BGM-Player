@@ -80,8 +80,8 @@ namespace WpfApp1
 
             if (isPause)
             {
-                AudioManager.ContinueAudio();
                 isPause = false;
+                AudioManager.ContinueAudio();
                 return;
             }
 
@@ -91,6 +91,7 @@ namespace WpfApp1
 
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
+            isPause = false;
             AudioManager.StopAudio();
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
