@@ -123,7 +123,7 @@ namespace WpfApp1
     }
 
     /// <summary>
-    /// Manage and control music using NAudio library.
+    /// Provide set of funtions to manage and control music using NAudio library.
     /// </summary>
     public static class AudioManager
     {
