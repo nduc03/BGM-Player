@@ -52,6 +52,4 @@ namespace WpfApp1
             File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
         }
     }
-
-
 }
