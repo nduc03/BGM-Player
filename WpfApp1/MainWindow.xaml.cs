@@ -74,6 +74,7 @@ namespace WpfApp1
                 return;
             }
 
+            DisableChooseFile();
             play_button.IsEnabled = false;
             stop_button.IsEnabled = true;
             pause_button.IsEnabled = true;
@@ -93,6 +94,7 @@ namespace WpfApp1
         {
             isPause = false;
             AudioManager.StopAudio();
+            EnableChooseFile();
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
@@ -105,6 +107,18 @@ namespace WpfApp1
             pause_button.IsEnabled = false;
             play_button.IsEnabled = true;
             stop_button.IsEnabled = true;
+        }
+
+        private void DisableChooseFile()
+        {
+            start.IsEnabled = false;
+            loop.IsEnabled = false;
+        }
+
+        private void EnableChooseFile()
+        {
+            start.IsEnabled = true;
+            loop.IsEnabled = true;
         }
     }
 
