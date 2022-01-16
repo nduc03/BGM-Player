@@ -7,7 +7,7 @@ namespace WpfApp1
 {
     public class BGMLoopStream : LoopStream
     {
-        WaveStream startStream;
+        private WaveStream startStream;
         public BGMLoopStream(WaveStream startStream, WaveStream loopStream) : base(loopStream)
         {
             this.startStream = startStream;
