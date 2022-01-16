@@ -43,7 +43,7 @@ namespace WpfApp1
             PathData? data = LoadPath();
             if (data == null)
             {
-                Directory.CreateDirectory(AppConstants.DATA_LOCATION);
+                Directory.CreateDirectory(AppConstants.DATA_FOLDER);
                 File.Create(AppConstants.CONFIG_LOCATION).Close();
                 data = new PathData();
             }

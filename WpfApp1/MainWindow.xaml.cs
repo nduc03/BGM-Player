@@ -12,8 +12,8 @@ namespace WpfApp1
         public const string USER_ERROR_TITLE = "User Error! Invalid input.";
         public const string DEV_ERROR_TITLE = "Dev-Error! Bug appear.";
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
-        public const string CONFIG_LOCATION = "AudioLoop_Data/path.cfg";
-        public const string DATA_LOCATION = "AudioLoop_Data";
+        public const string DATA_FOLDER = "AudioLoop_Data";
+        public const string CONFIG_LOCATION = $"{DATA_FOLDER}/path.cfg";
     }
     public partial class MainWindow : Window
     {
