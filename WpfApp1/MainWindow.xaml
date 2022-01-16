@@ -6,8 +6,8 @@
         mc:Ignorable="d"
         Title="BGM Player" Height="450" Width="800">
     <StackPanel Margin="-5,0,5,0">
+        
         <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Top" Margin="0,50,0,0">
-
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label Content="Start file location" Margin="0,0,10,0"/>
                 <TextBlock x:Name="StartField" TextAlignment="Left" TextWrapping="Wrap" Height="53" Width="326"/>
@@ -19,7 +19,9 @@
             </StackPanel>
 
         </StackPanel>
+
         <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,40,0,0">
+
             <StackPanel Orientation="Horizontal" Height="Auto" Width="Auto" HorizontalAlignment="Center">
                 <Button x:Name="start" Content="Start" Margin="0,0,5,0" VerticalAlignment="Top" Width="94" Height="32" Click="start_Click"/>
                 <Button x:Name="loop" Content="Loop" Margin="5,0,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="loop_Click"/>
