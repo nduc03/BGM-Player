@@ -7,14 +7,6 @@ using NAudio.Extras;
 
 namespace WpfApp1
 {
-    struct AppConstants
-    {
-        public const string USER_ERROR_TITLE = "User Error! Invalid input.";
-        public const string DEV_ERROR_TITLE = "Dev-Error! Bug appear.";
-        public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
-        public const string DATA_FOLDER = "AudioLoop_Data";
-        public const string CONFIG_LOCATION = $"{DATA_FOLDER}/path.cfg";
-    }
     public partial class MainWindow : Window
     {
         private OpenFileDialog loopPath;
@@ -24,6 +16,10 @@ namespace WpfApp1
 
         public MainWindow()
         {
+            if (ConfigManager.MigrateNewConfig() == ReadConfigState.FAILED)
+            {
+                MessageBox.Show("Old data file is corrupted. App will reset all configuration.", AppConstants.ERROR_TITLE, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             InitializeComponent();
             startPath = new OpenFileDialog();
             loopPath = new OpenFileDialog();
@@ -68,8 +64,9 @@ namespace WpfApp1
 
         private void play_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(startPath.FileName) || !File.Exists(loopPath.FileName))
+            if (!File.Exists(startPath.FileName) && !File.Exists(loopPath.FileName))
             {
+                // If both 2 two files is not found or not set -> show error message.
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return;
             }
@@ -86,8 +83,22 @@ namespace WpfApp1
                 return;
             }
 
-            AudioManager.InitAudio();
-            AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
+            if (!File.Exists(startPath.FileName) || !File.Exists(loopPath.FileName))
+            {
+                // If only one file is not found or not set -> still play music but in loop mode.
+                AudioManager.InitAudio();
+                AudioManager.PlayLoop(
+                        // Check if start path is found -> PlayLoop start path
+                        // else -> PlayLoop loop path
+                        File.Exists(startPath.FileName) ? startPath.FileName : loopPath.FileName
+                    );
+            }
+            else
+            {
+                AudioManager.InitAudio();
+                AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
+            }
+
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)
