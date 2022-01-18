@@ -4,6 +4,7 @@ using System.Windows;
 using Microsoft.Win32;
 using NAudio.Wave;
 using NAudio.Extras;
+using System.Diagnostics;
 
 namespace WpfApp1
 {
@@ -91,7 +92,7 @@ namespace WpfApp1
                         // Check if start path is found -> PlayLoop start path
                         // else -> PlayLoop loop path
                         File.Exists(startPath.FileName) ? startPath.FileName : loopPath.FileName
-                    );
+                );
             }
             else
             {
@@ -171,7 +172,7 @@ namespace WpfApp1
         }
 
         /// <summary>
-        /// Stop current playing music by calling <see cref="StopAudio()"/> and start looping new music.
+        /// Start looping new music.
         /// </summary>
         /// <param name="audioPath">Path to music file that needs to loop.</param>
         public static void PlayLoop(string audioPath)
@@ -183,10 +184,9 @@ namespace WpfApp1
             }
             if (outputDevice == null)
             {
-                Console.Error.WriteLine("outputDevice is null or not initialized, please check again", AppConstants.DEV_ERROR_TITLE);
+                Trace.TraceWarning("outputDevice is null or not initialized, please check again");
                 return;
             }
-            StopAudio();
             AudioFileReader audioFile = new AudioFileReader(audioPath);
             LoopStream loopStream = new LoopStream(audioFile);
             outputDevice.Init(loopStream);
