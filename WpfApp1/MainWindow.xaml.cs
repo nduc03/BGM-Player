@@ -20,15 +20,27 @@ namespace bgmPlayer
             {
                 MessageBox.Show("Old data file is corrupted. App will reset all configuration.", AppConstants.ERROR_TITLE, MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            InitializeComponent();
+
             startPath = new OpenFileDialog();
             loopPath = new OpenFileDialog();
+
+            InitializeComponent();
+            InitPathData();
+        }
+
+        private void InitPathData()
+        {
+            if (startPath == null || loopPath == null)
+            {
+                Trace.TraceWarning("startPath or loopPath is null. Init path again.");
+                startPath = new OpenFileDialog();
+                loopPath = new OpenFileDialog();
+            }
             pathData = ConfigManager.LoadPath();
-            startPath.Filter = "Music files (*.mp3, *.wav)|*.mp3; *.wav";
-            loopPath.Filter = "Music files (*.mp3, *.wav)|*.mp3; *.wav";
+            startPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
+            loopPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
-
             if (pathData != null)
             {
                 // if pathData not null -> pathData is specified
@@ -66,7 +78,7 @@ namespace bgmPlayer
             }
         }
 
-        private void play_Click(object sender, RoutedEventArgs e)
+        private void play_Click(object sender, RoutedEventArgs? e)
         {
             if (!File.Exists(startPath.FileName) && !File.Exists(loopPath.FileName))
             {
@@ -104,7 +116,7 @@ namespace bgmPlayer
             }
         }
 
-        private void Stop_Click(object sender, RoutedEventArgs e)
+        private void stop_Click(object sender, RoutedEventArgs? e)
         {
             isPause = false;
             AudioManager.StopAudio();
@@ -114,7 +126,7 @@ namespace bgmPlayer
             pause_button.IsEnabled = false;
         }
 
-        private void pause_Click(object sender, RoutedEventArgs e)
+        private void pause_Click(object sender, RoutedEventArgs? e)
         {
             isPause = true;
             AudioManager.PauseAudio();
@@ -133,6 +145,25 @@ namespace bgmPlayer
         {
             start.IsEnabled = true;
             loop.IsEnabled = true;
+        }
+
+        /* Play button handler from taskbar */
+        private void play_handler(object sender, System.EventArgs e)
+        {
+            if (play_button.IsEnabled)
+                play_Click(sender, null);
+        }
+
+        private void pause_handler(object sender, System.EventArgs e)
+        {
+            if (pause_button.IsEnabled)
+                pause_Click(sender, null);
+        }
+
+        private void stop_handler(object sender, System.EventArgs e)
+        {
+            if (stop_button.IsEnabled)
+                stop_Click(sender, null);
         }
     }
 
