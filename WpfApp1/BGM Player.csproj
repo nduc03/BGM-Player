@@ -7,8 +7,10 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>music.ico</ApplicationIcon>
     <AssemblyName>BGM Player</AssemblyName>
-    <RootNamespace>WpfApp1</RootNamespace>
+    <RootNamespace>bgmPlayer</RootNamespace>
     <StartupObject></StartupObject>
+    <IsPublishable>False</IsPublishable>
+    <Authors>nduc</Authors>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using Microsoft.Win32;
 using NAudio.Wave;
 using NAudio.Extras;
 using System.Diagnostics;
 
-namespace WpfApp1
+namespace bgmPlayer
 {
     public partial class MainWindow : Window
     {

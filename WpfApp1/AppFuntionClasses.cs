@@ -4,12 +4,12 @@ using NAudio.Wave;
 using NAudio.Extras;
 using System.Diagnostics;
 
-namespace WpfApp1
+namespace bgmPlayer
 {
     struct AppConstants
     {
-        public const string USER_ERROR_TITLE = "User Error! Invalid input.";
-        public const string DEV_ERROR_TITLE = "Dev-Error! Bug appear.";
+        public const string USER_ERROR_TITLE = "User Error! Invalid input";
+        public const string DEV_ERROR_TITLE = "Dev-Error! Bug appear";
         public const string ERROR_TITLE = "Error!";
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
         public const string DATA_FOLDER = "BGM_Player_Data";
