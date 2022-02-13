@@ -31,10 +31,14 @@ namespace bgmPlayer
 
             if (pathData != null)
             {
+                // if pathData not null -> pathData is specified
+
+                // then check pathData is valid path using File.Exists()
+                // if path does not exist -> ignore setting up path
                 if (File.Exists(pathData.StartPath))
                 {
-                    StartField.Text = pathData.StartPath;
-                    startPath.FileName = pathData.StartPath;
+                    StartField.Text = pathData.StartPath; // show path in GUI
+                    startPath.FileName = pathData.StartPath; // set path in app logic
                 }
                 if (File.Exists(pathData.LoopPath))
                 {
@@ -98,7 +102,6 @@ namespace bgmPlayer
                 AudioManager.InitAudio();
                 AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
             }
-
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)
