@@ -20,7 +20,7 @@
 
         <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Top" Margin="0,50,0,0">
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Content="Start file location" Margin="0,0,10,0"/>
+                <Label Content="Intro file location" Margin="0,0,10,0"/>
                 <TextBlock x:Name="StartField" TextAlignment="Left" TextWrapping="Wrap" Height="53" Width="326"/>
             </StackPanel>
 
