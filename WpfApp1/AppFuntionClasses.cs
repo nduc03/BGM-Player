@@ -26,6 +26,7 @@ namespace bgmPlayer
     public class BGMLoopStream : LoopStream
     {
         private WaveStream? startStream;
+
         public BGMLoopStream(WaveStream startStream, WaveStream loopStream) : base(loopStream)
         {
             this.startStream = startStream;
@@ -37,10 +38,24 @@ namespace bgmPlayer
         {
             if (startStream == null)
                 return base.Read(buffer, offset, count);
-            if (startStream.Position < startStream.Length)
-                return startStream.Read(buffer, offset, count);
-            else
-                return base.Read(buffer, offset, count);
+
+            int startRead = startStream.Read(buffer, offset, count);
+            int loopRead = 0;
+            if (startRead < count)
+            {
+                // startRead < count when the startStream near the end of stream.
+                // when near the end, block the code until startStream finish read
+                // then call loopStream read forever
+                while (startStream.Position < startStream.Length - 1000)
+                {
+                    // do nothing
+                    // just block loopStream read until startStream is fully read
+                    // and avoid overlap between the end of startStream and the start of loopStream
+                }
+                // loopStream started loop here and loop until stop or close the app.
+                loopRead = base.Read(buffer, 0, count);
+            }
+            return startRead + loopRead;
         }
     }
     public class PathData
