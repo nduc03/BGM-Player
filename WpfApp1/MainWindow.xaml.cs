@@ -18,7 +18,12 @@ namespace bgmPlayer
         {
             if (ConfigManager.MigrateNewConfig() == ReadConfigState.FAILED)
             {
-                MessageBox.Show("Old data file is corrupted. App will reset all configuration.", AppConstants.ERROR_TITLE, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Old data file is corrupted. App will reset all configuration.",
+                    AppConstants.ERROR_TITLE,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
 
             startPath = new OpenFileDialog();

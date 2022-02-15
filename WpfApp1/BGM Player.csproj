@@ -11,6 +11,7 @@
     <StartupObject></StartupObject>
     <IsPublishable>False</IsPublishable>
     <Authors>nduc</Authors>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
