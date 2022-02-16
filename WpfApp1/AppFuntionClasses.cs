@@ -63,7 +63,15 @@ namespace bgmPlayer
     {
         public string? StartPath { get; set; }
         public string? LoopPath { get; set; }
-        public float? Volume { get; set; }
+        public float? Volume
+        {
+            get
+            {
+                if (Volume > 0 && Volume < AppConstants.VOLUME_SCALE) return Volume;
+                else return null;
+            }
+            set { Volume = value; }
+        }
     }
 
     public static class ConfigManager
