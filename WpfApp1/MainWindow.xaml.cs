@@ -74,10 +74,10 @@ namespace bgmPlayer
                 Trace.TraceError("InitVolume: config data is null");
             else if (configData.Volume == null)
                 Trace.TraceInformation("InitVolume: configData doesn't have Volume value");
-            else if (configData.Volume <= 10 && configData.Volume >= 0)
+            else if (configData.Volume >= 0 && configData.Volume <= AppConstants.VOLUME_SCALE)
                 currentVolume = (int)configData.Volume;
             else
-                currentVolume = 10;
+                currentVolume = (int)AppConstants.VOLUME_SCALE;
 
             volValue.Text = currentVolume.ToString();
             AudioManager.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
