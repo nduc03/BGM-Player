@@ -74,7 +74,7 @@ namespace bgmPlayer
                 Trace.TraceError("InitVolume: config data is null");
             else if (configData.Volume == null)
                 Trace.TraceInformation("InitVolume: configData doesn't have Volume value");
-            else if (configData.Volume <= 10 || configData.Volume >= 0)
+            else if (configData.Volume <= 10 && configData.Volume >= 0)
                 currentVolume = (int)configData.Volume;
             else
                 currentVolume = 10;
