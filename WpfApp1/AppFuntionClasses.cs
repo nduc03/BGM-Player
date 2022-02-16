@@ -16,6 +16,7 @@ namespace bgmPlayer
         public const string OLD_DATA_FOLDER = "AudioLoop_Data";
         public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/path.cfg";
         public const string CONFIG_LOCATION = $"{DATA_FOLDER}/data.json";
+        public const float VOLUME_SCALE = 10f;
     }
 
     public enum ReadConfigState
@@ -58,23 +59,24 @@ namespace bgmPlayer
             return startRead + loopRead;
         }
     }
-    public class PathData
+    public class ConfigData
     {
         public string? StartPath { get; set; }
         public string? LoopPath { get; set; }
+        public float? Volume { get; set; }
     }
 
     public static class ConfigManager
     {
-        public static PathData? LoadPath()
+        public static ConfigData? LoadPath()
         {
-            PathData? data;
+            ConfigData? data;
             if (!File.Exists(AppConstants.CONFIG_LOCATION)) return null;
 
             string fileContent = File.ReadAllText(AppConstants.CONFIG_LOCATION);
             try
             {
-                data = JsonSerializer.Deserialize<PathData>(fileContent);
+                data = JsonSerializer.Deserialize<ConfigData>(fileContent);
             }
             catch
             {
@@ -86,18 +88,30 @@ namespace bgmPlayer
 
         public static void SavePath(string? startPath, string? loopPath)
         {
-            PathData? data = LoadPath();
+            ConfigData? data = LoadPath();
             if (data == null)
             {
                 Directory.CreateDirectory(AppConstants.DATA_FOLDER);
                 File.Create(AppConstants.CONFIG_LOCATION).Close();
-                data = new PathData();
+                data = new ConfigData();
             }
-
-            if (data == null) data = new PathData();
 
             if (startPath != null) data.StartPath = startPath;
             if (loopPath != null) data.LoopPath = loopPath;
+            File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
+        }
+
+        public static void SaveVolume(float? Volume)
+        {
+            ConfigData? data = LoadPath();
+            if (data == null)
+            {
+                Directory.CreateDirectory(AppConstants.DATA_FOLDER);
+                File.Create(AppConstants.CONFIG_LOCATION).Close();
+                data = new ConfigData();
+            }
+
+            if (Volume != null) data.Volume = Volume;
             File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
         }
 
@@ -112,10 +126,10 @@ namespace bgmPlayer
                 return ReadConfigState.FILE_NOT_FOUND;
             }
 
-            PathData? data;
+            ConfigData? data;
             try
             {
-                data = JsonSerializer.Deserialize<PathData>(File.ReadAllText(AppConstants.OLD_CONFIG_LOCATION));
+                data = JsonSerializer.Deserialize<ConfigData>(File.ReadAllText(AppConstants.OLD_CONFIG_LOCATION));
             }
             catch
             {

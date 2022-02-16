@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
+using System.Diagnostics;
 using Microsoft.Win32;
 using NAudio.Wave;
 using NAudio.Extras;
-using System.Diagnostics;
 
 namespace bgmPlayer
 {
@@ -11,8 +12,9 @@ namespace bgmPlayer
     {
         private OpenFileDialog loopPath;
         private OpenFileDialog startPath;
-        private PathData? pathData;
+        private ConfigData? configData;
         private bool isPause = false;
+        private int currentVolume = 10;
 
         public MainWindow()
         {
@@ -28,9 +30,11 @@ namespace bgmPlayer
 
             startPath = new OpenFileDialog();
             loopPath = new OpenFileDialog();
+            configData = ConfigManager.LoadPath();
 
             InitializeComponent();
             InitPathData();
+            InitVolume();
         }
 
         private void InitPathData()
@@ -41,28 +45,39 @@ namespace bgmPlayer
                 startPath = new OpenFileDialog();
                 loopPath = new OpenFileDialog();
             }
-            pathData = ConfigManager.LoadPath();
             startPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
             loopPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
-            if (pathData != null)
+            if (configData != null)
             {
                 // if pathData not null -> pathData is specified
 
                 // then check pathData is valid path using File.Exists()
                 // if path does not exist -> ignore setting up path
-                if (File.Exists(pathData.StartPath))
+                if (File.Exists(configData.StartPath))
                 {
-                    StartField.Text = pathData.StartPath; // show path in GUI
-                    startPath.FileName = pathData.StartPath; // set path in app logic
+                    StartField.Text = configData.StartPath; // show path in GUI
+                    startPath.FileName = configData.StartPath; // set path in app logic
                 }
-                if (File.Exists(pathData.LoopPath))
+                if (File.Exists(configData.LoopPath))
                 {
-                    LoopField.Text = pathData.LoopPath;
-                    loopPath.FileName = pathData.LoopPath;
+                    LoopField.Text = configData.LoopPath;
+                    loopPath.FileName = configData.LoopPath;
                 }
             }
+        }
+
+        private void InitVolume()
+        {
+            if (configData == null)
+                Trace.TraceError("InitVolume: config data is null");
+            else if (configData.Volume == null)
+                Trace.TraceInformation("InitVolume: configData doesn't have Volume value");
+            else
+                currentVolume = (int)configData.Volume;
+
+            volValue.Text = currentVolume.ToString();
         }
 
         private void start_Click(object sender, RoutedEventArgs e)
@@ -153,22 +168,46 @@ namespace bgmPlayer
         }
 
         /* Play button handler from taskbar */
-        private void play_handler(object sender, System.EventArgs e)
+        private void play_handler(object sender, EventArgs e)
         {
             if (play_button.IsEnabled)
                 play_Click(sender, null);
         }
 
-        private void pause_handler(object sender, System.EventArgs e)
+        private void pause_handler(object sender, EventArgs e)
         {
             if (pause_button.IsEnabled)
                 pause_Click(sender, null);
         }
 
-        private void stop_handler(object sender, System.EventArgs e)
+        private void stop_handler(object sender, EventArgs e)
         {
             if (stop_button.IsEnabled)
                 stop_Click(sender, null);
+        }
+
+        private void volDown_Click(object sender, RoutedEventArgs e)
+        {
+            var currentVol = Int32.Parse(volValue.Text);
+            if (currentVol > 0)
+            {
+                currentVol--;
+                volValue.Text = currentVol.ToString();
+                AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
+            }
+            ConfigManager.SaveVolume(currentVol);
+        }
+
+        private void volUp_Click(object sender, RoutedEventArgs e)
+        {
+            var currentVol = Int32.Parse(volValue.Text);
+            if (currentVol < AppConstants.VOLUME_SCALE)
+            {
+                currentVol++;
+                volValue.Text = currentVol.ToString();
+                AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
+            }
+            ConfigManager.SaveVolume(currentVol);
         }
     }
 
@@ -179,6 +218,7 @@ namespace bgmPlayer
     {
         private static WaveOutEvent? outputDevice;
         private static AudioFileReader? audioFile;
+        private static float volume = 1f;
 
         public static void InitAudio()
         {
@@ -188,6 +228,7 @@ namespace bgmPlayer
                 outputDevice = null;
             }
             outputDevice = new WaveOutEvent();
+            SetVolume(volume);
         }
 
         /// <summary>
@@ -206,6 +247,7 @@ namespace bgmPlayer
             outputDevice = new WaveOutEvent();
             audioFile = new AudioFileReader(audioPath);
             outputDevice.Init(audioFile);
+            SetVolume(volume);
             outputDevice.Play();
         }
 
@@ -249,6 +291,7 @@ namespace bgmPlayer
             outputDevice.PlaybackStopped += (o, e) =>
             {
                 outputDevice.Init(loopStream);
+                SetVolume(volume);
                 outputDevice.Play();
             };
         }
@@ -264,6 +307,7 @@ namespace bgmPlayer
             if (outputDevice == null) return;
             BGMLoopStream bGMLoopStream = new BGMLoopStream(new AudioFileReader(startPath), new AudioFileReader(loopPath));
             outputDevice.Init(bGMLoopStream);
+            SetVolume(volume);
             outputDevice.Play();
         }
 
@@ -273,6 +317,7 @@ namespace bgmPlayer
         public static void ContinueAudio()
         {
             if (outputDevice == null) return;
+            SetVolume(volume);
             outputDevice.Play();
         }
 
@@ -301,6 +346,37 @@ namespace bgmPlayer
                 audioFile.Dispose();
                 audioFile = null;
             }
+        }
+
+        /// <summary>
+        /// Set volume for audio.
+        /// <paramref name="Volume"/>: Should be between 0f and 1f
+        /// </summary>
+        /// <param name="Volume"></param>
+        public static void SetVolume(float Volume)
+        {
+            volume = Volume;
+            if (outputDevice == null)
+            {
+                Trace.TraceWarning("SetVolume: outputDevice = null");
+                return;
+            }
+            switch (Volume)
+            {
+                case (<= 0): outputDevice.Volume = 0; break;
+                case (> 1): outputDevice.Volume = 1; break;
+                default: outputDevice.Volume = Volume; break;
+            }
+        }
+
+        public static float GetVolume()
+        {
+            if (outputDevice == null)
+            {
+                Trace.TraceWarning("SetVolume: outputDevice = null");
+                return 0;
+            }
+            else return outputDevice.Volume;
         }
     }
 }

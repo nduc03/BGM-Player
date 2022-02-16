@@ -29,12 +29,18 @@
                 <TextBlock x:Name="LoopField" TextAlignment="Left" TextWrapping="Wrap" Width="326" Height="53"/>
             </StackPanel>
 
+            <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="volDown" Content="Volume Down" Margin="0,0,10,0" Click="volDown_Click"/>
+                <TextBlock x:Name="volValue" Margin="10,0,10,0" Width="25" TextAlignment="Center" />
+                <Button x:Name="volUp" Content="Volume Up" Margin="10,0,0,0" Click="volUp_Click"/>
+            </StackPanel>
+
         </StackPanel>
 
         <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,40,0,0">
 
             <StackPanel Orientation="Horizontal" Height="Auto" Width="Auto" HorizontalAlignment="Center">
-                <Button x:Name="start" Content="Start" Margin="0,0,5,0" VerticalAlignment="Top" Width="94" Height="32" Click="start_Click"/>
+                <Button x:Name="start" Content="Intro" Margin="0,0,5,0" VerticalAlignment="Top" Width="94" Height="32" Click="start_Click"/>
                 <Button x:Name="loop" Content="Loop" Margin="5,0,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="loop_Click"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,20,0,0" HorizontalAlignment="Center">
