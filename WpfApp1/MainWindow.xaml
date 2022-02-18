@@ -22,11 +22,14 @@
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label Content="Intro file location" Margin="0,0,10,0"/>
                 <TextBlock x:Name="StartField" TextAlignment="Left" TextWrapping="Wrap" Height="53" Width="326"/>
+                <Button x:Name="remove_intro" Content="Remove" Height="20" Click="remove_intro_Click" />
             </StackPanel>
 
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label Content="Loop file location" Margin="0,0,10,0"/>
                 <TextBlock x:Name="LoopField" TextAlignment="Left" TextWrapping="Wrap" Width="326" Height="53"/>
+                <Button x:Name="remove_loop" Height="20" Content="Remove" Click="remove_loop_Click" />
+
             </StackPanel>
 
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">

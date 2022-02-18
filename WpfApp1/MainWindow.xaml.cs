@@ -212,6 +212,34 @@ namespace bgmPlayer
             }
             ConfigManager.SaveVolume(currentVol);
         }
+
+        private void remove_intro_Click(object sender, RoutedEventArgs e)
+        {
+            if (AudioManager.IsStopped)
+            {
+                startPath.FileName = string.Empty;
+                StartField.Text = string.Empty;
+                ConfigManager.SavePath(startPath.FileName, loopPath.FileName);
+            }
+            else
+            {
+                MessageBox.Show("Stop music before remove file path");
+            }
+        }
+
+        private void remove_loop_Click(object sender, RoutedEventArgs e)
+        {
+            if (AudioManager.IsStopped)
+            {
+                loopPath.FileName = string.Empty;
+                LoopField.Text = string.Empty;
+                ConfigManager.SavePath(startPath.FileName, loopPath.FileName);
+            }
+            else
+            {
+                MessageBox.Show("Stop music before remove file path");
+            }
+        }
     }
 
     /// <summary>
@@ -222,6 +250,17 @@ namespace bgmPlayer
         private static WaveOutEvent? outputDevice;
         private static AudioFileReader? audioFile;
         private static float volume = 1f;
+        public static bool IsStopped
+        {
+            get
+            {
+                if (outputDevice == null) return true;
+
+                if (outputDevice.PlaybackState == PlaybackState.Stopped) return true;
+                else return false;
+            }
+        }
+        public static bool IsPlaying { get { return !IsStopped; } }
 
         public static void InitAudio()
         {
