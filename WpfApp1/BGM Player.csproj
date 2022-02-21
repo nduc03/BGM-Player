@@ -12,6 +12,7 @@
     <IsPublishable>False</IsPublishable>
     <Authors>nduc</Authors>
     <AssemblyVersion>1.0.1</AssemblyVersion>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

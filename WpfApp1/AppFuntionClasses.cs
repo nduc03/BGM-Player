@@ -47,7 +47,7 @@ namespace bgmPlayer
                 // startRead < count when the startStream near the end of stream.
                 // when near the end, block the code until startStream finish read
                 // then call loopStream read forever
-                while (startStream.Position < startStream.Length - 1000)
+                while (startStream.Position < startStream.Length)
                 {
                     // do nothing
                     // just block loopStream read until startStream is fully read
