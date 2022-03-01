@@ -95,7 +95,7 @@ namespace bgmPlayer
             if (mediaPlayer == null || smtc == null || updater == null)
                 throw new NullReferenceException("Cannot initialize SystemMediaTransportControls, consider checking Windows version.");
             mediaPlayer.CommandManager.IsEnabled = false;
-            smtc.IsEnabled = true;
+            
             smtc.IsPlayEnabled = true;
             smtc.IsPauseEnabled = true;
             smtc.IsStopEnabled = true;
@@ -141,6 +141,7 @@ namespace bgmPlayer
             play_button.IsEnabled = false;
             stop_button.IsEnabled = true;
             pause_button.IsEnabled = true;
+            smtc.IsEnabled = true;
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
 
             if (isPause)
@@ -180,6 +181,7 @@ namespace bgmPlayer
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
             smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            smtc.IsEnabled = false;
         }
 
         private void pause_Click(object sender, RoutedEventArgs? e)
