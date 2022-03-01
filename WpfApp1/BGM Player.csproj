@@ -1,39 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-    <ApplicationIcon>music.ico</ApplicationIcon>
-    <AssemblyName>BGM Player</AssemblyName>
-    <RootNamespace>bgmPlayer</RootNamespace>
-    <StartupObject></StartupObject>
-    <IsPublishable>False</IsPublishable>
-    <Authors>nduc</Authors>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <Configurations>Debug;Release</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>music.ico</ApplicationIcon>
+		<AssemblyName>BGM Player</AssemblyName>
+		<RootNamespace>bgmPlayer</RootNamespace>
+		<StartupObject></StartupObject>
+		<IsPublishable>False</IsPublishable>
+		<Authors>nduc</Authors>
+		<AssemblyVersion>1.1.0</AssemblyVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="img\pause.png" />
-    <None Remove="img\play.png" />
-    <None Remove="img\stop.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="img\pause.png" />
+		<None Remove="img\play.png" />
+		<None Remove="img\schwarz.jpg" />
+		<None Remove="img\stop.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="music.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="music.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NAudio.Core" Version="2.0.0" />
-    <PackageReference Include="NAudio.Extras" Version="1.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="NAudio.Core" Version="2.0.0" />
+		<PackageReference Include="NAudio.Extras" Version="1.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="img\pause.png" />
-    <Resource Include="img\play.png" />
-    <Resource Include="img\stop.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="img\pause.png" />
+		<Resource Include="img\play.png" />
+		<Resource Include="img\schwarz.jpg" />
+		<Resource Include="img\stop.png" />
+	</ItemGroup>
 
 </Project>

@@ -3,14 +3,19 @@ using System.IO;
 using System.Windows;
 using System.Diagnostics;
 using Microsoft.Win32;
+using Windows.Media;
+using Windows.Storage.Streams;
 
 namespace bgmPlayer
 {
     public partial class MainWindow : Window
     {
+        private readonly ConfigData? configData;
+        private readonly Windows.Media.Playback.MediaPlayer mediaPlayer;
+        private readonly SystemMediaTransportControls smtc;
+        private readonly SystemMediaTransportControlsDisplayUpdater updater;
         private OpenFileDialog loopPath;
         private OpenFileDialog startPath;
-        private ConfigData? configData;
         private bool isPause = false;
         private int currentVolume = 10;
 
@@ -29,10 +34,14 @@ namespace bgmPlayer
             startPath = new OpenFileDialog();
             loopPath = new OpenFileDialog();
             configData = ConfigManager.LoadPath();
+            mediaPlayer = new Windows.Media.Playback.MediaPlayer();
+            smtc = mediaPlayer.SystemMediaTransportControls;
+            updater = smtc.DisplayUpdater;
 
             InitializeComponent();
             InitPathData();
             InitVolume();
+            InitSMTC();
         }
 
         private void InitPathData()
@@ -81,6 +90,26 @@ namespace bgmPlayer
             AudioManager.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
         }
 
+        private void InitSMTC()
+        {
+            if (mediaPlayer == null || smtc == null || updater == null)
+                throw new NullReferenceException("Cannot initialize SystemMediaTransportControls, consider checking Windows version.");
+            mediaPlayer.CommandManager.IsEnabled = false;
+            smtc.IsEnabled = true;
+            smtc.IsPlayEnabled = true;
+            smtc.IsPauseEnabled = true;
+            smtc.IsStopEnabled = true;
+            smtc.IsNextEnabled = false;
+            smtc.IsPreviousEnabled = false;
+            smtc.ButtonPressed += OnPlayPause;
+            updater.Type = MediaPlaybackType.Music;
+            updater.MusicProperties.Artist = "Someone in HyperGryph, idk :)";
+            updater.MusicProperties.AlbumArtist = "Someone in HyperGryph, idk :)";
+            updater.MusicProperties.Title = "Arknights BGM";
+            // TODO: Thumbnail does not work properly, need to fix
+            updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("pack://application:,,,/img/schwarz.jpg"));
+        }
+
         private void start_Click(object sender, RoutedEventArgs e)
         {
             if (startPath.ShowDialog() == true)
@@ -112,6 +141,7 @@ namespace bgmPlayer
             play_button.IsEnabled = false;
             stop_button.IsEnabled = true;
             pause_button.IsEnabled = true;
+            smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
 
             if (isPause)
             {
@@ -129,11 +159,15 @@ namespace bgmPlayer
                         // else -> PlayLoop loop path
                         File.Exists(startPath.FileName) ? startPath.FileName : loopPath.FileName
                 );
+                smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
+                updater.Update();
             }
             else
             {
                 AudioManager.InitAudio();
                 AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
+                smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
+                updater.Update();
             }
         }
 
@@ -145,6 +179,7 @@ namespace bgmPlayer
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
+            smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
         }
 
         private void pause_Click(object sender, RoutedEventArgs? e)
@@ -154,6 +189,7 @@ namespace bgmPlayer
             pause_button.IsEnabled = false;
             play_button.IsEnabled = true;
             stop_button.IsEnabled = true;
+            smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
         }
 
         private void DisableChooseFile()
@@ -169,19 +205,19 @@ namespace bgmPlayer
         }
 
         /* Play button handler from taskbar */
-        private void play_handler(object sender, EventArgs e)
+        private void play_handler(object sender, EventArgs? e)
         {
             if (play_button.IsEnabled)
                 play_Click(sender, null);
         }
 
-        private void pause_handler(object sender, EventArgs e)
+        private void pause_handler(object sender, EventArgs? e)
         {
             if (pause_button.IsEnabled)
                 pause_Click(sender, null);
         }
 
-        private void stop_handler(object sender, EventArgs e)
+        private void stop_handler(object sender, EventArgs? e)
         {
             if (stop_button.IsEnabled)
                 stop_Click(sender, null);
@@ -238,6 +274,33 @@ namespace bgmPlayer
                 MessageBox.Show("Stop music before remove file path");
             }
         }
-    }
 
+        private void OnPlayPause(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case SystemMediaTransportControlsButton.Play:
+                    Dispatcher.Invoke(() =>
+                    {
+                        play_handler(sender, null);
+                    });
+                    break;
+                case SystemMediaTransportControlsButton.Pause:
+                    Dispatcher.Invoke(() =>
+                    {
+                        pause_handler(sender, null);
+                    });
+                    break;
+                case SystemMediaTransportControlsButton.Stop:
+                    Dispatcher.Invoke(() =>
+                    {
+                        stop_handler(sender, null);
+                    });
+                    break;
+                default:
+                    Trace.TraceWarning("Incorrect input");
+                    break;
+            }
+        }
+    }
 }
