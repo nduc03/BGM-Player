@@ -95,7 +95,6 @@ namespace bgmPlayer
             if (mediaPlayer == null || smtc == null || updater == null)
                 throw new NullReferenceException("Cannot initialize SystemMediaTransportControls, consider checking Windows version.");
             mediaPlayer.CommandManager.IsEnabled = false;
-            
             smtc.IsPlayEnabled = true;
             smtc.IsPauseEnabled = true;
             smtc.IsStopEnabled = true;
@@ -107,7 +106,7 @@ namespace bgmPlayer
             updater.MusicProperties.AlbumArtist = "Someone in HyperGryph, idk :)";
             updater.MusicProperties.Title = "Arknights BGM";
             // TODO: Thumbnail does not work properly, need to fix
-            updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri("pack://application:,,,/img/schwarz.jpg"));
+            updater.Thumbnail = RandomAccessStreamReference.CreateFromStream(Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream.AsRandomAccessStream());
         }
 
         private void start_Click(object sender, RoutedEventArgs e)
