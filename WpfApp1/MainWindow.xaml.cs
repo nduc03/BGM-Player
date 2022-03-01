@@ -107,6 +107,7 @@ namespace bgmPlayer
             updater.MusicProperties.Title = "Arknights BGM";
             // TODO: Thumbnail does not work properly, need to fix
             updater.Thumbnail = RandomAccessStreamReference.CreateFromStream(Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream.AsRandomAccessStream());
+            updater.Update();
         }
 
         private void start_Click(object sender, RoutedEventArgs e)
@@ -136,7 +137,7 @@ namespace bgmPlayer
                 return;
             }
 
-            DisableChooseFile();
+            AllowChooseFile(false);
             play_button.IsEnabled = false;
             stop_button.IsEnabled = true;
             pause_button.IsEnabled = true;
@@ -159,15 +160,11 @@ namespace bgmPlayer
                         // else -> PlayLoop loop path
                         File.Exists(startPath.FileName) ? startPath.FileName : loopPath.FileName
                 );
-                smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
-                updater.Update();
             }
             else
             {
                 AudioManager.InitAudio();
                 AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
-                smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
-                updater.Update();
             }
         }
 
@@ -175,7 +172,7 @@ namespace bgmPlayer
         {
             isPause = false;
             AudioManager.StopAudio();
-            EnableChooseFile();
+            AllowChooseFile(true);
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
@@ -193,40 +190,9 @@ namespace bgmPlayer
             smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
         }
 
-        private void DisableChooseFile()
-        {
-            start.IsEnabled = false;
-            loop.IsEnabled = false;
-        }
-
-        private void EnableChooseFile()
-        {
-            start.IsEnabled = true;
-            loop.IsEnabled = true;
-        }
-
-        /* Play button handler from taskbar */
-        private void play_handler(object sender, EventArgs? e)
-        {
-            if (play_button.IsEnabled)
-                play_Click(sender, null);
-        }
-
-        private void pause_handler(object sender, EventArgs? e)
-        {
-            if (pause_button.IsEnabled)
-                pause_Click(sender, null);
-        }
-
-        private void stop_handler(object sender, EventArgs? e)
-        {
-            if (stop_button.IsEnabled)
-                stop_Click(sender, null);
-        }
-
         private void volDown_Click(object sender, RoutedEventArgs e)
         {
-            var currentVol = Int32.Parse(volValue.Text);
+            var currentVol = int.Parse(volValue.Text);
             if (currentVol > 0)
             {
                 currentVol--;
@@ -238,7 +204,7 @@ namespace bgmPlayer
 
         private void volUp_Click(object sender, RoutedEventArgs e)
         {
-            var currentVol = Int32.Parse(volValue.Text);
+            var currentVol = int.Parse(volValue.Text);
             if (currentVol < AppConstants.VOLUME_SCALE)
             {
                 currentVol++;
@@ -276,6 +242,24 @@ namespace bgmPlayer
             }
         }
 
+        private void taskbar_play_handler(object sender, EventArgs? e)
+        {
+            if (play_button.IsEnabled)
+                play_Click(sender, null);
+        }
+
+        private void taskbar_stop_handler(object sender, EventArgs? e)
+        {
+            if (stop_button.IsEnabled)
+                stop_Click(sender, null);
+        }
+
+        private void taskbar_pause_handler(object sender, EventArgs? e)
+        {
+            if (pause_button.IsEnabled)
+                pause_Click(sender, null);
+        }
+
         private void OnPlayPause(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs e)
         {
             switch (e.Button)
@@ -283,25 +267,31 @@ namespace bgmPlayer
                 case SystemMediaTransportControlsButton.Play:
                     Dispatcher.Invoke(() =>
                     {
-                        play_handler(sender, null);
+                        taskbar_play_handler(sender, null);
                     });
                     break;
                 case SystemMediaTransportControlsButton.Pause:
                     Dispatcher.Invoke(() =>
                     {
-                        pause_handler(sender, null);
+                        taskbar_pause_handler(sender, null);
                     });
                     break;
                 case SystemMediaTransportControlsButton.Stop:
                     Dispatcher.Invoke(() =>
                     {
-                        stop_handler(sender, null);
+                        taskbar_stop_handler(sender, null);
                     });
                     break;
                 default:
                     Trace.TraceWarning("Incorrect input");
                     break;
             }
+        }
+
+        private void AllowChooseFile(bool isAllow)
+        {
+            start.IsEnabled = isAllow;
+            loop.IsEnabled = isAllow;
         }
     }
 }
