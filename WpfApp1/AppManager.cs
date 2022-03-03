@@ -31,7 +31,7 @@ namespace bgmPlayer
 
     public class ConfigData
     {
-        public string? StartPath { get; set; }
+        public string? IntroPath { get; set; }
         public string? LoopPath { get; set; }
         public float? Volume { get; set; }
     }
@@ -66,7 +66,7 @@ namespace bgmPlayer
                 data = new ConfigData();
             }
 
-            if (startPath != null) data.StartPath = startPath;
+            if (startPath != null) data.IntroPath = startPath;
             if (loopPath != null) data.LoopPath = loopPath;
             File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
         }
@@ -114,7 +114,7 @@ namespace bgmPlayer
                 return ReadConfigState.FAILED;
             }
 
-            SavePath(data.StartPath, data.LoopPath);
+            SavePath(data.IntroPath, data.LoopPath);
             File.Delete(AppConstants.OLD_CONFIG_LOCATION);
             Directory.Delete(AppConstants.OLD_DATA_FOLDER, true);
             return ReadConfigState.SUCCESSFUL;

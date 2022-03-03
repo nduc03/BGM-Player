@@ -14,8 +14,8 @@ namespace bgmPlayer
         private readonly Windows.Media.Playback.MediaPlayer mediaPlayer;
         private readonly SystemMediaTransportControls smtc;
         private readonly SystemMediaTransportControlsDisplayUpdater updater;
+        private OpenFileDialog introPath;
         private OpenFileDialog loopPath;
-        private OpenFileDialog startPath;
         private bool isPause = false;
         private int currentVolume = 10;
 
@@ -31,7 +31,7 @@ namespace bgmPlayer
                 );
             }
 
-            startPath = new OpenFileDialog();
+            introPath = new OpenFileDialog();
             loopPath = new OpenFileDialog();
             configData = ConfigManager.LoadPath();
             mediaPlayer = new Windows.Media.Playback.MediaPlayer();
@@ -46,13 +46,13 @@ namespace bgmPlayer
 
         private void InitPathData()
         {
-            if (startPath == null || loopPath == null)
+            if (introPath == null || loopPath == null)
             {
                 Trace.TraceWarning("startPath or loopPath is null. Init path again.");
-                startPath = new OpenFileDialog();
+                introPath = new OpenFileDialog();
                 loopPath = new OpenFileDialog();
             }
-            startPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
+            introPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
             loopPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
@@ -61,10 +61,10 @@ namespace bgmPlayer
                 // if configData not null -> configData is specified
                 // then check configData has valid path using File.Exists()
                 // if path does not exist -> ignore setting up path
-                if (File.Exists(configData.StartPath))
+                if (File.Exists(configData.IntroPath))
                 {
-                    StartField.Text = configData.StartPath; // show path in GUI
-                    startPath.FileName = configData.StartPath; // set path in app logic
+                    IntroField.Text = configData.IntroPath; // show path in GUI
+                    introPath.FileName = configData.IntroPath; // set path in app logic
                 }
                 if (File.Exists(configData.LoopPath))
                 {
@@ -109,10 +109,10 @@ namespace bgmPlayer
 
         private void start_Click(object sender, RoutedEventArgs e)
         {
-            if (startPath.ShowDialog() == true)
+            if (introPath.ShowDialog() == true)
             {
-                StartField.Text = startPath.FileName;
-                ConfigManager.SavePath(startPath.FileName, null);
+                IntroField.Text = introPath.FileName;
+                ConfigManager.SavePath(introPath.FileName, null);
             }
         }
 
@@ -127,7 +127,7 @@ namespace bgmPlayer
 
         private void play_Click(object sender, RoutedEventArgs? e)
         {
-            if (!File.Exists(startPath.FileName) && !File.Exists(loopPath.FileName))
+            if (!File.Exists(introPath.FileName) && !File.Exists(loopPath.FileName))
             {
                 // If both 2 two files is not found or not set -> show error message.
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
@@ -149,11 +149,11 @@ namespace bgmPlayer
             }
 
             // If only one file is not found or not set -> still play music but in loop mode.
-            if (!File.Exists(startPath.FileName) || !File.Exists(loopPath.FileName))
+            if (!File.Exists(introPath.FileName) || !File.Exists(loopPath.FileName))
             {
                 // Check if start path is found -> PlayLoop start path
                 // else -> PlayLoop loop path
-                string filePath = File.Exists(startPath.FileName) ? startPath.FileName : loopPath.FileName;
+                string filePath = File.Exists(introPath.FileName) ? introPath.FileName : loopPath.FileName;
                 updater.MusicProperties.Title = Path.GetFileNameWithoutExtension(filePath);
                 AudioManager.InitAudio();
                 AudioManager.PlayLoop(filePath);
@@ -161,9 +161,9 @@ namespace bgmPlayer
             }
             else
             {
-                updater.MusicProperties.Title = GetArknightsBgmFileName(startPath.FileName, loopPath.FileName) ?? "BGM Player";
+                updater.MusicProperties.Title = GetArknightsBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
                 AudioManager.InitAudio();
-                AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
+                AudioManager.PlayBGM(introPath.FileName, loopPath.FileName);
                 updater.Update();
             }
         }
@@ -218,9 +218,9 @@ namespace bgmPlayer
         {
             if (AudioManager.IsStopped)
             {
-                startPath.FileName = string.Empty;
-                StartField.Text = string.Empty;
-                ConfigManager.SavePath(startPath.FileName, loopPath.FileName);
+                introPath.FileName = string.Empty;
+                IntroField.Text = string.Empty;
+                ConfigManager.SavePath(introPath.FileName, loopPath.FileName);
             }
             else
             {
@@ -234,7 +234,7 @@ namespace bgmPlayer
             {
                 loopPath.FileName = string.Empty;
                 LoopField.Text = string.Empty;
-                ConfigManager.SavePath(startPath.FileName, loopPath.FileName);
+                ConfigManager.SavePath(introPath.FileName, loopPath.FileName);
             }
             else
             {
@@ -305,7 +305,7 @@ namespace bgmPlayer
         {
             string _path1 = Path.GetFileNameWithoutExtension(path1);
             string _path2 = Path.GetFileNameWithoutExtension(path2);
-            if ((_path1.EndsWith("_intro") || _path1.EndsWith("_loop")) && (_path2.EndsWith("_intro") || _path2.EndsWith("_loop")))
+            if ((_path1.EndsWith("_intro") && _path2.EndsWith("_loop")) || (_path2.EndsWith("_intro") && _path1.EndsWith("_loop")))
             {
                 if (_path1[.._path1.LastIndexOf('_')] == _path2[.._path2.LastIndexOf('_')])
                     return _path1[.._path1.LastIndexOf('_')];
