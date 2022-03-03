@@ -102,8 +102,8 @@ namespace bgmPlayer
             smtc.IsPreviousEnabled = false;
             smtc.ButtonPressed += OnPlayPause;
             updater.Type = MediaPlaybackType.Music;
-            updater.MusicProperties.Artist = "Someone in HyperGryph, idk :)";
-            updater.MusicProperties.AlbumArtist = "Someone in HyperGryph, idk :)";
+            //updater.MusicProperties.Artist = "Someone in HyperGryph, idk :)";
+            //updater.MusicProperties.AlbumArtist = "Someone in HyperGryph, idk :)";
             updater.MusicProperties.Title = "Arknights BGM";
             // TODO: Thumbnail does not work properly, need to fix
             updater.Thumbnail = RandomAccessStreamReference.CreateFromStream(Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream.AsRandomAccessStream());
@@ -164,7 +164,7 @@ namespace bgmPlayer
             }
             else
             {
-                updater.MusicProperties.Title = GetArknightsBgmFileName(startPath.FileName, loopPath.FileName) ?? "Arknights BGM";
+                updater.MusicProperties.Title = GetArknightsBgmFileName(startPath.FileName, loopPath.FileName) ?? "BGM Player";
                 AudioManager.InitAudio();
                 AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
                 updater.Update();
@@ -306,11 +306,13 @@ namespace bgmPlayer
         /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
         private static string? GetArknightsBgmFileName(string path1, string path2)
         {
-            string intro = Path.GetFileNameWithoutExtension(path1);
-            string loop = Path.GetFileNameWithoutExtension(path2);
-            if ((intro.EndsWith("_intro") || intro.EndsWith("_loop")) && (loop.EndsWith("_intro") || loop.EndsWith("_loop")))
+            string _path1 = Path.GetFileNameWithoutExtension(path1);
+            string _path2 = Path.GetFileNameWithoutExtension(path2);
+            if ((_path1.EndsWith("_intro") || _path1.EndsWith("_loop")) && (_path2.EndsWith("_intro") || _path2.EndsWith("_loop")))
             {
-                return intro[..intro.LastIndexOf('_')];
+                if (_path1[.._path1.LastIndexOf('_')] == _path2[.._path2.LastIndexOf('_')])
+                    return _path1[.._path1.LastIndexOf('_')];
+                return null;
             }
             return null;
         }
