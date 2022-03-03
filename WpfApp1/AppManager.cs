@@ -13,9 +13,9 @@ namespace bgmPlayer
         public const string ERROR_TITLE = "Error!";
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
         public const string DATA_FOLDER = "BGM_Player_Data";
+        public const string CONFIG_LOCATION = $"{DATA_FOLDER}/data.json";
         public const string OLD_DATA_FOLDER = "AudioLoop_Data";
         public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/path.cfg";
-        public const string CONFIG_LOCATION = $"{DATA_FOLDER}/data.json";
         public const float VOLUME_SCALE = 10f;
     }
 
