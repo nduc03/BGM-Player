@@ -58,9 +58,8 @@ namespace bgmPlayer
             pause_button.IsEnabled = false;
             if (configData != null)
             {
-                // if pathData not null -> pathData is specified
-
-                // then check pathData is valid path using File.Exists()
+                // if configData not null -> configData is specified
+                // then check configData has valid path using File.Exists()
                 // if path does not exist -> ignore setting up path
                 if (File.Exists(configData.StartPath))
                 {
@@ -102,9 +101,7 @@ namespace bgmPlayer
             smtc.IsPreviousEnabled = false;
             smtc.ButtonPressed += OnPlayPause;
             updater.Type = MediaPlaybackType.Music;
-            //updater.MusicProperties.Artist = "Someone in HyperGryph, idk :)";
-            //updater.MusicProperties.AlbumArtist = "Someone in HyperGryph, idk :)";
-            updater.MusicProperties.Title = "Arknights BGM";
+            updater.MusicProperties.Title = "BGM Player";
             // TODO: Thumbnail does not work properly, need to fix
             updater.Thumbnail = RandomAccessStreamReference.CreateFromStream(Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream.AsRandomAccessStream());
             updater.Update();
