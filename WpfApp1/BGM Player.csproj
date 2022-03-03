@@ -5,13 +5,20 @@
 		<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
-		<ApplicationIcon>music.ico</ApplicationIcon>
+		<ApplicationIcon Condition="$(Configuration)==Debug Or $(Configuration)==Release">music.ico</ApplicationIcon>
+		<ApplicationIcon Condition="$(Configuration)==Me">schwarz.ico</ApplicationIcon>
 		<AssemblyName>BGM Player</AssemblyName>
 		<RootNamespace>bgmPlayer</RootNamespace>
 		<StartupObject></StartupObject>
 		<IsPublishable>False</IsPublishable>
 		<Authors>nduc</Authors>
 		<AssemblyVersion>1.1.1</AssemblyVersion>
+		<Configurations>Debug;Release;Me</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
+	  <Optimize>True</Optimize>
+	  <DefineConstants>ME;RELEASE;NET;NET6_0;NETCOREAPP</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

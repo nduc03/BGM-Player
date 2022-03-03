@@ -77,9 +77,9 @@ namespace bgmPlayer
         private void InitVolume()
         {
             if (configData == null)
-                Trace.TraceError("InitVolume: config data is null");
+                Debug.WriteLine("InitVolume: config data is null, set volume to default value.");
             else if (configData.Volume == null)
-                Trace.TraceInformation("InitVolume: configData doesn't have Volume value");
+                Debug.WriteLine("InitVolume: configData doesn't have Volume value");
             else if (configData.Volume >= 0 && configData.Volume <= AppConstants.VOLUME_SCALE)
                 currentVolume = (int)configData.Volume;
             else

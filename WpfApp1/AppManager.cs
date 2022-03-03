@@ -50,7 +50,7 @@ namespace bgmPlayer
             }
             catch
             {
-                Trace.TraceWarning("Json error");
+                Debug.WriteLine("Json error");
                 data = null;
             }
             return data;
@@ -108,7 +108,7 @@ namespace bgmPlayer
 
             if (data == null)
             {
-                Trace.TraceWarning("Old config corrupted, app will ignore migrate and only delete old config file.");
+                Debug.WriteLine("Old config corrupted, app will ignore migrate and only delete old config file.");
                 Directory.Delete(AppConstants.OLD_DATA_FOLDER, true);
                 File.Delete(AppConstants.OLD_CONFIG_LOCATION);
                 return ReadConfigState.FAILED;
@@ -186,7 +186,7 @@ namespace bgmPlayer
             }
             if (outputDevice == null)
             {
-                Trace.TraceWarning("outputDevice is null or not initialized, please check again");
+                Debug.WriteLine("outputDevice is null or not initialized, please check again");
                 return AudioManagerState.PLAY_FAILED;
             }
             AudioFileReader audioFile = new AudioFileReader(audioPath);
@@ -260,7 +260,7 @@ namespace bgmPlayer
             volume = Volume;
             if (outputDevice == null)
             {
-                Trace.TraceWarning("SetVolume: outputDevice = null");
+                Debug.WriteLine("SetVolume: outputDevice = null");
                 return AudioManagerState.PLAY_FAILED;
             }
             switch (Volume)
@@ -280,7 +280,7 @@ namespace bgmPlayer
         {
             if (outputDevice == null)
             {
-                Trace.TraceWarning("SetVolume: outputDevice = null");
+                Debug.WriteLine("SetVolume: outputDevice = null");
                 return 0;
             }
             else return outputDevice.Volume;
