@@ -151,20 +151,23 @@ namespace bgmPlayer
                 return;
             }
 
+            // If only one file is not found or not set -> still play music but in loop mode.
             if (!File.Exists(startPath.FileName) || !File.Exists(loopPath.FileName))
             {
-                // If only one file is not found or not set -> still play music but in loop mode.
+                // Check if start path is found -> PlayLoop start path
+                // else -> PlayLoop loop path
+                string filePath = File.Exists(startPath.FileName) ? startPath.FileName : loopPath.FileName;
+                updater.MusicProperties.Title = Path.GetFileNameWithoutExtension(filePath);
                 AudioManager.InitAudio();
-                AudioManager.PlayLoop(
-                        // Check if start path is found -> PlayLoop start path
-                        // else -> PlayLoop loop path
-                        File.Exists(startPath.FileName) ? startPath.FileName : loopPath.FileName
-                );
+                AudioManager.PlayLoop(filePath);
+                updater.Update();
             }
             else
             {
+                updater.MusicProperties.Title = GetArknightsBgmFileName(startPath.FileName, loopPath.FileName) ?? "Arknights BGM";
                 AudioManager.InitAudio();
                 AudioManager.PlayBGM(startPath.FileName, loopPath.FileName);
+                updater.Update();
             }
         }
 
@@ -292,6 +295,24 @@ namespace bgmPlayer
         {
             start.IsEnabled = isAllow;
             loop.IsEnabled = isAllow;
+        }
+
+        /// <summary>
+        /// Get BGM name of intro and loop file.
+        /// Only work correctly with Arknights music file pattern
+        /// </summary>
+        /// <param name="path1">Full absolute path to intro or loop file</param>
+        /// <param name="path2">Full absolute path to intro or loop file</param>
+        /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
+        private static string? GetArknightsBgmFileName(string path1, string path2)
+        {
+            string intro = Path.GetFileNameWithoutExtension(path1);
+            string loop = Path.GetFileNameWithoutExtension(path2);
+            if ((intro.EndsWith("_intro") || intro.EndsWith("_loop")) && (loop.EndsWith("_intro") || loop.EndsWith("_loop")))
+            {
+                return intro[..intro.LastIndexOf('_')];
+            }
+            return null;
         }
     }
 }
