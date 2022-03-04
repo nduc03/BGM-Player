@@ -13,9 +13,9 @@ namespace bgmPlayer
         public const string ERROR_TITLE = "Error!";
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
         public const string DATA_FOLDER = "BGM_Player_Data";
-        public const string CONFIG_LOCATION = $"{DATA_FOLDER}/data.json";
-        public const string OLD_DATA_FOLDER = "AudioLoop_Data";
-        public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/path.cfg";
+        public const string CONFIG_LOCATION = $"{DATA_FOLDER}/preferences.json";
+        public const string OLD_DATA_FOLDER = "BGM_Player_Data";
+        public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/data.json";
         public const float VOLUME_SCALE = 10f;
     }
 
@@ -91,7 +91,7 @@ namespace bgmPlayer
             {
                 if (Directory.Exists(AppConstants.OLD_DATA_FOLDER))
                 {
-                    Directory.Delete(AppConstants.OLD_DATA_FOLDER, true);
+                    SafeDeleteOldConfigFolder();
                 }
                 return ReadConfigState.FILE_NOT_FOUND;
             }
@@ -101,7 +101,7 @@ namespace bgmPlayer
             {
                 data = JsonSerializer.Deserialize<ConfigData>(File.ReadAllText(AppConstants.OLD_CONFIG_LOCATION));
             }
-            catch
+            catch (JsonException)
             {
                 data = null;
             }
@@ -109,15 +109,32 @@ namespace bgmPlayer
             if (data == null)
             {
                 Debug.WriteLine("Old config corrupted, app will ignore migrate and only delete old config file.");
+#if DEBUG
+                MessageBox.Show("Migrate error");
+#endif
                 Directory.Delete(AppConstants.OLD_DATA_FOLDER, true);
                 File.Delete(AppConstants.OLD_CONFIG_LOCATION);
                 return ReadConfigState.FAILED;
             }
 
             SavePath(data.IntroPath, data.LoopPath);
+            SaveVolume(data.Volume);
             File.Delete(AppConstants.OLD_CONFIG_LOCATION);
-            Directory.Delete(AppConstants.OLD_DATA_FOLDER, true);
+            SafeDeleteOldConfigFolder();
             return ReadConfigState.SUCCESSFUL;
+        }
+
+        private static void SafeDeleteOldConfigFolder()
+        {
+            try
+            {
+                Directory.Delete(AppConstants.OLD_DATA_FOLDER, false);
+            }
+            catch (IOException)
+            {
+                Debug.WriteLine("MigrateNewConfig did not delete old folder, " +
+                    "it is normal if old config has the same folder with the new one, otherwise it might be a bug.");
+            }
         }
     }
 

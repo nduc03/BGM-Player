@@ -48,7 +48,7 @@ namespace bgmPlayer
         {
             if (introPath == null || loopPath == null)
             {
-                Trace.TraceWarning("startPath or loopPath is null. Init path again.");
+                Debug.WriteLine("InitPathData error: startPath or loopPath is null. Init path again.");
                 introPath = new OpenFileDialog();
                 loopPath = new OpenFileDialog();
             }
@@ -109,19 +109,23 @@ namespace bgmPlayer
 
         private void start_Click(object sender, RoutedEventArgs e)
         {
+            smtc.IsEnabled = false;
             if (introPath.ShowDialog() == true)
             {
                 IntroField.Text = introPath.FileName;
                 ConfigManager.SavePath(introPath.FileName, null);
+                smtc.IsEnabled = true;
             }
         }
 
         private void loop_Click(object sender, RoutedEventArgs e)
         {
+            smtc.IsEnabled = false;
             if (loopPath.ShowDialog() == true)
             {
                 LoopField.Text = loopPath.FileName;
                 ConfigManager.SavePath(null, loopPath.FileName);
+                smtc.IsEnabled = true;
             }
         }
 
@@ -244,7 +248,7 @@ namespace bgmPlayer
 
         private void taskbar_play_handler(object sender, EventArgs? e)
         {
-            if (play_button.IsEnabled)
+            if (play_button.IsEnabled && smtc.IsEnabled)
                 play_Click(sender, null);
         }
 
