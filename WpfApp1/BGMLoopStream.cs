@@ -1,18 +1,25 @@
 ﻿using NAudio.Wave;
 using NAudio.Extras;
+using System.Diagnostics;
+using System.Threading;
 
 namespace bgmPlayer
 {
     public class BGMLoopStream : LoopStream
     {
         private readonly WaveStream? introStream;
+        private readonly WaveStream loopStream;
 
         public BGMLoopStream(WaveStream introStream, WaveStream loopStream) : base(loopStream)
         {
             this.introStream = introStream;
+            this.loopStream = loopStream;
         }
 
-        public BGMLoopStream(WaveStream loopStream) : base(loopStream) { }
+        public BGMLoopStream(WaveStream loopStream) : base(loopStream) 
+        {
+            this.loopStream = loopStream;
+        }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -20,13 +27,14 @@ namespace bgmPlayer
                 return base.Read(buffer, offset, count);
 
             int introRead = introStream.Read(buffer, offset, count);
-            int loopRead = 0;
-            if (introRead < count)
-            {
-                // Problem: Some music appears overlapping issue between intro and loop 
-                loopRead = base.Read(buffer, 0, count);
-            }
-            return introRead + loopRead;
+
+            if (introRead < count && introRead != 0)
+                return introRead + loopStream.Read(buffer, offset + introRead, count - introRead);
+            
+            if (introStream.Position == introStream.Length)            
+                return base.Read(buffer, offset, count);
+
+            return introRead;
         }
     }
 }
