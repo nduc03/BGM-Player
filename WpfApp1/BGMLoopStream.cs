@@ -1,7 +1,5 @@
 ﻿using NAudio.Wave;
 using NAudio.Extras;
-using System.Diagnostics;
-using System.Threading;
 
 namespace bgmPlayer
 {

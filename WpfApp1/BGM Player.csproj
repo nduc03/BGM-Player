@@ -12,8 +12,15 @@
 		<StartupObject></StartupObject>
 		<IsPublishable>False</IsPublishable>
 		<Authors>nduc</Authors>
-		<AssemblyVersion>1.1.1</AssemblyVersion>
+		<AssemblyVersion>1.2.0</AssemblyVersion>
 		<Configurations>Debug;Release;Me</Configurations>
+		<RepositoryUrl>https://github.com/nduc03/BGMLoop</RepositoryUrl>
+		<FileVersion></FileVersion>
+		<Description>BGM Player</Description>
+		<SignAssembly>False</SignAssembly>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<EnableNETAnalyzers>False</EnableNETAnalyzers>
+		<Copyright>Phạm Nhật Đức</Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
