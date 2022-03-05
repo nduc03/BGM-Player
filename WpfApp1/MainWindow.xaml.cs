@@ -155,6 +155,7 @@ namespace bgmPlayer
             // If only one file is not found or not set -> still play music but in loop mode.
             if (!File.Exists(introPath.FileName) || !File.Exists(loopPath.FileName))
             {
+                Mp3Check();
                 // Check if start path is found -> PlayLoop start path
                 // else -> PlayLoop loop path
                 string filePath = File.Exists(introPath.FileName) ? introPath.FileName : loopPath.FileName;
@@ -165,6 +166,7 @@ namespace bgmPlayer
             }
             else
             {
+                Mp3Check();
                 updater.MusicProperties.Title = GetArknightsBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
                 AudioManager.InitAudio();
                 AudioManager.PlayBGM(introPath.FileName, loopPath.FileName);
@@ -295,6 +297,18 @@ namespace bgmPlayer
         {
             start.IsEnabled = isAllow;
             loop.IsEnabled = isAllow;
+        }
+
+        private void Mp3Check()
+        {
+            if (Path.GetExtension(introPath.FileName) == ".mp3" || Path.GetExtension(loopPath.FileName) == ".mp3")
+                MessageBox.Show(
+                    "You are using compressed file mp3, which is not recommended for BGM loop.\n" +
+                        "Consider convert the file to .wav for smoother experience.",
+                    "Warning!",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
         }
 
         /// <summary>
