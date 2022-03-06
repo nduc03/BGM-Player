@@ -14,7 +14,7 @@ namespace bgmPlayer
             this.loopStream = loopStream;
         }
 
-        public BGMLoopStream(WaveStream loopStream) : base(loopStream) 
+        public BGMLoopStream(WaveStream loopStream) : base(loopStream)
         {
             this.loopStream = loopStream;
         }
@@ -23,16 +23,15 @@ namespace bgmPlayer
         {
             if (introStream == null)
                 return base.Read(buffer, offset, count);
-
-            int introRead = introStream.Read(buffer, offset, count);
-
-            if (introRead < count && introRead != 0)
-                return introRead + loopStream.Read(buffer, offset + introRead, count - introRead);
-            
-            if (introStream.Position == introStream.Length)            
+            if (introStream.Position < introStream.Length)
+            {
+                int introRead = introStream.Read(buffer, offset, count);
+                if (introRead < count)
+                    return introRead + loopStream.Read(buffer, offset + introRead, count - introRead);
+                return introRead;
+            }
+            else
                 return base.Read(buffer, offset, count);
-
-            return introRead;
         }
     }
 }
