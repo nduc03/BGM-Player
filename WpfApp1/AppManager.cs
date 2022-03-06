@@ -206,8 +206,8 @@ namespace bgmPlayer
                 Debug.WriteLine("outputDevice is null or not initialized, please check again");
                 return AudioManagerState.PLAY_FAILED;
             }
-            AudioFileReader audioFile = new AudioFileReader(audioPath);
-            BGMLoopStream loopStream = new BGMLoopStream(audioFile);
+            AudioFileReader audioFile = new(audioPath);
+            BGMLoopStream loopStream = new(audioFile);
             outputDevice.Init(loopStream);
             outputDevice.Play();
             return AudioManagerState.OK;
@@ -219,11 +219,11 @@ namespace bgmPlayer
         /// Function plays the start music file -> Loop play a second music file.
         /// Require output device to be initialized by calling <see cref="InitAudio"/>
         /// </summary>
-        public static AudioManagerState PlayBGM(string startPath, string loopPath)
+        public static AudioManagerState PlayBGM(string introPath, string loopPath)
         {
             if (outputDevice == null) return AudioManagerState.PLAY_FAILED;
-            BGMLoopStream bGMLoopStream = new BGMLoopStream(new AudioFileReader(startPath), new AudioFileReader(loopPath));
-            outputDevice.Init(bGMLoopStream);
+            BGMLoopStream bgmLoopStream = new(new AudioFileReader(introPath), new AudioFileReader(loopPath));
+            outputDevice.Init(bgmLoopStream);
             SetVolume(volume);
             outputDevice.Play();
             return AudioManagerState.OK;
@@ -280,12 +280,25 @@ namespace bgmPlayer
                 Debug.WriteLine("SetVolume: outputDevice = null");
                 return AudioManagerState.PLAY_FAILED;
             }
-            switch (Volume)
-            {
-                case (<= 0): outputDevice.Volume = 0; break;
-                case (> 1): outputDevice.Volume = 1; break;
-                default: outputDevice.Volume = Volume; break;
-            }
+
+            // Decided not delete this old code because it is fun
+            // Old normal code:
+            // switch (Volume)
+            // {
+            //     case <= 0: outputDevice.Volume = 0; break;
+            //     case > 1: outputDevice.Volume = 1; break;
+            //     default: outputDevice.Volume = Volume; break;
+            // }
+            // Visual Studio suggest this new and fun code:
+            // outputDevice.Volume = Volume switch
+            // {
+            //     <= 0 => 0, // wtf is this :) 
+            //     > 1 => 1,
+            //     _ => Volume,
+            // };
+            // Better new code:
+            outputDevice.Volume = System.Math.Clamp(Volume, 0.0f, 1.0f);
+
             return AudioManagerState.OK;
         }
 
