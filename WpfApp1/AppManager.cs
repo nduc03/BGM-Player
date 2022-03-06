@@ -16,6 +16,8 @@ namespace bgmPlayer
         public const string CONFIG_LOCATION = $"{DATA_FOLDER}/preferences.json";
         public const string OLD_DATA_FOLDER = "BGM_Player_Data";
         public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/data.json";
+        public const string INTRO_END = "_intro";
+        public const string LOOP_END = "_loop";
         public const float VOLUME_SCALE = 10f;
     }
 
@@ -34,11 +36,12 @@ namespace bgmPlayer
         public string? IntroPath { get; set; }
         public string? LoopPath { get; set; }
         public float? Volume { get; set; }
+        public bool? AutoFill { get; set; }
     }
 
     public static class ConfigManager
     {
-        public static ConfigData? LoadPath()
+        public static ConfigData? LoadConfig()
         {
             ConfigData? data;
             if (!File.Exists(AppConstants.CONFIG_LOCATION)) return null;
@@ -56,9 +59,9 @@ namespace bgmPlayer
             return data;
         }
 
-        public static void SavePath(string? startPath, string? loopPath)
+        public static void SaveConfig(string? IntroPath = null, string? LoopPath = null, float? Volume = null, bool? AutoFill = null)
         {
-            ConfigData? data = LoadPath();
+            ConfigData? data = LoadConfig();
             if (data == null)
             {
                 Directory.CreateDirectory(AppConstants.DATA_FOLDER);
@@ -66,22 +69,11 @@ namespace bgmPlayer
                 data = new ConfigData();
             }
 
-            if (startPath != null) data.IntroPath = startPath;
-            if (loopPath != null) data.LoopPath = loopPath;
-            File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
-        }
-
-        public static void SaveVolume(float? Volume)
-        {
-            ConfigData? data = LoadPath();
-            if (data == null)
-            {
-                Directory.CreateDirectory(AppConstants.DATA_FOLDER);
-                File.Create(AppConstants.CONFIG_LOCATION).Close();
-                data = new ConfigData();
-            }
-
+            if (IntroPath != null) data.IntroPath = IntroPath;
+            if (LoopPath != null) data.LoopPath = LoopPath;
             if (Volume != null) data.Volume = Volume;
+            if (AutoFill != null) data.AutoFill = AutoFill;
+
             File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
         }
 
@@ -109,16 +101,12 @@ namespace bgmPlayer
             if (data == null)
             {
                 Debug.WriteLine("Old config corrupted, app will ignore migrate and only delete old config file.");
-#if DEBUG
-                MessageBox.Show("Migrate error");
-#endif
                 Directory.Delete(AppConstants.OLD_DATA_FOLDER, true);
                 File.Delete(AppConstants.OLD_CONFIG_LOCATION);
                 return ReadConfigState.FAILED;
             }
 
-            SavePath(data.IntroPath, data.LoopPath);
-            SaveVolume(data.Volume);
+            SaveConfig(data.IntroPath, data.LoopPath, data.Volume);
             File.Delete(AppConstants.OLD_CONFIG_LOCATION);
             SafeDeleteOldConfigFolder();
             return ReadConfigState.SUCCESSFUL;

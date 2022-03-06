@@ -33,7 +33,7 @@ namespace bgmPlayer
 
             introPath = new OpenFileDialog();
             loopPath = new OpenFileDialog();
-            configData = ConfigManager.LoadPath();
+            configData = ConfigManager.LoadConfig();
             mediaPlayer = new Windows.Media.Playback.MediaPlayer();
             smtc = mediaPlayer.SystemMediaTransportControls;
             updater = smtc.DisplayUpdater;
@@ -42,8 +42,10 @@ namespace bgmPlayer
             InitPathData();
             InitVolume();
             InitSMTC();
+            InitCheckbox();
         }
 
+        #region Initialize
         private void InitPathData()
         {
             if (introPath == null || loopPath == null)
@@ -107,29 +109,42 @@ namespace bgmPlayer
             updater.Update();
         }
 
-        private void start_Click(object sender, RoutedEventArgs e)
+        private void InitCheckbox()
+        {
+            autoFill.Checked += OnCheck;
+            autoFill.Unchecked += OnUnchecked;
+            var config = ConfigManager.LoadConfig();
+            if (config != null)
+                autoFill.IsChecked = config.AutoFill;
+        }
+        #endregion
+
+        #region Button handler
+        private void Intro_Click(object sender, RoutedEventArgs e)
         {
             smtc.IsEnabled = false;
             if (introPath.ShowDialog() == true)
             {
                 IntroField.Text = introPath.FileName;
-                ConfigManager.SavePath(introPath.FileName, null);
-                smtc.IsEnabled = true;
+                TryAutoSetLoop();
+                ConfigManager.SaveConfig(IntroPath: introPath.FileName);
             }
+            smtc.IsEnabled = true;
         }
 
-        private void loop_Click(object sender, RoutedEventArgs e)
+        private void Loop_Click(object sender, RoutedEventArgs e)
         {
             smtc.IsEnabled = false;
             if (loopPath.ShowDialog() == true)
             {
                 LoopField.Text = loopPath.FileName;
-                ConfigManager.SavePath(null, loopPath.FileName);
-                smtc.IsEnabled = true;
+                TryAutoSetIntro();
+                ConfigManager.SaveConfig(LoopPath: loopPath.FileName);
             }
+            smtc.IsEnabled = true;
         }
 
-        private void play_Click(object sender, RoutedEventArgs? e)
+        private void Play_Click(object sender, RoutedEventArgs? e)
         {
             if (!File.Exists(introPath.FileName) && !File.Exists(loopPath.FileName))
             {
@@ -167,14 +182,14 @@ namespace bgmPlayer
             else
             {
                 Mp3Check();
-                updater.MusicProperties.Title = GetArknightsBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
+                updater.MusicProperties.Title = GetBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
                 AudioManager.InitAudio();
                 AudioManager.PlayBGM(introPath.FileName, loopPath.FileName);
                 updater.Update();
             }
         }
 
-        private void stop_Click(object sender, RoutedEventArgs? e)
+        private void Stop_Click(object sender, RoutedEventArgs? e)
         {
             isPause = false;
             AudioManager.StopAudio();
@@ -185,7 +200,7 @@ namespace bgmPlayer
             smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
         }
 
-        private void pause_Click(object sender, RoutedEventArgs? e)
+        private void Pause_Click(object sender, RoutedEventArgs? e)
         {
             isPause = true;
             AudioManager.PauseAudio();
@@ -195,7 +210,7 @@ namespace bgmPlayer
             smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
         }
 
-        private void volDown_Click(object sender, RoutedEventArgs e)
+        private void VolDown_Click(object sender, RoutedEventArgs e)
         {
             var currentVol = int.Parse(volValue.Text);
             if (currentVol > 0)
@@ -204,10 +219,10 @@ namespace bgmPlayer
                 volValue.Text = currentVol.ToString();
                 AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
             }
-            ConfigManager.SaveVolume(currentVol);
+            ConfigManager.SaveConfig(Volume: currentVol);
         }
 
-        private void volUp_Click(object sender, RoutedEventArgs e)
+        private void VolUp_Click(object sender, RoutedEventArgs e)
         {
             var currentVol = int.Parse(volValue.Text);
             if (currentVol < AppConstants.VOLUME_SCALE)
@@ -216,16 +231,16 @@ namespace bgmPlayer
                 volValue.Text = currentVol.ToString();
                 AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
             }
-            ConfigManager.SaveVolume(currentVol);
+            ConfigManager.SaveConfig(Volume: currentVol);
         }
 
-        private void remove_intro_Click(object sender, RoutedEventArgs e)
+        private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
             if (AudioManager.IsStopped)
             {
                 introPath.FileName = string.Empty;
                 IntroField.Text = string.Empty;
-                ConfigManager.SavePath(introPath.FileName, loopPath.FileName);
+                ConfigManager.SaveConfig(IntroPath: introPath.FileName, LoopPath: loopPath.FileName);
             }
             else
             {
@@ -233,38 +248,42 @@ namespace bgmPlayer
             }
         }
 
-        private void remove_loop_Click(object sender, RoutedEventArgs e)
+        private void RemoveLoop_Click(object sender, RoutedEventArgs e)
         {
             if (AudioManager.IsStopped)
             {
                 loopPath.FileName = string.Empty;
                 LoopField.Text = string.Empty;
-                ConfigManager.SavePath(introPath.FileName, loopPath.FileName);
+                ConfigManager.SaveConfig(IntroPath: introPath.FileName, LoopPath: loopPath.FileName);
             }
             else
             {
                 MessageBox.Show("Stop music before remove file path");
             }
         }
+        #endregion
 
-        private void taskbar_play_handler(object sender, EventArgs? e)
+        #region Taskbar handler
+        private void TaskbarPlay_handler(object sender, EventArgs? e)
         {
             if (play_button.IsEnabled && smtc.IsEnabled)
-                play_Click(sender, null);
+                Play_Click(sender, null);
         }
 
-        private void taskbar_stop_handler(object sender, EventArgs? e)
+        private void TaskbarStop_handler(object sender, EventArgs? e)
         {
             if (stop_button.IsEnabled)
-                stop_Click(sender, null);
+                Stop_Click(sender, null);
         }
 
-        private void taskbar_pause_handler(object sender, EventArgs? e)
+        private void TaskbarPause_handler(object sender, EventArgs? e)
         {
             if (pause_button.IsEnabled)
-                pause_Click(sender, null);
+                Pause_Click(sender, null);
         }
+        #endregion
 
+        #region Event handler
         private void OnPlayPause(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs e)
         {
             switch (e.Button)
@@ -272,19 +291,19 @@ namespace bgmPlayer
                 case SystemMediaTransportControlsButton.Play:
                     Dispatcher.Invoke(() =>
                     {
-                        taskbar_play_handler(sender, null);
+                        TaskbarPlay_handler(sender, null);
                     });
                     break;
                 case SystemMediaTransportControlsButton.Pause:
                     Dispatcher.Invoke(() =>
                     {
-                        taskbar_pause_handler(sender, null);
+                        TaskbarPause_handler(sender, null);
                     });
                     break;
                 case SystemMediaTransportControlsButton.Stop:
                     Dispatcher.Invoke(() =>
                     {
-                        taskbar_stop_handler(sender, null);
+                        TaskbarStop_handler(sender, null);
                     });
                     break;
                 default:
@@ -293,9 +312,21 @@ namespace bgmPlayer
             }
         }
 
+        private void OnCheck(object sender, RoutedEventArgs e)
+        {
+            ConfigManager.SaveConfig(AutoFill: true);
+        }
+
+        private void OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            ConfigManager.SaveConfig(AutoFill: false);
+        }
+        #endregion
+
+        #region Private helper methods
         private void AllowChooseFile(bool isAllow)
         {
-            start.IsEnabled = isAllow;
+            intro.IsEnabled = isAllow;
             loop.IsEnabled = isAllow;
         }
 
@@ -311,14 +342,52 @@ namespace bgmPlayer
                 );
         }
 
+        private void TryAutoSetLoop()
+        {
+            if (autoFill == null) return;
+            if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
+            string _introPath = introPath.FileName;
+
+            if (!Path.GetFileNameWithoutExtension(_introPath).EndsWith("_intro")) return;
+
+            string shouldLoopPath = _introPath[.._introPath.LastIndexOf('_')] + AppConstants.LOOP_END + Path.GetExtension(_introPath);
+
+            if (File.Exists(shouldLoopPath))
+            {
+                loopPath.FileName = shouldLoopPath;
+                LoopField.Text = shouldLoopPath;
+                ConfigManager.SaveConfig(LoopPath: shouldLoopPath);
+            }
+        }
+
+        private void TryAutoSetIntro()
+        {
+            if (autoFill == null) return;
+            if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
+            string _loopPath = loopPath.FileName;
+
+            if (!Path.GetFileNameWithoutExtension(_loopPath).EndsWith("_loop")) return;
+
+            string shouldIntroPath = _loopPath[.._loopPath.LastIndexOf('_')] + AppConstants.INTRO_END + Path.GetExtension(_loopPath);
+
+            if (File.Exists(shouldIntroPath))
+            {
+                introPath.FileName = shouldIntroPath;
+                IntroField.Text = shouldIntroPath;
+                ConfigManager.SaveConfig(IntroPath: shouldIntroPath);
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Get BGM name of intro and loop file.
-        /// Only work correctly with Arknights music file pattern
+        /// Only work correctly with correct pattern.
+        /// Pattern: file_name_intro, file_name_loop
         /// </summary>
         /// <param name="path1">Full absolute path to intro or loop file</param>
         /// <param name="path2">Full absolute path to intro or loop file</param>
         /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
-        private static string? GetArknightsBgmFileName(string path1, string path2)
+        private static string? GetBgmFileName(string path1, string path2)
         {
             string _path1 = Path.GetFileNameWithoutExtension(path1);
             string _path2 = Path.GetFileNameWithoutExtension(path2);
