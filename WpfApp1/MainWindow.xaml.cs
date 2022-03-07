@@ -128,6 +128,8 @@ namespace bgmPlayer
                 IntroField.Text = introPath.FileName;
                 TryAutoSetLoop();
                 ConfigManager.SaveConfig(IntroPath: introPath.FileName);
+                smtc.IsEnabled = false;
+                return;
             }
             smtc.IsEnabled = true;
         }
@@ -140,6 +142,8 @@ namespace bgmPlayer
                 LoopField.Text = loopPath.FileName;
                 TryAutoSetIntro();
                 ConfigManager.SaveConfig(LoopPath: loopPath.FileName);
+                smtc.IsEnabled = false;
+                return;
             }
             smtc.IsEnabled = true;
         }
@@ -152,13 +156,6 @@ namespace bgmPlayer
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return;
             }
-
-            AllowChooseFile(false);
-            play_button.IsEnabled = false;
-            stop_button.IsEnabled = true;
-            pause_button.IsEnabled = true;
-            smtc.IsEnabled = true;
-            smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
 
             if (isPause)
             {
@@ -176,17 +173,32 @@ namespace bgmPlayer
                 string filePath = File.Exists(introPath.FileName) ? introPath.FileName : loopPath.FileName;
                 updater.MusicProperties.Title = Path.GetFileNameWithoutExtension(filePath);
                 AudioManager.InitAudio();
-                AudioManager.PlayLoop(filePath);
+                if (AudioManager.PlayLoop(filePath) == AudioManagerState.PLAY_FAILED)
+                {
+                    MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 updater.Update();
             }
             else
             {
                 Mp3Check();
-                updater.MusicProperties.Title = GetBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
                 AudioManager.InitAudio();
-                AudioManager.PlayBGM(introPath.FileName, loopPath.FileName);
+                if (AudioManager.PlayBGM(introPath.FileName, loopPath.FileName) == AudioManagerState.PLAY_FAILED)
+                {
+                    MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                updater.MusicProperties.Title = GetBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
                 updater.Update();
             }
+
+            AllowChooseFile(false);
+            play_button.IsEnabled = false;
+            stop_button.IsEnabled = true;
+            pause_button.IsEnabled = true;
+            smtc.IsEnabled = true;
+            smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
         }
 
         private void Stop_Click(object sender, RoutedEventArgs? e)
@@ -334,7 +346,7 @@ namespace bgmPlayer
         {
             if (Path.GetExtension(introPath.FileName) == ".mp3" || Path.GetExtension(loopPath.FileName) == ".mp3")
                 MessageBox.Show(
-                    "You are using compressed file mp3, which is not recommended for BGM loop.\n" +
+                    "You are using compressed file mp3, which is not recommended for BGM playback.\n" +
                         "Consider convert the file to .wav for smoother experience.",
                     "Warning!",
                     MessageBoxButton.OK,

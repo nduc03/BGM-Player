@@ -194,11 +194,18 @@ namespace bgmPlayer
                 Debug.WriteLine("outputDevice is null or not initialized, please check again");
                 return AudioManagerState.PLAY_FAILED;
             }
-            AudioFileReader audioFile = new(audioPath);
-            BGMLoopStream loopStream = new(audioFile);
-            outputDevice.Init(loopStream);
-            outputDevice.Play();
-            return AudioManagerState.OK;
+            try
+            {
+                AudioFileReader audioFile = new(audioPath);
+                BGMLoopStream loopStream = new(audioFile);
+                outputDevice.Init(loopStream);
+                outputDevice.Play();
+                return AudioManagerState.OK;
+            }
+            catch
+            {
+                return AudioManagerState.PLAY_FAILED;
+            }
         }
 
         /// <summary>
@@ -210,11 +217,18 @@ namespace bgmPlayer
         public static AudioManagerState PlayBGM(string introPath, string loopPath)
         {
             if (outputDevice == null) return AudioManagerState.PLAY_FAILED;
-            BGMLoopStream bgmLoopStream = new(new AudioFileReader(introPath), new AudioFileReader(loopPath));
-            outputDevice.Init(bgmLoopStream);
-            SetVolume(volume);
-            outputDevice.Play();
-            return AudioManagerState.OK;
+            try
+            {
+                BGMLoopStream bgmLoopStream = new(new AudioFileReader(introPath), new AudioFileReader(loopPath));
+                outputDevice.Init(bgmLoopStream);
+                SetVolume(volume);
+                outputDevice.Play();
+                return AudioManagerState.OK;
+            }
+            catch
+            {
+                return AudioManagerState.PLAY_FAILED;
+            }
         }
 
         /// <summary>
