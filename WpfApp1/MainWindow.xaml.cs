@@ -157,10 +157,17 @@ namespace bgmPlayer
                 return;
             }
 
+            AllowChooseFile(false);
+            play_button.IsEnabled = false;
+            stop_button.IsEnabled = true;
+            pause_button.IsEnabled = true;
+            smtc.IsEnabled = true;
+
             if (isPause)
             {
                 isPause = false;
                 AudioManager.ContinueAudio();
+                smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
                 return;
             }
 
@@ -178,7 +185,6 @@ namespace bgmPlayer
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                updater.Update();
             }
             else
             {
@@ -190,15 +196,10 @@ namespace bgmPlayer
                     return;
                 }
                 updater.MusicProperties.Title = GetBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
-                updater.Update();
             }
 
-            AllowChooseFile(false);
-            play_button.IsEnabled = false;
-            stop_button.IsEnabled = true;
-            pause_button.IsEnabled = true;
-            smtc.IsEnabled = true;
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
+            updater.Update();
         }
 
         private void Stop_Click(object sender, RoutedEventArgs? e)
@@ -253,6 +254,7 @@ namespace bgmPlayer
                 introPath.FileName = string.Empty;
                 IntroField.Text = string.Empty;
                 ConfigManager.SaveConfig(IntroPath: introPath.FileName, LoopPath: loopPath.FileName);
+                smtc.IsEnabled = false;
             }
             else
             {
@@ -267,6 +269,7 @@ namespace bgmPlayer
                 loopPath.FileName = string.Empty;
                 LoopField.Text = string.Empty;
                 ConfigManager.SaveConfig(IntroPath: introPath.FileName, LoopPath: loopPath.FileName);
+                smtc.IsEnabled = false;
             }
             else
             {
