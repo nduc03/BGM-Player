@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Diagnostics;
 using System.Windows;
 using NAudio.Wave;
+using System;
 
 namespace bgmPlayer
 {
@@ -299,7 +300,7 @@ namespace bgmPlayer
             //     _ => Volume,
             // };
             // Better new code:
-            outputDevice.Volume = System.Math.Clamp(Volume, 0.0f, 1.0f);
+            outputDevice.Volume = Math.Clamp(Volume, 0.0f, 1.0f);
 
             return AudioManagerState.OK;
         }

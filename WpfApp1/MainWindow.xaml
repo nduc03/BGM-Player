@@ -9,9 +9,8 @@
         <TaskbarItemInfo x:Name="mediaControl">
             <TaskbarItemInfo.ThumbButtonInfos>
                 <ThumbButtonInfoCollection>
-                    <ThumbButtonInfo Description="Play" Click="TaskbarPlay_handler" ImageSource="img/play.png"/>
-                    <ThumbButtonInfo Description="Pause" Click="TaskbarPause_handler" ImageSource="img/pause.png"/>
-                    <ThumbButtonInfo Description="Stop" Click="TaskbarStop_handler" ImageSource="img/stop.png"/>
+                    <ThumbButtonInfo x:Name="play_pause_taskbar" Description="Play" Click="TaskbarPlayPause_handler" ImageSource="img/play.png"/>
+                    <ThumbButtonInfo x:Name="stop_taskbar" Description="Stop" Click="TaskbarStop_handler" ImageSource="img/stop.png"/>
                 </ThumbButtonInfoCollection>
             </TaskbarItemInfo.ThumbButtonInfos>
         </TaskbarItemInfo>

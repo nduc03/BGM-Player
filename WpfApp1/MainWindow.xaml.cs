@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using Windows.Media;
 using Windows.Storage.Streams;
+using System.Windows.Media.Imaging;
 
 namespace bgmPlayer
 {
@@ -107,6 +108,7 @@ namespace bgmPlayer
             // TODO: Thumbnail does not work properly, need to fix
             updater.Thumbnail = RandomAccessStreamReference.CreateFromStream(Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream.AsRandomAccessStream());
             updater.Update();
+            smtc.IsEnabled = true;
         }
 
         private void InitCheckbox()
@@ -162,6 +164,7 @@ namespace bgmPlayer
             stop_button.IsEnabled = true;
             pause_button.IsEnabled = true;
             smtc.IsEnabled = true;
+            TaskbarChangeToPause();
 
             if (isPause)
             {
@@ -211,6 +214,7 @@ namespace bgmPlayer
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
             smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            TaskbarChangeToPlay();
         }
 
         private void Pause_Click(object sender, RoutedEventArgs? e)
@@ -221,6 +225,7 @@ namespace bgmPlayer
             play_button.IsEnabled = true;
             stop_button.IsEnabled = true;
             smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
+            TaskbarChangeToPlay();
         }
 
         private void VolDown_Click(object sender, RoutedEventArgs e)
@@ -231,8 +236,8 @@ namespace bgmPlayer
                 currentVol--;
                 volValue.Text = currentVol.ToString();
                 AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
+                ConfigManager.SaveConfig(Volume: currentVol);
             }
-            ConfigManager.SaveConfig(Volume: currentVol);
         }
 
         private void VolUp_Click(object sender, RoutedEventArgs e)
@@ -243,58 +248,66 @@ namespace bgmPlayer
                 currentVol++;
                 volValue.Text = currentVol.ToString();
                 AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
+                ConfigManager.SaveConfig(Volume: currentVol);
             }
-            ConfigManager.SaveConfig(Volume: currentVol);
         }
 
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
+            if (loopPath.FileName == string.Empty && LoopField.Text == string.Empty) return;
             if (AudioManager.IsStopped)
             {
                 introPath.FileName = string.Empty;
                 IntroField.Text = string.Empty;
-                ConfigManager.SaveConfig(IntroPath: introPath.FileName, LoopPath: loopPath.FileName);
+                ConfigManager.SaveConfig(IntroPath: introPath.FileName);
                 smtc.IsEnabled = false;
             }
             else
             {
-                MessageBox.Show("Stop music before remove file path");
+                MessageBox.Show("Stop music before removing file path");
             }
         }
 
         private void RemoveLoop_Click(object sender, RoutedEventArgs e)
         {
+            if (loopPath.FileName == string.Empty && LoopField.Text == string.Empty) return;
             if (AudioManager.IsStopped)
             {
                 loopPath.FileName = string.Empty;
                 LoopField.Text = string.Empty;
-                ConfigManager.SaveConfig(IntroPath: introPath.FileName, LoopPath: loopPath.FileName);
+                ConfigManager.SaveConfig(LoopPath: loopPath.FileName);
                 smtc.IsEnabled = false;
             }
             else
             {
-                MessageBox.Show("Stop music before remove file path");
+                MessageBox.Show("Stop music before removing file path");
             }
         }
         #endregion
 
         #region Taskbar handler
-        private void TaskbarPlay_handler(object sender, EventArgs? e)
+        private void TaskbarPlayPause_handler(object sender, EventArgs? e)
         {
             if (play_button.IsEnabled && smtc.IsEnabled)
+            {
+                TaskbarChangeToPause();
                 Play_Click(sender, null);
+            }
+            else if (pause_button.IsEnabled)
+            {
+                TaskbarChangeToPlay();
+                Pause_Click(sender, null);
+            }
+            else
+            {
+                return;
+            }
         }
 
         private void TaskbarStop_handler(object sender, EventArgs? e)
         {
             if (stop_button.IsEnabled)
                 Stop_Click(sender, null);
-        }
-
-        private void TaskbarPause_handler(object sender, EventArgs? e)
-        {
-            if (pause_button.IsEnabled)
-                Pause_Click(sender, null);
         }
         #endregion
 
@@ -306,13 +319,13 @@ namespace bgmPlayer
                 case SystemMediaTransportControlsButton.Play:
                     Dispatcher.Invoke(() =>
                     {
-                        TaskbarPlay_handler(sender, null);
+                        TaskbarPlayPause_handler(sender, null);
                     });
                     break;
                 case SystemMediaTransportControlsButton.Pause:
                     Dispatcher.Invoke(() =>
                     {
-                        TaskbarPause_handler(sender, null);
+                        TaskbarPlayPause_handler(sender, null);
                     });
                     break;
                 case SystemMediaTransportControlsButton.Stop:
@@ -391,6 +404,16 @@ namespace bgmPlayer
                 IntroField.Text = shouldIntroPath;
                 ConfigManager.SaveConfig(IntroPath: shouldIntroPath);
             }
+        }
+
+        private void TaskbarChangeToPlay()
+        {
+            play_pause_taskbar.ImageSource = new BitmapImage(new Uri("pack://application:,,,/img/play.png"));
+        }
+
+        private void TaskbarChangeToPause()
+        {
+            play_pause_taskbar.ImageSource = new BitmapImage(new Uri("pack://application:,,,/img/pause.png"));
         }
         #endregion
 
