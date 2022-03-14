@@ -29,7 +29,7 @@ namespace bgmPlayer
 
     public enum AudioManagerState
     {
-        OK, FILE_MISSING, PLAY_FAILED
+        OK, FILE_MISSING, FAILED
     }
 
     public class ConfigData
@@ -154,7 +154,7 @@ namespace bgmPlayer
                 outputDevice.Dispose();
                 outputDevice = null;
             }
-            outputDevice = new WaveOutEvent();
+            outputDevice = new();
             SetVolume(volume);
         }
 
@@ -171,8 +171,8 @@ namespace bgmPlayer
             }
             StopAudio();
 
-            outputDevice = new WaveOutEvent();
-            audioFile = new AudioFileReader(audioPath);
+            outputDevice = new();
+            audioFile = new(audioPath);
             outputDevice.Init(audioFile);
             SetVolume(volume);
             outputDevice.Play();
@@ -193,7 +193,7 @@ namespace bgmPlayer
             if (outputDevice == null)
             {
                 Debug.WriteLine("outputDevice is null or not initialized, please check again");
-                return AudioManagerState.PLAY_FAILED;
+                return AudioManagerState.FAILED;
             }
             try
             {
@@ -205,7 +205,7 @@ namespace bgmPlayer
             }
             catch
             {
-                return AudioManagerState.PLAY_FAILED;
+                return AudioManagerState.FAILED;
             }
         }
 
@@ -217,7 +217,7 @@ namespace bgmPlayer
         /// </summary>
         public static AudioManagerState PlayBGM(string introPath, string loopPath)
         {
-            if (outputDevice == null) return AudioManagerState.PLAY_FAILED;
+            if (outputDevice == null) return AudioManagerState.FAILED;
             try
             {
                 BGMLoopStream bgmLoopStream = new(new AudioFileReader(introPath), new AudioFileReader(loopPath));
@@ -228,7 +228,7 @@ namespace bgmPlayer
             }
             catch
             {
-                return AudioManagerState.PLAY_FAILED;
+                return AudioManagerState.FAILED;
             }
         }
 
@@ -237,7 +237,7 @@ namespace bgmPlayer
         /// </summary>
         public static AudioManagerState ContinueAudio()
         {
-            if (outputDevice == null) return AudioManagerState.PLAY_FAILED;
+            if (outputDevice == null) return AudioManagerState.FAILED;
             SetVolume(volume);
             outputDevice.Play();
             return AudioManagerState.OK;
@@ -248,7 +248,7 @@ namespace bgmPlayer
         /// </summary>
         public static AudioManagerState PauseAudio()
         {
-            if (outputDevice == null) return AudioManagerState.PLAY_FAILED;
+            if (outputDevice == null) return AudioManagerState.FAILED;
             outputDevice.Pause();
             return AudioManagerState.OK;
         }
@@ -281,7 +281,7 @@ namespace bgmPlayer
             if (outputDevice == null)
             {
                 Debug.WriteLine("SetVolume: outputDevice = null");
-                return AudioManagerState.PLAY_FAILED;
+                return AudioManagerState.FAILED;
             }
 
             // Decided not delete this old code because it is fun

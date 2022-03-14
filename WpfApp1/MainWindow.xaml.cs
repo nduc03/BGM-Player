@@ -15,8 +15,8 @@ namespace bgmPlayer
         private readonly Windows.Media.Playback.MediaPlayer mediaPlayer;
         private readonly SystemMediaTransportControls smtc;
         private readonly SystemMediaTransportControlsDisplayUpdater updater;
-        private OpenFileDialog introPath;
-        private OpenFileDialog loopPath;
+        private OpenFileDialog IntroPath;
+        private OpenFileDialog LoopPath;
         private bool isPause = false;
         private int currentVolume = 10;
 
@@ -32,8 +32,8 @@ namespace bgmPlayer
                 );
             }
 
-            introPath = new OpenFileDialog();
-            loopPath = new OpenFileDialog();
+            IntroPath = new OpenFileDialog();
+            LoopPath = new OpenFileDialog();
             configData = ConfigManager.LoadConfig();
             mediaPlayer = new Windows.Media.Playback.MediaPlayer();
             smtc = mediaPlayer.SystemMediaTransportControls;
@@ -49,14 +49,14 @@ namespace bgmPlayer
         #region Initialize
         private void InitPathData()
         {
-            if (introPath == null || loopPath == null)
+            if (IntroPath == null || LoopPath == null)
             {
                 Debug.WriteLine("InitPathData error: startPath or loopPath is null. Init path again.");
-                introPath = new OpenFileDialog();
-                loopPath = new OpenFileDialog();
+                IntroPath = new OpenFileDialog();
+                LoopPath = new OpenFileDialog();
             }
-            introPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
-            loopPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
+            IntroPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
+            LoopPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
             if (configData != null)
@@ -67,12 +67,12 @@ namespace bgmPlayer
                 if (File.Exists(configData.IntroPath))
                 {
                     IntroField.Text = configData.IntroPath; // show path in GUI
-                    introPath.FileName = configData.IntroPath; // set path in app logic
+                    IntroPath.FileName = configData.IntroPath; // set path in app logic
                 }
                 if (File.Exists(configData.LoopPath))
                 {
                     LoopField.Text = configData.LoopPath;
-                    loopPath.FileName = configData.LoopPath;
+                    LoopPath.FileName = configData.LoopPath;
                 }
             }
         }
@@ -104,10 +104,9 @@ namespace bgmPlayer
             smtc.IsPreviousEnabled = false;
             smtc.ButtonPressed += OnPlayPause;
             updater.Type = MediaPlaybackType.Music;
-            updater.MusicProperties.Title = "BGM Player";
             // TODO: Thumbnail does not work properly, need to fix
             updater.Thumbnail = RandomAccessStreamReference.CreateFromStream(Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream.AsRandomAccessStream());
-            updater.Update();
+            UpdateTitle();
             smtc.IsEnabled = true;
         }
 
@@ -118,6 +117,11 @@ namespace bgmPlayer
             var config = ConfigManager.LoadConfig();
             if (config != null)
                 autoFill.IsChecked = config.AutoFill;
+            else
+            {
+                autoFill.IsChecked = false;
+                ConfigManager.SaveConfig(AutoFill: false);
+            }
         }
         #endregion
 
@@ -125,12 +129,12 @@ namespace bgmPlayer
         private void Intro_Click(object sender, RoutedEventArgs e)
         {
             smtc.IsEnabled = false;
-            if (introPath.ShowDialog() == true)
+            if (IntroPath.ShowDialog() == true)
             {
-                IntroField.Text = introPath.FileName;
+                SetIntroPath(IntroPath.FileName);
                 TryAutoSetLoop();
-                ConfigManager.SaveConfig(IntroPath: introPath.FileName);
-                smtc.IsEnabled = false;
+                UpdateTitle();
+                smtc.IsEnabled = true;
                 return;
             }
             smtc.IsEnabled = true;
@@ -139,12 +143,12 @@ namespace bgmPlayer
         private void Loop_Click(object sender, RoutedEventArgs e)
         {
             smtc.IsEnabled = false;
-            if (loopPath.ShowDialog() == true)
+            if (LoopPath.ShowDialog() == true)
             {
-                LoopField.Text = loopPath.FileName;
+                SetLoopPath(LoopPath.FileName);
                 TryAutoSetIntro();
-                ConfigManager.SaveConfig(LoopPath: loopPath.FileName);
-                smtc.IsEnabled = false;
+                UpdateTitle();
+                smtc.IsEnabled = true;
                 return;
             }
             smtc.IsEnabled = true;
@@ -152,7 +156,7 @@ namespace bgmPlayer
 
         private void Play_Click(object sender, RoutedEventArgs? e)
         {
-            if (!File.Exists(introPath.FileName) && !File.Exists(loopPath.FileName))
+            if (!File.Exists(IntroPath.FileName) && !File.Exists(LoopPath.FileName))
             {
                 // If both 2 two files is not found or not set -> show error message.
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
@@ -169,23 +173,40 @@ namespace bgmPlayer
             if (isPause)
             {
                 isPause = false;
-                AudioManager.ContinueAudio();
+                try
+                {
+                    AudioManager.ContinueAudio();
+                }
+                catch (NAudio.MmException)
+                {
+                    if (MessageBox.Show(
+                            "Some problem with audio devices or drivers, app cannot play, consider restart the app or system.\n" +
+                            "Choose 'Yes' to close the app or 'No' to stop the music.",
+                            "Error!",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Error
+                        ) == MessageBoxResult.Yes)
+                        Application.Current.Shutdown();
+                    else
+                        Stop_Click(null, null);
+                }
                 smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
                 return;
             }
 
             // If only one file is not found or not set -> still play music but in loop mode.
-            if (!File.Exists(introPath.FileName) || !File.Exists(loopPath.FileName))
+            if (!File.Exists(IntroPath.FileName) || !File.Exists(LoopPath.FileName))
             {
                 Mp3Check();
                 // Check if start path is found -> PlayLoop start path
                 // else -> PlayLoop loop path
-                string filePath = File.Exists(introPath.FileName) ? introPath.FileName : loopPath.FileName;
+                string filePath = File.Exists(IntroPath.FileName) ? IntroPath.FileName : LoopPath.FileName;
                 updater.MusicProperties.Title = Path.GetFileNameWithoutExtension(filePath);
                 AudioManager.InitAudio();
-                if (AudioManager.PlayLoop(filePath) == AudioManagerState.PLAY_FAILED)
+                if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    TaskbarChangeToPlay();
                     return;
                 }
             }
@@ -193,19 +214,20 @@ namespace bgmPlayer
             {
                 Mp3Check();
                 AudioManager.InitAudio();
-                if (AudioManager.PlayBGM(introPath.FileName, loopPath.FileName) == AudioManagerState.PLAY_FAILED)
+                if (AudioManager.PlayBGM(IntroPath.FileName, LoopPath.FileName) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    TaskbarChangeToPlay();
                     return;
                 }
-                updater.MusicProperties.Title = GetBgmFileName(introPath.FileName, loopPath.FileName) ?? "BGM Player";
+                updater.MusicProperties.Title = GetBgmFileName(IntroPath.FileName, LoopPath.FileName) ?? "BGM Player";
             }
 
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
             updater.Update();
         }
 
-        private void Stop_Click(object sender, RoutedEventArgs? e)
+        private void Stop_Click(object? sender, RoutedEventArgs? e)
         {
             isPause = false;
             AudioManager.StopAudio();
@@ -234,9 +256,7 @@ namespace bgmPlayer
             if (currentVol > 0)
             {
                 currentVol--;
-                volValue.Text = currentVol.ToString();
-                AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
-                ConfigManager.SaveConfig(Volume: currentVol);
+                SetVolume(currentVol);
             }
         }
 
@@ -246,21 +266,18 @@ namespace bgmPlayer
             if (currentVol < AppConstants.VOLUME_SCALE)
             {
                 currentVol++;
-                volValue.Text = currentVol.ToString();
-                AudioManager.SetVolume(currentVol / AppConstants.VOLUME_SCALE);
-                ConfigManager.SaveConfig(Volume: currentVol);
+                SetVolume(currentVol);
             }
         }
 
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
-            if (loopPath.FileName == string.Empty && LoopField.Text == string.Empty) return;
+            if (IntroPath.FileName == string.Empty && IntroField.Text == string.Empty) return;
             if (AudioManager.IsStopped)
             {
-                introPath.FileName = string.Empty;
-                IntroField.Text = string.Empty;
-                ConfigManager.SaveConfig(IntroPath: introPath.FileName);
-                smtc.IsEnabled = false;
+                SetIntroPath(string.Empty);
+                UpdateTitle();
+                if (LoopField.Text == string.Empty) smtc.IsEnabled = false;
             }
             else
             {
@@ -270,13 +287,12 @@ namespace bgmPlayer
 
         private void RemoveLoop_Click(object sender, RoutedEventArgs e)
         {
-            if (loopPath.FileName == string.Empty && LoopField.Text == string.Empty) return;
+            if (LoopPath.FileName == string.Empty && LoopField.Text == string.Empty) return;
             if (AudioManager.IsStopped)
             {
-                loopPath.FileName = string.Empty;
-                LoopField.Text = string.Empty;
-                ConfigManager.SaveConfig(LoopPath: loopPath.FileName);
-                smtc.IsEnabled = false;
+                SetLoopPath(string.Empty);
+                UpdateTitle();
+                if (IntroField.Text == string.Empty) smtc.IsEnabled = false;
             }
             else
             {
@@ -360,7 +376,7 @@ namespace bgmPlayer
 
         private void Mp3Check()
         {
-            if (Path.GetExtension(introPath.FileName) == ".mp3" || Path.GetExtension(loopPath.FileName) == ".mp3")
+            if (Path.GetExtension(IntroPath.FileName) == ".mp3" || Path.GetExtension(LoopPath.FileName) == ".mp3")
                 MessageBox.Show(
                     "You are using compressed file mp3, which is not recommended for BGM playback.\n" +
                         "Consider convert the file to .wav for smoother experience.",
@@ -374,17 +390,15 @@ namespace bgmPlayer
         {
             if (autoFill == null) return;
             if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
-            string _introPath = introPath.FileName;
+            string _introPath = IntroPath.FileName;
 
             if (!Path.GetFileNameWithoutExtension(_introPath).EndsWith("_intro")) return;
 
-            string shouldLoopPath = _introPath[.._introPath.LastIndexOf('_')] + AppConstants.LOOP_END + Path.GetExtension(_introPath);
+            string expectedLoopPath = _introPath[.._introPath.LastIndexOf('_')] + AppConstants.LOOP_END + Path.GetExtension(_introPath);
 
-            if (File.Exists(shouldLoopPath))
+            if (File.Exists(expectedLoopPath))
             {
-                loopPath.FileName = shouldLoopPath;
-                LoopField.Text = shouldLoopPath;
-                ConfigManager.SaveConfig(LoopPath: shouldLoopPath);
+                SetLoopPath(expectedLoopPath);
             }
         }
 
@@ -392,17 +406,15 @@ namespace bgmPlayer
         {
             if (autoFill == null) return;
             if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
-            string _loopPath = loopPath.FileName;
+            string _loopPath = LoopPath.FileName;
 
             if (!Path.GetFileNameWithoutExtension(_loopPath).EndsWith("_loop")) return;
 
-            string shouldIntroPath = _loopPath[.._loopPath.LastIndexOf('_')] + AppConstants.INTRO_END + Path.GetExtension(_loopPath);
+            string expectedIntroPath = _loopPath[.._loopPath.LastIndexOf('_')] + AppConstants.INTRO_END + Path.GetExtension(_loopPath);
 
-            if (File.Exists(shouldIntroPath))
+            if (File.Exists(expectedIntroPath))
             {
-                introPath.FileName = shouldIntroPath;
-                IntroField.Text = shouldIntroPath;
-                ConfigManager.SaveConfig(IntroPath: shouldIntroPath);
+                SetIntroPath(expectedIntroPath);
             }
         }
 
@@ -414,6 +426,43 @@ namespace bgmPlayer
         private void TaskbarChangeToPause()
         {
             play_pause_taskbar.ImageSource = new BitmapImage(new Uri("pack://application:,,,/img/pause.png"));
+        }
+
+        private void SetIntroPath(string introPath)
+        {
+            IntroField.Text = introPath;
+            IntroPath.FileName = introPath;
+            ConfigManager.SaveConfig(IntroPath: introPath);
+        }
+
+        private void SetLoopPath(string loopPath)
+        {
+            LoopField.Text = loopPath;
+            LoopPath.FileName = loopPath;
+            ConfigManager.SaveConfig(LoopPath: loopPath);
+        }
+
+        private void SetVolume(int Volume)
+        {
+            volValue.Text = Volume.ToString();
+            AudioManager.SetVolume(Volume / AppConstants.VOLUME_SCALE);
+            ConfigManager.SaveConfig(Volume: Volume);
+        }
+
+        private void UpdateTitle()
+        {
+            string? title = GetBgmFileName(IntroField.Text, LoopField.Text);
+            if (title == null)
+            {
+                if (IntroField.Text != string.Empty && LoopField.Text == string.Empty)
+                    title = Path.GetFileNameWithoutExtension(IntroField.Text);
+                else if (LoopField.Text != string.Empty && IntroField.Text == string.Empty)
+                    title = Path.GetFileNameWithoutExtension(LoopField.Text);
+                else
+                    title = "BGM Player";
+            }
+            updater.MusicProperties.Title = title ?? "BGM Player";
+            updater.Update();
         }
         #endregion
 
