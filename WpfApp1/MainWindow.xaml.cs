@@ -44,6 +44,7 @@ namespace bgmPlayer
             InitVolume();
             InitSMTC();
             InitCheckbox();
+            Debug.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
         #region Initialize
@@ -181,12 +182,15 @@ namespace bgmPlayer
                 {
                     if (MessageBox.Show(
                             "Some problem with audio devices or drivers, app cannot play, consider restart the app or system.\n" +
-                            "Choose 'Yes' to close the app or 'No' to stop the music.",
+                            "Choose 'Yes' to restart the app or 'No' to stop the music.",
                             "Error!",
                             MessageBoxButton.YesNo,
                             MessageBoxImage.Error
                         ) == MessageBoxResult.Yes)
+                    {
+                        Process.Start(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetExecutingAssembly().Location));
                         Application.Current.Shutdown();
+                    }
                     else
                         Stop_Click(null, null);
                 }
