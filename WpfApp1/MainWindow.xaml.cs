@@ -182,7 +182,7 @@ namespace bgmPlayer
                 {
                     if (MessageBox.Show(
                             "Some problem with audio devices or drivers, app cannot play, consider restart the app or system.\n" +
-                            "Choose 'Yes' to restart the app or 'No' to stop the music.",
+                                "Choose 'Yes' to restart the app or 'No' to stop the music.",
                             "Error!",
                             MessageBoxButton.YesNo,
                             MessageBoxImage.Error
@@ -285,7 +285,7 @@ namespace bgmPlayer
             }
             else
             {
-                MessageBox.Show("Stop music before removing file path");
+                MessageBox.Show("Stop music before removing music file.");
             }
         }
 
@@ -300,7 +300,7 @@ namespace bgmPlayer
             }
             else
             {
-                MessageBox.Show("Stop music before removing file path");
+                MessageBox.Show("Stop music before removing music file.");
             }
         }
         #endregion

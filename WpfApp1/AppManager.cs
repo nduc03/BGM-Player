@@ -36,7 +36,7 @@ namespace bgmPlayer
     {
         public string? IntroPath { get; set; }
         public string? LoopPath { get; set; }
-        public float? Volume { get; set; }
+        public int? Volume { get; set; }
         public bool? AutoFill { get; set; }
     }
 
@@ -60,7 +60,7 @@ namespace bgmPlayer
             return data;
         }
 
-        public static void SaveConfig(string? IntroPath = null, string? LoopPath = null, float? Volume = null, bool? AutoFill = null)
+        public static void SaveConfig(string? IntroPath = null, string? LoopPath = null, int? Volume = null, bool? AutoFill = null)
         {
             ConfigData? data = LoadConfig();
             if (data == null)
@@ -103,7 +103,6 @@ namespace bgmPlayer
             {
                 Debug.WriteLine("Old config corrupted, app will ignore migrate and only delete old config file.");
                 Directory.Delete(AppConstants.OLD_DATA_FOLDER, true);
-                File.Delete(AppConstants.OLD_CONFIG_LOCATION);
                 return ReadConfigState.FAILED;
             }
 
