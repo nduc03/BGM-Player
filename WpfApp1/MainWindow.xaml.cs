@@ -131,6 +131,7 @@ namespace bgmPlayer
             smtc.IsEnabled = false;
             if (IntroPath.ShowDialog() == true)
             {
+                if (IsRedundant()) return;
                 SetIntroPath(IntroPath.FileName);
                 TryAutoSetLoop();
                 UpdateTitle();
@@ -145,6 +146,7 @@ namespace bgmPlayer
             smtc.IsEnabled = false;
             if (LoopPath.ShowDialog() == true)
             {
+                if (IsRedundant()) return;
                 SetLoopPath(LoopPath.FileName);
                 TryAutoSetIntro();
                 UpdateTitle();
@@ -156,7 +158,7 @@ namespace bgmPlayer
 
         private void Play_Click(object sender, RoutedEventArgs? e)
         {
-            if (!File.Exists(IntroPath.FileName) && !File.Exists(LoopPath.FileName))
+            if (!File.Exists(IntroField.Text) && !File.Exists(LoopField.Text))
             {
                 // If both 2 two files is not found or not set -> show error message.
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
@@ -198,12 +200,12 @@ namespace bgmPlayer
             }
 
             // If only one file is not found or not set -> still play music but in loop mode.
-            if (!File.Exists(IntroPath.FileName) || !File.Exists(LoopPath.FileName))
+            if (!File.Exists(IntroField.Text) || !File.Exists(LoopField.Text))
             {
                 Mp3Check();
                 // Check if start path is found -> PlayLoop start path
                 // else -> PlayLoop loop path
-                string filePath = File.Exists(IntroPath.FileName) ? IntroPath.FileName : LoopPath.FileName;
+                string filePath = File.Exists(IntroField.Text) ? IntroField.Text : LoopField.Text;
                 updater.MusicProperties.Title = Path.GetFileNameWithoutExtension(filePath);
                 AudioManager.InitAudio();
                 if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
@@ -217,13 +219,13 @@ namespace bgmPlayer
             {
                 Mp3Check();
                 AudioManager.InitAudio();
-                if (AudioManager.PlayBGM(IntroPath.FileName, LoopPath.FileName) == AudioManagerState.FAILED)
+                if (AudioManager.PlayBGM(IntroField.Text, LoopField.Text) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     TaskbarChangeToPlay();
                     return;
                 }
-                updater.MusicProperties.Title = GetBgmFileName(IntroPath.FileName, LoopPath.FileName) ?? "BGM Player";
+                updater.MusicProperties.Title = GetBgmFileName(IntroField.Text, LoopField.Text) ?? "BGM Player";
             }
 
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
@@ -379,7 +381,7 @@ namespace bgmPlayer
 
         private void Mp3Check()
         {
-            if (Path.GetExtension(IntroPath.FileName) == ".mp3" || Path.GetExtension(LoopPath.FileName) == ".mp3")
+            if (Path.GetExtension(IntroField.Text) == ".mp3" || Path.GetExtension(LoopField.Text) == ".mp3")
                 MessageBox.Show(
                     "You are using compressed file mp3, which is not recommended for BGM playback.\n" +
                         "Consider convert the file to .wav for smoother experience.",
@@ -393,11 +395,11 @@ namespace bgmPlayer
         {
             if (autoFill == null) return;
             if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
-            string _introPath = IntroPath.FileName;
+            string introPath = IntroField.Text;
 
-            if (!Path.GetFileNameWithoutExtension(_introPath).EndsWith("_intro")) return;
+            if (!Path.GetFileNameWithoutExtension(introPath).EndsWith("_intro")) return;
 
-            string expectedLoopPath = _introPath[.._introPath.LastIndexOf('_')] + AppConstants.LOOP_END + Path.GetExtension(_introPath);
+            string expectedLoopPath = introPath[..introPath.LastIndexOf('_')] + AppConstants.LOOP_END + Path.GetExtension(introPath);
 
             if (File.Exists(expectedLoopPath))
             {
@@ -409,11 +411,11 @@ namespace bgmPlayer
         {
             if (autoFill == null) return;
             if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
-            string _loopPath = LoopPath.FileName;
+            string loopPath = LoopField.Text;
 
-            if (!Path.GetFileNameWithoutExtension(_loopPath).EndsWith("_loop")) return;
+            if (!Path.GetFileNameWithoutExtension(loopPath).EndsWith("_loop")) return;
 
-            string expectedIntroPath = _loopPath[.._loopPath.LastIndexOf('_')] + AppConstants.INTRO_END + Path.GetExtension(_loopPath);
+            string expectedIntroPath = loopPath[..loopPath.LastIndexOf('_')] + AppConstants.INTRO_END + Path.GetExtension(loopPath);
 
             if (File.Exists(expectedIntroPath))
             {
@@ -467,6 +469,18 @@ namespace bgmPlayer
             updater.MusicProperties.Title = title ?? "BGM Player";
             Application.Current.MainWindow.Title = title ?? "BGM Player";
             updater.Update();
+        }
+
+        private bool IsRedundant()
+        {
+            if (IntroPath.FileName == LoopPath.FileName)
+            {
+                IntroPath.FileName = IntroField.Text;
+                LoopPath.FileName = LoopField.Text;
+                MessageBox.Show("Adding two same files is unecessary!", "Redundant file", MessageBoxButton.OK, MessageBoxImage.Information);
+                return true;
+            }
+            return false;
         }
         #endregion
 
