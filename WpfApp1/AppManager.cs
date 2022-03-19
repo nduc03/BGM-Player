@@ -32,6 +32,11 @@ namespace bgmPlayer
         OK, FILE_MISSING, FAILED
     }
 
+    public enum AudioState
+    {
+        PLAY, PAUSE, STOP
+    }
+
     public class ConfigData
     {
         public string? IntroPath { get; set; }
@@ -127,13 +132,14 @@ namespace bgmPlayer
     }
 
     /// <summary>
-    /// Provide set of funtions to manage and control music using NAudio library.
+    /// Provide set of funtions to manage and control music through NAudio library.
     /// </summary>
     public static class AudioManager
     {
         private static WaveOutEvent? outputDevice;
         private static AudioFileReader? audioFile;
         private static float volume = 1f;
+        public static AudioState audioState = AudioState.STOP;
         public static bool IsStopped
         {
             get
@@ -175,6 +181,7 @@ namespace bgmPlayer
             outputDevice.Init(audioFile);
             SetVolume(volume);
             outputDevice.Play();
+            audioState = AudioState.PLAY;
             return AudioManagerState.OK;
         }
 
@@ -200,6 +207,7 @@ namespace bgmPlayer
                 BGMLoopStream loopStream = new(audioFile);
                 outputDevice.Init(loopStream);
                 outputDevice.Play();
+                audioState = AudioState.PLAY;
                 return AudioManagerState.OK;
             }
             catch
@@ -223,6 +231,7 @@ namespace bgmPlayer
                 outputDevice.Init(bgmLoopStream);
                 SetVolume(volume);
                 outputDevice.Play();
+                audioState = AudioState.PLAY;
                 return AudioManagerState.OK;
             }
             catch
@@ -239,6 +248,7 @@ namespace bgmPlayer
             if (outputDevice == null) return AudioManagerState.FAILED;
             SetVolume(volume);
             outputDevice.Play();
+            audioState = AudioState.PLAY;
             return AudioManagerState.OK;
         }
 
@@ -249,6 +259,7 @@ namespace bgmPlayer
         {
             if (outputDevice == null) return AudioManagerState.FAILED;
             outputDevice.Pause();
+            audioState = AudioState.PAUSE;
             return AudioManagerState.OK;
         }
 
@@ -268,6 +279,7 @@ namespace bgmPlayer
                 audioFile.Dispose();
                 audioFile = null;
             }
+            audioState = AudioState.STOP;
         }
 
         /// <summary>
@@ -276,7 +288,7 @@ namespace bgmPlayer
         /// </summary>
         public static AudioManagerState SetVolume(float Volume)
         {
-            volume = Volume;
+            volume = Math.Clamp(Volume, 0.0f, 1.0f); ;
             if (outputDevice == null)
             {
                 Debug.WriteLine("SetVolume: outputDevice = null");
@@ -312,7 +324,7 @@ namespace bgmPlayer
         {
             if (outputDevice == null)
             {
-                Debug.WriteLine("SetVolume: outputDevice = null");
+                Debug.WriteLine("GetVolume: outputDevice = null");
                 return 0;
             }
             else return outputDevice.Volume;

@@ -131,7 +131,6 @@ namespace bgmPlayer
             smtc.IsEnabled = false;
             if (IntroPath.ShowDialog() == true)
             {
-                if (IsRedundant()) return;
                 SetIntroPath(IntroPath.FileName);
                 TryAutoSetLoop();
                 UpdateTitle();
@@ -146,7 +145,6 @@ namespace bgmPlayer
             smtc.IsEnabled = false;
             if (LoopPath.ShowDialog() == true)
             {
-                if (IsRedundant()) return;
                 SetLoopPath(LoopPath.FileName);
                 TryAutoSetIntro();
                 UpdateTitle();
@@ -469,18 +467,6 @@ namespace bgmPlayer
             updater.MusicProperties.Title = title ?? "BGM Player";
             Application.Current.MainWindow.Title = title ?? "BGM Player";
             updater.Update();
-        }
-
-        private bool IsRedundant()
-        {
-            if (IntroPath.FileName == LoopPath.FileName)
-            {
-                IntroPath.FileName = IntroField.Text;
-                LoopPath.FileName = LoopField.Text;
-                MessageBox.Show("Adding two same files is unecessary!", "Redundant file", MessageBoxButton.OK, MessageBoxImage.Information);
-                return true;
-            }
-            return false;
         }
         #endregion
 
