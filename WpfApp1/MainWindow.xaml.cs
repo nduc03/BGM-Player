@@ -44,7 +44,6 @@ namespace bgmPlayer
             InitVolume();
             InitSMTC();
             InitCheckbox();
-            Debug.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
         #region Initialize
@@ -466,6 +465,7 @@ namespace bgmPlayer
                     title = "BGM Player";
             }
             updater.MusicProperties.Title = title ?? "BGM Player";
+            Application.Current.MainWindow.Title = title ?? "BGM Player";
             updater.Update();
         }
         #endregion
