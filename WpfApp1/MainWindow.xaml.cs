@@ -175,7 +175,7 @@ namespace bgmPlayer
                 isPause = false;
                 try
                 {
-                    AudioManager.ContinueAudio();
+                    AudioManager.Continue();
                 }
                 catch (NAudio.MmException)
                 {
@@ -205,7 +205,6 @@ namespace bgmPlayer
                 // else -> PlayLoop loop path
                 string filePath = File.Exists(IntroField.Text) ? IntroField.Text : LoopField.Text;
                 updater.MusicProperties.Title = Path.GetFileNameWithoutExtension(filePath);
-                AudioManager.InitAudio();
                 if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -216,7 +215,6 @@ namespace bgmPlayer
             else
             {
                 Mp3Check();
-                AudioManager.InitAudio();
                 if (AudioManager.PlayBGM(IntroField.Text, LoopField.Text) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -233,7 +231,7 @@ namespace bgmPlayer
         private void Stop_Click(object? sender, RoutedEventArgs? e)
         {
             isPause = false;
-            AudioManager.StopAudio();
+            AudioManager.Stop();
             AllowChooseFile(true);
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
@@ -245,7 +243,7 @@ namespace bgmPlayer
         private void Pause_Click(object sender, RoutedEventArgs? e)
         {
             isPause = true;
-            AudioManager.PauseAudio();
+            AudioManager.Pause();
             pause_button.IsEnabled = false;
             play_button.IsEnabled = true;
             stop_button.IsEnabled = true;
@@ -373,8 +371,8 @@ namespace bgmPlayer
         #region Private helper methods
         private void AllowChooseFile(bool isAllow)
         {
-            intro.IsEnabled = isAllow;
-            loop.IsEnabled = isAllow;
+            intro_button.IsEnabled = isAllow;
+            loop_button.IsEnabled = isAllow;
         }
 
         private void Mp3Check()
@@ -480,12 +478,12 @@ namespace bgmPlayer
         /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
         private static string? GetBgmFileName(string path1, string path2)
         {
-            string _path1 = Path.GetFileNameWithoutExtension(path1);
-            string _path2 = Path.GetFileNameWithoutExtension(path2);
-            if ((_path1.EndsWith("_intro") && _path2.EndsWith("_loop")) || (_path2.EndsWith("_intro") && _path1.EndsWith("_loop")))
+            string p1 = Path.GetFileNameWithoutExtension(path1);
+            string p2 = Path.GetFileNameWithoutExtension(path2);
+            if ((p1.EndsWith(AppConstants.INTRO_END) && p2.EndsWith(AppConstants.LOOP_END)) || (p2.EndsWith(AppConstants.INTRO_END) && p1.EndsWith(AppConstants.LOOP_END)))
             {
-                if (_path1[.._path1.LastIndexOf('_')] == _path2[.._path2.LastIndexOf('_')])
-                    return _path1[.._path1.LastIndexOf('_')];
+                if (p1[..p1.LastIndexOf(AppConstants.INTRO_END)] == p2[..p2.LastIndexOf(AppConstants.LOOP_END)])
+                    return p1[..p1.LastIndexOf(AppConstants.INTRO_END)];
                 return null;
             }
             return null;
