@@ -33,6 +33,7 @@
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label>Volume</Label>
                 <Slider VerticalAlignment="Center" x:Name="VolSlider" Width="200" ValueChanged="VolSlider_ValueChanged" Maximum="100"/>
+                <TextBlock VerticalAlignment="Center" x:Name="VolValue" Width="25" TextAlignment="Center"/>
             </StackPanel>
 
             <CheckBox x:Name="autoFill" Content="Auto fill intro or loop" HorizontalAlignment="Center" Margin="0,20,0,0" />

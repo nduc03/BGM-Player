@@ -431,6 +431,7 @@ namespace bgmPlayer
         private void SetVolume(float Volume)
         {
             VolSlider.Value = Volume;
+            VolValue.Text = ((int)Volume).ToString();
             AudioManager.SetVolume(Volume / AppConstants.VOLUME_SCALE);
             ConfigManager.SaveConfig(Volume: Volume);
         }
