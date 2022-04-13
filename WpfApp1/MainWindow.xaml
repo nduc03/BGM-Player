@@ -31,11 +31,10 @@
             </StackPanel>
 
             <StackPanel Height="Auto" Width="Auto" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="volDown" Content="Volume Down" Margin="0,0,10,0" Click="VolDown_Click"/>
-                <TextBlock x:Name="volValue" Margin="10,0,10,0" Width="25" TextAlignment="Center" />
-                <Button x:Name="volUp" Content="Volume Up" Margin="10,0,10,0" Click="VolUp_Click"/>
+                <Label>Volume</Label>
+                <Slider VerticalAlignment="Center" x:Name="VolSlider" Width="200" ValueChanged="VolSlider_ValueChanged" Maximum="100"/>
             </StackPanel>
-            
+
             <CheckBox x:Name="autoFill" Content="Auto fill intro or loop" HorizontalAlignment="Center" Margin="0,20,0,0" />
 
         </StackPanel>

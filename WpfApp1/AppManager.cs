@@ -19,7 +19,7 @@ namespace bgmPlayer
         public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/data.json";
         public const string INTRO_END = "_intro";
         public const string LOOP_END = "_loop";
-        public const float VOLUME_SCALE = 10f;
+        public const float VOLUME_SCALE = 100f;
     }
 
     public enum ReadConfigState
@@ -41,7 +41,7 @@ namespace bgmPlayer
     {
         public string? IntroPath { get; set; }
         public string? LoopPath { get; set; }
-        public int? Volume { get; set; }
+        public float? Volume { get; set; }
         public bool? AutoFill { get; set; }
     }
 
@@ -65,7 +65,7 @@ namespace bgmPlayer
             return data;
         }
 
-        public static void SaveConfig(string? IntroPath = null, string? LoopPath = null, int? Volume = null, bool? AutoFill = null)
+        public static void SaveConfig(string? IntroPath = null, string? LoopPath = null, float? Volume = null, bool? AutoFill = null)
         {
             ConfigData? data = LoadConfig();
             if (data == null)
@@ -283,7 +283,7 @@ namespace bgmPlayer
             // Visual Studio suggest this new and fun code:
             // outputDevice.Volume = Volume switch
             // {
-            //     <= 0 => 0, // wtf is this :) 
+            //     <= 0 => 0, // wtf is this :))
             //     > 1 => 1,
             //     _ => Volume,
             // };

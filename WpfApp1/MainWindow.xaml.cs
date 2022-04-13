@@ -88,7 +88,7 @@ namespace bgmPlayer
             else
                 currentVolume = (int)AppConstants.VOLUME_SCALE;
 
-            volValue.Text = currentVolume.ToString();
+            VolSlider.Value = currentVolume;
             AudioManager.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
         }
 
@@ -251,26 +251,6 @@ namespace bgmPlayer
             TaskbarChangeToPlay();
         }
 
-        private void VolDown_Click(object sender, RoutedEventArgs e)
-        {
-            var currentVol = int.Parse(volValue.Text);
-            if (currentVol > 0)
-            {
-                currentVol--;
-                SetVolume(currentVol);
-            }
-        }
-
-        private void VolUp_Click(object sender, RoutedEventArgs e)
-        {
-            var currentVol = int.Parse(volValue.Text);
-            if (currentVol < AppConstants.VOLUME_SCALE)
-            {
-                currentVol++;
-                SetVolume(currentVol);
-            }
-        }
-
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
             if (IntroPath.FileName == string.Empty && IntroField.Text == string.Empty) return;
@@ -366,6 +346,11 @@ namespace bgmPlayer
         {
             ConfigManager.SaveConfig(AutoFill: false);
         }
+
+        private void VolSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            SetVolume((float)VolSlider.Value);
+        }
         #endregion
 
         #region Private helper methods
@@ -443,9 +428,9 @@ namespace bgmPlayer
             ConfigManager.SaveConfig(LoopPath: loopPath);
         }
 
-        private void SetVolume(int Volume)
+        private void SetVolume(float Volume)
         {
-            volValue.Text = Volume.ToString();
+            VolSlider.Value = Volume;
             AudioManager.SetVolume(Volume / AppConstants.VOLUME_SCALE);
             ConfigManager.SaveConfig(Volume: Volume);
         }
