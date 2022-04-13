@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using Windows.Media;
 using Windows.Storage.Streams;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace bgmPlayer
 {
@@ -44,6 +45,7 @@ namespace bgmPlayer
             InitVolume();
             InitSMTC();
             InitCheckbox();
+            InitBackground();
         }
 
         #region Initialize
@@ -123,9 +125,20 @@ namespace bgmPlayer
                 ConfigManager.SaveConfig(AutoFill: false);
             }
         }
-        #endregion
 
-        #region Button handler
+        private void InitBackground()
+        {
+#if ME
+            ImageBrush background = new(new BitmapImage(new Uri("pack://application:,,,/img/schwarz_blured.png")))
+            {
+                Stretch = Stretch.UniformToFill
+            };
+            Background = background;
+#endif
+        }
+#endregion
+
+#region Button handler
         private void Intro_Click(object sender, RoutedEventArgs e)
         {
             smtc.IsEnabled = false;
@@ -280,9 +293,9 @@ namespace bgmPlayer
                 MessageBox.Show("Stop music before removing music file.");
             }
         }
-        #endregion
+#endregion
 
-        #region Taskbar handler
+#region Taskbar handler
         private void TaskbarPlayPause_handler(object sender, EventArgs? e)
         {
             if (play_button.IsEnabled && smtc.IsEnabled)
@@ -306,9 +319,9 @@ namespace bgmPlayer
             if (stop_button.IsEnabled)
                 Stop_Click(sender, null);
         }
-        #endregion
+#endregion
 
-        #region Event handler
+#region Event handler
         private void OnPlayPause(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs e)
         {
             switch (e.Button)
@@ -351,9 +364,9 @@ namespace bgmPlayer
         {
             SetVolume((float)VolSlider.Value);
         }
-        #endregion
+#endregion
 
-        #region Private helper methods
+#region Private helper methods
         private void AllowChooseFile(bool isAllow)
         {
             intro_button.IsEnabled = isAllow;
@@ -452,7 +465,7 @@ namespace bgmPlayer
             Application.Current.MainWindow.Title = title ?? "BGM Player";
             updater.Update();
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// Get BGM name of intro and loop file.

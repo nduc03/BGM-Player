@@ -32,6 +32,7 @@
 		<None Remove="img\pause.png" />
 		<None Remove="img\play.png" />
 		<None Remove="img\schwarz.jpg" />
+		<None Remove="img\schwarz_blured.png" />
 		<None Remove="img\stop.png" />
 	</ItemGroup>
 
@@ -48,6 +49,7 @@
 		<Resource Include="img\pause.png" />
 		<Resource Include="img\play.png" />
 		<Resource Include="img\schwarz.jpg" />
+		<Resource Include="img\schwarz_blured.png" />
 		<Resource Include="img\stop.png" />
 	</ItemGroup>
 
