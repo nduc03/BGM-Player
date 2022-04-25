@@ -57,8 +57,8 @@ namespace bgmPlayer
                 IntroPath = new OpenFileDialog();
                 LoopPath = new OpenFileDialog();
             }
-            IntroPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
-            LoopPath.Filter = "Audio files (*.mp3, *.wav)|*.mp3; *.wav";
+            IntroPath.Filter = "Wave sound|*.wav|MP3 (not recommended)|*.mp3";
+            LoopPath.Filter = "Wave sound|*.wav|MP3 (not recommended)|*.mp3";
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
             if (configData != null)
