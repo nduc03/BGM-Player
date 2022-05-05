@@ -38,9 +38,11 @@
 
             <CheckBox x:Name="autoFill" Content="Auto fill intro or loop" HorizontalAlignment="Center" Margin="0,20,0,0" />
 
+            <TextBlock x:Name="TimerBlock" TextAlignment="Center" Margin="0,10,0,0"/>
+
         </StackPanel>
 
-        <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,40,0,0">
+        <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,30,0,0">
 
             <StackPanel Orientation="Horizontal" Height="Auto" Width="Auto" HorizontalAlignment="Center">
                 <Button x:Name="intro_button" Content="Intro" Margin="0,0,5,0" VerticalAlignment="Top" Width="94" Height="32" Click="Intro_Click"/>

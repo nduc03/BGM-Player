@@ -6,7 +6,7 @@ using Microsoft.Win32;
 using Windows.Media;
 using Windows.Storage.Streams;
 using System.Windows.Media.Imaging;
-using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace bgmPlayer
 {
@@ -16,6 +16,8 @@ namespace bgmPlayer
         private readonly Windows.Media.Playback.MediaPlayer mediaPlayer;
         private readonly SystemMediaTransportControls smtc;
         private readonly SystemMediaTransportControlsDisplayUpdater updater;
+        private readonly TimeCount timer = TimeCount.Instance;
+        private DispatcherTimer dispatcherTimer;
         private OpenFileDialog IntroPath;
         private OpenFileDialog LoopPath;
         private bool isPause = false;
@@ -46,6 +48,7 @@ namespace bgmPlayer
             InitSMTC();
             InitCheckbox();
             InitBackground();
+            InitTimer();
         }
 
         #region Initialize
@@ -136,9 +139,19 @@ namespace bgmPlayer
             Background = background;
 #endif
         }
-#endregion
 
-#region Button handler
+        private void InitTimer()
+        {
+            dispatcherTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(0.5) };
+            dispatcherTimer.Tick += (o, e) =>
+            {
+                TimerBlock.Text = "Played:  " + timer.GetTimer();
+            };
+            dispatcherTimer.Start();
+        }
+        #endregion
+
+        #region Button handler
         private void Intro_Click(object sender, RoutedEventArgs e)
         {
             smtc.IsEnabled = false;
@@ -189,6 +202,8 @@ namespace bgmPlayer
                 try
                 {
                     AudioManager.Continue();
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
+                    timer.Start();
                 }
                 catch (NAudio.MmException)
                 {
@@ -206,7 +221,6 @@ namespace bgmPlayer
                     else
                         Stop_Click(null, null);
                 }
-                smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
                 return;
             }
 
@@ -237,6 +251,7 @@ namespace bgmPlayer
                 updater.MusicProperties.Title = GetBgmFileName(IntroField.Text, LoopField.Text) ?? "BGM Player";
             }
 
+            timer.Start();
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
             updater.Update();
         }
@@ -251,6 +266,8 @@ namespace bgmPlayer
             pause_button.IsEnabled = false;
             smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
             TaskbarChangeToPlay();
+            timer.Stop();
+            timer.Reset();
         }
 
         private void Pause_Click(object sender, RoutedEventArgs? e)
@@ -262,6 +279,7 @@ namespace bgmPlayer
             stop_button.IsEnabled = true;
             smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
             TaskbarChangeToPlay();
+            timer.Stop();
         }
 
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
@@ -293,9 +311,9 @@ namespace bgmPlayer
                 MessageBox.Show("Stop music before removing music file.");
             }
         }
-#endregion
+        #endregion
 
-#region Taskbar handler
+        #region Taskbar handler
         private void TaskbarPlayPause_handler(object sender, EventArgs? e)
         {
             if (play_button.IsEnabled && smtc.IsEnabled)
@@ -319,9 +337,9 @@ namespace bgmPlayer
             if (stop_button.IsEnabled)
                 Stop_Click(sender, null);
         }
-#endregion
+        #endregion
 
-#region Event handler
+        #region Event handler
         private void OnPlayPause(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs e)
         {
             switch (e.Button)
@@ -364,9 +382,9 @@ namespace bgmPlayer
         {
             SetVolume((float)VolSlider.Value);
         }
-#endregion
+        #endregion
 
-#region Private helper methods
+        #region Private helper methods
         private void AllowChooseFile(bool isAllow)
         {
             intro_button.IsEnabled = isAllow;
@@ -465,7 +483,6 @@ namespace bgmPlayer
             Application.Current.MainWindow.Title = title ?? "BGM Player";
             updater.Update();
         }
-#endregion
 
         /// <summary>
         /// Get BGM name of intro and loop file.
@@ -487,5 +504,6 @@ namespace bgmPlayer
             }
             return null;
         }
+        #endregion
     }
 }
