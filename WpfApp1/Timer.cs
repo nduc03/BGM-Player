@@ -3,16 +3,16 @@ using System.Diagnostics;
 
 namespace bgmPlayer
 {
-    public class TimeCount
+    public class Timer
     {
         #region Singleton declaration
-        private TimeCount() { }
-        private static TimeCount? instance = null;
-        public static TimeCount Instance
+        private Timer() { }
+        private static Timer? instance = null;
+        public static Timer Instance
         {
             get
             {
-                if (instance == null) { instance = new TimeCount(); }
+                if (instance == null) { instance = new Timer(); }
                 return instance;
             }
         }
@@ -24,7 +24,7 @@ namespace bgmPlayer
             stopWatch.Start();
         }
 
-        public string GetTimer()
+        public string GetElapsed()
         {
             TimeSpan time = stopWatch.Elapsed;
             if (time.Hours == 0)

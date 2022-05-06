@@ -16,12 +16,12 @@ namespace bgmPlayer
         private readonly Windows.Media.Playback.MediaPlayer mediaPlayer;
         private readonly SystemMediaTransportControls smtc;
         private readonly SystemMediaTransportControlsDisplayUpdater updater;
-        private readonly TimeCount timer = TimeCount.Instance;
-        private DispatcherTimer dispatcherTimer;
+        private readonly Timer timer = Timer.Instance;
+        private readonly DispatcherTimer dispatcherTimer;
         private OpenFileDialog IntroPath;
         private OpenFileDialog LoopPath;
         private bool isPause = false;
-        private int currentVolume = 10;
+        private int currentVolume = 100;
 
         public MainWindow()
         {
@@ -41,6 +41,7 @@ namespace bgmPlayer
             mediaPlayer = new Windows.Media.Playback.MediaPlayer();
             smtc = mediaPlayer.SystemMediaTransportControls;
             updater = smtc.DisplayUpdater;
+            dispatcherTimer = new DispatcherTimer();
 
             InitializeComponent();
             InitPathData();
@@ -132,9 +133,9 @@ namespace bgmPlayer
         private void InitBackground()
         {
 #if ME
-            ImageBrush background = new(new BitmapImage(new Uri("pack://application:,,,/img/schwarz_blured.png")))
+            System.Windows.Media.ImageBrush background = new(new BitmapImage(new Uri("pack://application:,,,/img/schwarz_blured.png")))
             {
-                Stretch = Stretch.UniformToFill
+                Stretch = System.Windows.Media.Stretch.UniformToFill
             };
             Background = background;
 #endif
@@ -142,10 +143,10 @@ namespace bgmPlayer
 
         private void InitTimer()
         {
-            dispatcherTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(0.5) };
+            dispatcherTimer.Interval = TimeSpan.FromSeconds(0.5);
             dispatcherTimer.Tick += (o, e) =>
             {
-                TimerBlock.Text = "Played:  " + timer.GetTimer();
+                TimerBlock.Text = "Played:  " + timer.GetElapsed();
             };
             dispatcherTimer.Start();
         }
