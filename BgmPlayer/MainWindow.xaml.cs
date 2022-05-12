@@ -12,7 +12,7 @@ namespace bgmPlayer
 {
     public partial class MainWindow : Window
     {
-        private readonly ConfigData? configData;
+        private readonly Preferences? preferences;
         private readonly Windows.Media.Playback.MediaPlayer mediaPlayer;
         private readonly SystemMediaTransportControls smtc;
         private readonly SystemMediaTransportControlsDisplayUpdater updater;
@@ -25,19 +25,9 @@ namespace bgmPlayer
 
         public MainWindow()
         {
-            if (ConfigManager.MigrateNewConfig() == ReadConfigState.FAILED)
-            {
-                MessageBox.Show(
-                    "Old data file is corrupted. App will reset all configuration.",
-                    AppConstants.ERROR_TITLE,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
-            }
-
             IntroPath = new OpenFileDialog();
             LoopPath = new OpenFileDialog();
-            configData = ConfigManager.LoadConfig();
+            preferences = PreferencesHelper.LoadPreferences();
             mediaPlayer = new Windows.Media.Playback.MediaPlayer();
             smtc = mediaPlayer.SystemMediaTransportControls;
             updater = smtc.DisplayUpdater;
@@ -65,32 +55,32 @@ namespace bgmPlayer
             LoopPath.Filter = "Wave sound|*.wav|MP3 (not recommended)|*.mp3";
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
-            if (configData != null)
+            if (preferences != null)
             {
                 // if configData not null -> configData is specified
                 // then check configData has valid path using File.Exists()
                 // if path does not exist -> ignore setting up path
-                if (File.Exists(configData.IntroPath))
+                if (File.Exists(preferences.IntroPath))
                 {
-                    IntroField.Text = configData.IntroPath; // show path in GUI
-                    IntroPath.FileName = configData.IntroPath; // set path in app logic
+                    IntroField.Text = preferences.IntroPath; // show path in GUI
+                    IntroPath.FileName = preferences.IntroPath; // set path in app logic
                 }
-                if (File.Exists(configData.LoopPath))
+                if (File.Exists(preferences.LoopPath))
                 {
-                    LoopField.Text = configData.LoopPath;
-                    LoopPath.FileName = configData.LoopPath;
+                    LoopField.Text = preferences.LoopPath;
+                    LoopPath.FileName = preferences.LoopPath;
                 }
             }
         }
 
         private void InitVolume()
         {
-            if (configData == null)
+            if (preferences == null)
                 Debug.WriteLine("InitVolume: config data is null, set volume to default value.");
-            else if (configData.Volume == null)
+            else if (preferences.Volume == null)
                 Debug.WriteLine("InitVolume: configData doesn't have Volume value");
-            else if (configData.Volume >= 0 && configData.Volume <= AppConstants.VOLUME_SCALE)
-                currentVolume = (int)configData.Volume;
+            else if (preferences.Volume >= 0 && preferences.Volume <= AppConstants.VOLUME_SCALE)
+                currentVolume = (int)preferences.Volume;
             else
                 currentVolume = (int)AppConstants.VOLUME_SCALE;
 
@@ -120,13 +110,13 @@ namespace bgmPlayer
         {
             autoFill.Checked += OnCheck;
             autoFill.Unchecked += OnUnchecked;
-            var config = ConfigManager.LoadConfig();
+            var config = PreferencesHelper.LoadPreferences();
             if (config != null)
                 autoFill.IsChecked = config.AutoFill;
             else
             {
                 autoFill.IsChecked = false;
-                ConfigManager.SaveConfig(AutoFill: false);
+                PreferencesHelper.SavePreferences(AutoFill: false);
             }
         }
 
@@ -146,7 +136,7 @@ namespace bgmPlayer
             dispatcherTimer.Interval = TimeSpan.FromSeconds(0.5);
             dispatcherTimer.Tick += (o, e) =>
             {
-                TimerBlock.Text = "Played:  " + timer.GetElapsed();
+                TimerBlock.Text = "Played:  " + timer.GetParsedElapsed();
             };
             dispatcherTimer.Start();
         }
@@ -371,12 +361,12 @@ namespace bgmPlayer
 
         private void OnCheck(object sender, RoutedEventArgs e)
         {
-            ConfigManager.SaveConfig(AutoFill: true);
+            PreferencesHelper.SavePreferences(AutoFill: true);
         }
 
         private void OnUnchecked(object sender, RoutedEventArgs e)
         {
-            ConfigManager.SaveConfig(AutoFill: false);
+            PreferencesHelper.SavePreferences(AutoFill: false);
         }
 
         private void VolSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -450,14 +440,14 @@ namespace bgmPlayer
         {
             IntroField.Text = introPath;
             IntroPath.FileName = introPath;
-            ConfigManager.SaveConfig(IntroPath: introPath);
+            PreferencesHelper.SavePreferences(IntroPath: introPath);
         }
 
         private void SetLoopPath(string loopPath)
         {
             LoopField.Text = loopPath;
             LoopPath.FileName = loopPath;
-            ConfigManager.SaveConfig(LoopPath: loopPath);
+            PreferencesHelper.SavePreferences(LoopPath: loopPath);
         }
 
         private void SetVolume(float Volume)
@@ -465,7 +455,7 @@ namespace bgmPlayer
             VolSlider.Value = Volume;
             VolValue.Text = ((int)Volume).ToString();
             AudioManager.SetVolume(Volume / AppConstants.VOLUME_SCALE);
-            ConfigManager.SaveConfig(Volume: Volume);
+            PreferencesHelper.SavePreferences(Volume: Volume);
         }
 
         private void UpdateTitle()

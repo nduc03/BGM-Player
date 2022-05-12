@@ -24,7 +24,7 @@ namespace bgmPlayer
             stopWatch.Start();
         }
 
-        public string GetElapsed()
+        public string GetParsedElapsed()
         {
             TimeSpan time = stopWatch.Elapsed;
             if (time.Hours == 0)
