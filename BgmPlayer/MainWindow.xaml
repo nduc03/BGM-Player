@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        MouseWheel="Window_MouseWheel"
         Title="BGM Player" Height="500" MinHeight="500" Width="900" MinWidth="600">
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="mediaControl">

@@ -496,5 +496,12 @@ namespace bgmPlayer
             return null;
         }
         #endregion
+
+        private void Window_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            currentVolume += e.Delta / AppConstants.MOUSE_WHEEL_SCALE;
+            AudioManager.SetVolume(currentVolume);
+            VolSlider.Value = currentVolume;
+        }
     }
 }
