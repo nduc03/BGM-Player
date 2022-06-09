@@ -13,6 +13,7 @@
         public const string INTRO_END = "_intro";
         public const string LOOP_END = "_loop";
         public const float VOLUME_SCALE = 100f;
+        public const int MOUSE_WHEEL_SCALE = 120;
     }
 
     public enum ReadConfigState
