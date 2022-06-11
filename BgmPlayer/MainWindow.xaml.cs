@@ -111,7 +111,7 @@ namespace bgmPlayer
             autoFill.Checked += OnCheck;
             autoFill.Unchecked += OnUnchecked;
             var config = PreferencesHelper.LoadPreferences();
-            if (config != null)
+            if (config != null && config.AutoFill != null)
                 autoFill.IsChecked = config.AutoFill;
             else
             {
