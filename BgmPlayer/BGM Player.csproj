@@ -12,7 +12,7 @@
 		<StartupObject></StartupObject>
 		<IsPublishable>False</IsPublishable>
 		<Authors>nduc</Authors>
-		<AssemblyVersion>1.5.1</AssemblyVersion>
+		<AssemblyVersion>1.5.2</AssemblyVersion>
 		<Configurations>Debug;Release;Me</Configurations>
 		<RepositoryUrl>https://github.com/nduc03/BGM-Player</RepositoryUrl>
 		<FileVersion></FileVersion>

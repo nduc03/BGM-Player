@@ -491,8 +491,9 @@ namespace bgmPlayer
                 var stream = Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream;
                 stream.CopyTo(file);
             }
-            var stg = await Windows.Storage.StorageFile.GetFileFromPathAsync(System.AppDomain.CurrentDomain.BaseDirectory + ".temp\\thumbnail.jpg");
-            updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(stg);
+            updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(
+                await Windows.Storage.StorageFile.GetFileFromPathAsync(AppDomain.CurrentDomain.BaseDirectory + ".temp\\thumbnail.jpg")
+            );
         }
 
         /// <summary>
