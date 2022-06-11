@@ -50,7 +50,6 @@
 		<Resource Include="img\pause.png" />
 		<Resource Include="img\play.png" />
 		<Resource Include="img\schwarz.jpg">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="img\schwarz_blured.png" />
 		<Resource Include="img\stop.png" />

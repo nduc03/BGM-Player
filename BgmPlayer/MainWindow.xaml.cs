@@ -88,7 +88,7 @@ namespace bgmPlayer
             AudioManager.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
         }
 
-        private async void InitSMTC()
+        private void InitSMTC()
         {
             if (mediaPlayer == null || smtc == null || updater == null)
                 throw new NullReferenceException("Cannot initialize SystemMediaTransportControls, consider checking Windows version.");
@@ -486,8 +486,7 @@ namespace bgmPlayer
         {
             if (!File.Exists(".temp/thumbnail.jpg"))
             {
-                var dir = Directory.CreateDirectory(".temp");
-                dir.Attributes = FileAttributes.Hidden;
+                Directory.CreateDirectory(".temp").Attributes = FileAttributes.Hidden;
                 using var file = File.Create(".temp/thumbnail.jpg");
                 var stream = Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream;
                 stream.CopyTo(file);
