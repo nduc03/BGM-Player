@@ -16,11 +16,12 @@
 		<Configurations>Debug;Release;Me</Configurations>
 		<RepositoryUrl>https://github.com/nduc03/BGM-Player</RepositoryUrl>
 		<FileVersion></FileVersion>
-		<Description>BGM Player</Description>
+		<Description>Music playback app for looping BGM</Description>
 		<SignAssembly>False</SignAssembly>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<Copyright>Phạm Nhật Đức</Copyright>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
