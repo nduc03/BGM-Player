@@ -88,7 +88,7 @@ namespace bgmPlayer
             AudioManager.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
         }
 
-        private void InitSMTC()
+        private async void InitSMTC()
         {
             if (mediaPlayer == null || smtc == null || updater == null)
                 throw new NullReferenceException("Cannot initialize SystemMediaTransportControls, consider checking Windows version.");
@@ -101,7 +101,7 @@ namespace bgmPlayer
             smtc.ButtonPressed += OnPlayPause;
             updater.Type = MediaPlaybackType.Music;
             // TODO: Thumbnail does not work properly, need to fix
-            updater.Thumbnail = RandomAccessStreamReference.CreateFromStream(Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream.AsRandomAccessStream());
+            UpdateThumbnail();
             UpdateTitle();
             smtc.IsEnabled = true;
         }
@@ -480,6 +480,20 @@ namespace bgmPlayer
             updater.MusicProperties.Title = title ?? "BGM Player";
             Application.Current.MainWindow.Title = title ?? "BGM Player";
             updater.Update();
+        }
+
+        private async void UpdateThumbnail()
+        {
+            if (!File.Exists(".temp/thumbnail.jpg"))
+            {
+                var dir = Directory.CreateDirectory(".temp");
+                dir.Attributes = FileAttributes.Hidden;
+                using var file = File.Create(".temp/thumbnail.jpg");
+                var stream = Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream;
+                stream.CopyTo(file);
+            }
+            var stg = await Windows.Storage.StorageFile.GetFileFromPathAsync(System.AppDomain.CurrentDomain.BaseDirectory + ".temp\\thumbnail.jpg");
+            updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(stg);
         }
 
         /// <summary>
