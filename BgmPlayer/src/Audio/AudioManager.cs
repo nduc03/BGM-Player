@@ -179,7 +179,7 @@ namespace bgmPlayer
                 Debug.WriteLine("GetVolume: outputDevice = null");
                 return 0;
             }
-            else return outputDevice.Volume;
+            else return Math.Clamp(outputDevice.Volume, 0, 100);
         }
     }
 }

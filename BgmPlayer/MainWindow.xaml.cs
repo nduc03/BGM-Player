@@ -376,9 +376,12 @@ namespace bgmPlayer
 
         private void Window_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            currentVolume += e.Delta / AppConstants.MOUSE_WHEEL_SCALE;
-            AudioManager.SetVolume(currentVolume);
-            VolSlider.Value = currentVolume;
+            currentVolume = Math.Clamp(currentVolume + (e.Delta / AppConstants.MOUSE_WHEEL_SCALE), 0, 100);
+            if (currentVolume != (int)AudioManager.GetVolume())
+            {
+                AudioManager.SetVolume(currentVolume);
+                VolSlider.Value = currentVolume;
+            }
         }
         #endregion
 
