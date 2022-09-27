@@ -486,7 +486,8 @@ namespace bgmPlayer
 
         private async void UpdateThumbnail()
         {
-            // Create file as a workaround since creating thumbnail from RandomAccessStream does not work
+            // Create temp file as a workaround since creating thumbnail
+            // from RandomAccessStreamReference.CreateFromStream does not work
             if (!File.Exists(".temp/thumbnail.jpg"))
             {
                 Directory.CreateDirectory(".temp").Attributes = FileAttributes.Hidden;
