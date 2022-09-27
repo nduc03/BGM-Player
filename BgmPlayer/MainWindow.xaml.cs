@@ -100,7 +100,6 @@ namespace bgmPlayer
             smtc.IsPreviousEnabled = false;
             smtc.ButtonPressed += OnPlayPause;
             updater.Type = MediaPlaybackType.Music;
-            // TODO: Thumbnail does not work properly, need to fix
             UpdateThumbnail();
             UpdateTitle();
             smtc.IsEnabled = true;
@@ -487,6 +486,7 @@ namespace bgmPlayer
 
         private async void UpdateThumbnail()
         {
+            // Create file as a workaround since the create thumbnail from RandomAccessStream does not work
             if (!File.Exists(".temp/thumbnail.jpg"))
             {
                 Directory.CreateDirectory(".temp").Attributes = FileAttributes.Hidden;
