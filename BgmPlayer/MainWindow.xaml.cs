@@ -198,7 +198,7 @@ namespace bgmPlayer
                 catch (NAudio.MmException)
                 {
                     if (MessageBox.Show(
-                            "Some problem with audio devices or drivers, app cannot play, consider restart the app or system.\n" +
+                            "Some problem with audio devices or drivers, the music cannot be played, consider restart this app or computer.\n" +
                                 "Choose 'Yes' to restart the app or 'No' to stop the music.",
                             "Error!",
                             MessageBoxButton.YesNo,
