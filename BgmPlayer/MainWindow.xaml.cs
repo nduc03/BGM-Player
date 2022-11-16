@@ -138,6 +138,11 @@ namespace bgmPlayer
                 TimerBlock.Text = "Played:  " + timer.GetParsedElapsed();
             };
             dispatcherTimer.Start();
+            StateChanged += (o, e) =>
+            {
+                if (WindowState == WindowState.Minimized) dispatcherTimer.Stop();
+                else dispatcherTimer.Start();
+            };
         }
         #endregion
 
