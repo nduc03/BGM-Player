@@ -12,6 +12,7 @@
         public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/data.json";
         public const string INTRO_END = "_intro";
         public const string LOOP_END = "_loop";
+        public const string CACHE_FOLDER = ".cache";
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
     }

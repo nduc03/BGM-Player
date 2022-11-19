@@ -20,8 +20,10 @@ namespace bgmPlayer
         private readonly DispatcherTimer dispatcherTimer;
         private OpenFileDialog IntroPath;
         private OpenFileDialog LoopPath;
+
         private bool isPause = false;
         private int currentVolume = 100;
+        private object? keepThumbnailOpen = null;
 
         public MainWindow()
         {
@@ -497,15 +499,18 @@ namespace bgmPlayer
         {
             // Create temp file as a workaround since creating thumbnail
             // from RandomAccessStreamReference.CreateFromStream does not work
-            if (!File.Exists(".temp/thumbnail.jpg"))
+            if (!File.Exists($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg"))
             {
-                Directory.CreateDirectory(".temp").Attributes = FileAttributes.Hidden;
-                using var file = File.Create(".temp/thumbnail.jpg");
+                Directory.CreateDirectory(AppConstants.CACHE_FOLDER).Attributes = FileAttributes.Hidden;
+                using var file = File.Create($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg");
                 var stream = Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream;
                 stream.CopyTo(file);
             }
+            keepThumbnailOpen = File.Open($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg", FileMode.Open);
             updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(
-                await Windows.Storage.StorageFile.GetFileFromPathAsync(AppDomain.CurrentDomain.BaseDirectory + ".temp\\thumbnail.jpg")
+                await Windows.Storage.StorageFile.GetFileFromPathAsync(
+                        AppDomain.CurrentDomain.BaseDirectory + $"{AppConstants.CACHE_FOLDER}\\thumbnail.jpg"
+                    )
             );
         }
 
