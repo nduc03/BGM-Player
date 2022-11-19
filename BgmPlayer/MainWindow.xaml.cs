@@ -7,6 +7,7 @@ using Windows.Media;
 using Windows.Storage.Streams;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Configuration;
 
 namespace bgmPlayer
 {
@@ -390,6 +391,11 @@ namespace bgmPlayer
                 VolSlider.Value = currentVolume;
             }
         }
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            FileHelper.InstantSave();
+            base.OnClosing(e);
+        }
         #endregion
 
         #region Private helper methods
@@ -506,7 +512,7 @@ namespace bgmPlayer
                 var stream = Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream;
                 stream.CopyTo(file);
             }
-            keepThumbnailOpen = File.Open($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg", FileMode.Open);
+            keepThumbnailOpen ??= File.Open($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg", FileMode.Open, FileAccess.Read, FileShare.Read);
             updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(
                 await Windows.Storage.StorageFile.GetFileFromPathAsync(
                         AppDomain.CurrentDomain.BaseDirectory + $"{AppConstants.CACHE_FOLDER}\\thumbnail.jpg"
@@ -535,6 +541,5 @@ namespace bgmPlayer
             return null;
         }
         #endregion
-
     }
 }

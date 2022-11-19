@@ -15,6 +15,7 @@
         public const string CACHE_FOLDER = ".cache";
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
+        public const int SAVE_PREFERENCES_DELAY = 1000;
     }
 
     public enum ReadConfigState

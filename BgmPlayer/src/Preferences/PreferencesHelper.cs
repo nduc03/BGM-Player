@@ -6,8 +6,12 @@ namespace bgmPlayer
 {
     public static class PreferencesHelper
     {
+        private static Preferences? dataCache = null;
+
         public static Preferences? LoadPreferences()
         {
+            if (dataCache != null) return dataCache;
+
             Preferences? data;
             if (!File.Exists(AppConstants.CONFIG_LOCATION)) return null;
 
@@ -21,6 +25,7 @@ namespace bgmPlayer
                 Debug.WriteLine("Json error");
                 data = null;
             }
+            dataCache = data;
             return data;
         }
 
@@ -31,7 +36,7 @@ namespace bgmPlayer
             bool? AutoFill = null
         )
         {
-            Preferences? data = LoadPreferences();
+            Preferences? data = dataCache ?? LoadPreferences();
             if (data == null)
             {
                 Directory.CreateDirectory(AppConstants.DATA_FOLDER);
@@ -44,7 +49,8 @@ namespace bgmPlayer
             if (Volume != null) data.Volume = Volume;
             if (AutoFill != null) data.AutoFill = AutoFill;
 
-            File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
+            dataCache = data;
+            FileHelper.ApplyPreferences(data);
         }
     }
 }
