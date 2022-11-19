@@ -138,6 +138,7 @@ namespace bgmPlayer
                 TimerBlock.Text = "Played:  " + timer.GetParsedElapsed();
             };
             dispatcherTimer.Start();
+
             StateChanged += (o, e) =>
             {
                 if (WindowState == WindowState.Minimized) dispatcherTimer.Stop();
@@ -475,17 +476,20 @@ namespace bgmPlayer
         private void UpdateTitle()
         {
             string? title = GetBgmFileName(IntroField.Text, LoopField.Text);
+            string artist = string.Empty;
+            string defaultTitle = "BGM Player";
             if (title == null)
             {
                 if (IntroField.Text != string.Empty && LoopField.Text == string.Empty)
                     title = Path.GetFileNameWithoutExtension(IntroField.Text);
                 else if (LoopField.Text != string.Empty && IntroField.Text == string.Empty)
                     title = Path.GetFileNameWithoutExtension(LoopField.Text);
-                else
-                    title = "BGM Player";
+                else title = defaultTitle;
             }
-            updater.MusicProperties.Title = title ?? "BGM Player";
-            Application.Current.MainWindow.Title = title ?? "BGM Player";
+            else artist = "Monster Siren Records";
+            updater.MusicProperties.Title = title ?? defaultTitle;
+            updater.MusicProperties.Artist = artist ?? string.Empty;
+            Application.Current.MainWindow.Title = title ?? defaultTitle;
             updater.Update();
         }
 
