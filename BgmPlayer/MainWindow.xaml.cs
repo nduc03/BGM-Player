@@ -7,7 +7,6 @@ using Windows.Media;
 using Windows.Storage.Streams;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using System.Configuration;
 
 namespace bgmPlayer
 {
