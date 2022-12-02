@@ -18,11 +18,6 @@
         public const int SAVE_PREFERENCES_DELAY = 1000;
     }
 
-    public enum ReadConfigState
-    {
-        SUCCESSFUL, FAILED, FILE_NOT_FOUND
-    }
-
     public enum AudioManagerState
     {
         OK, FILE_MISSING, FAILED

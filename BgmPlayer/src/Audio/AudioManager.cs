@@ -68,10 +68,10 @@ namespace bgmPlayer
         }
 
         /// <summary>
-        /// Special method that auto arrange music part and play infinity BGM.
-        /// Infinite BGM require two part: start part and loop path.
-        /// Function plays the start music file -> Loop play a second music file.
-        /// Require output device to be initialized by calling <see cref="InitAudio"/>
+        /// Special method that auto arrange music part and play an infinite BGM.
+        /// An infinite BGM requires two part: start part and loop part.
+        /// Function plays from start music file then plays a loop music file unlimited times.
+        /// An output device need to be initialized by calling <see cref="InitAudio"/>
         /// </summary>
         public static AudioManagerState PlayBGM(string introPath, string loopPath)
         {

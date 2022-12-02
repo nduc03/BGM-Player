@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text.Json;
-using System.Windows;
 
 namespace bgmPlayer
 {
@@ -9,6 +8,8 @@ namespace bgmPlayer
         private static System.Timers.Timer? timer = null;
         private static Preferences? data = null;
 
+        // Reduce pressure on hard drive by only save data to RAM first
+        // then wait for a delay before actually save the last data on RAM to hard drive
         public static void ApplyPreferences(Preferences preferences)
         {
             if (timer == null)
