@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
+using System.Windows;
 
 namespace bgmPlayer
 {
@@ -9,7 +10,7 @@ namespace bgmPlayer
         private static Preferences? data = null;
 
         // Reduce pressure on hard drive by only save data to RAM first
-        // then wait for a delay before actually save the last data on RAM to hard drive
+        // then wait for a delay before saving the last data on RAM to hard drive
         public static void ApplyPreferences(Preferences preferences)
         {
             if (timer == null)
@@ -21,7 +22,7 @@ namespace bgmPlayer
                 };
                 timer.Elapsed += (sender, args) =>
                 {
-                    SavePreferences();
+                    SaveData(AppConstants.CONFIG_LOCATION);
                     timer.Stop();
                     timer.Dispose();
                     timer = null;
@@ -33,7 +34,7 @@ namespace bgmPlayer
 
         public static void InstantSave()
         {
-            SavePreferences();
+            SaveData(AppConstants.CONFIG_LOCATION);
             if (timer != null)
             {
                 timer.Stop();
@@ -42,11 +43,18 @@ namespace bgmPlayer
             }
         }
 
-        private static void SavePreferences()
+        private static void SaveData(string path)
         {
             if (data != null)
             {
-                File.WriteAllText(AppConstants.CONFIG_LOCATION, JsonSerializer.Serialize(data));
+                try
+                {
+                    File.WriteAllText(path, JsonSerializer.Serialize(data));
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    MessageBox.Show("Data directory not found! Data cannot be saved.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 data = null;
             }
         }
