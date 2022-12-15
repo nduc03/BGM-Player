@@ -12,7 +12,7 @@
 		<StartupObject></StartupObject>
 		<IsPublishable>False</IsPublishable>
 		<Authors>nduc</Authors>
-		<AssemblyVersion>1.6.0</AssemblyVersion>
+		<AssemblyVersion>1.6.1</AssemblyVersion>
 		<Configurations>Debug;Release;Me</Configurations>
 		<RepositoryUrl>https://github.com/nduc03/BGM-Player</RepositoryUrl>
 		<FileVersion></FileVersion>
@@ -20,26 +20,25 @@
 		<SignAssembly>False</SignAssembly>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
-		<Copyright></Copyright>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
-	  <Optimize>True</Optimize>
-	  <DefineConstants>RELEASE</DefineConstants>
-	  <DebugType>none</DebugType>
-	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+		<Optimize>True</Optimize>
+		<DefineConstants>RELEASE</DefineConstants>
+		<DebugType>none</DebugType>
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DebugType>none</DebugType>
-	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+		<DebugType>none</DebugType>
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <DebugType>none</DebugType>
-	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+		<DebugType>none</DebugType>
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -47,6 +46,8 @@
 		<None Remove="img\play.png" />
 		<None Remove="img\schwarz.jpg" />
 		<None Remove="img\schwarz_blured.png" />
+		<None Remove="img\sound.jpg" />
+		<None Remove="img\sound.png" />
 		<None Remove="img\stop.png" />
 	</ItemGroup>
 
@@ -62,9 +63,9 @@
 	<ItemGroup>
 		<Resource Include="img\pause.png" />
 		<Resource Include="img\play.png" />
-		<Resource Include="img\schwarz.jpg">
-		</Resource>
+		<Resource Include="img\schwarz.jpg" />
 		<Resource Include="img\schwarz_blured.png" />
+		<Resource Include="img\sound.jpg" />
 		<Resource Include="img\stop.png" />
 	</ItemGroup>
 

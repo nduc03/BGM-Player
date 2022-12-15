@@ -7,6 +7,8 @@ using Windows.Media;
 using Windows.Storage.Streams;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Security.Cryptography;
+using System.Security.Policy;
 
 namespace bgmPlayer
 {
@@ -504,11 +506,15 @@ namespace bgmPlayer
         {
             // Create temp file as a workaround since creating thumbnail
             // from RandomAccessStreamReference.CreateFromStream does not work
-            if (!File.Exists($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg"))
+            if (!IsValidCache())
             {
                 Directory.CreateDirectory(AppConstants.CACHE_FOLDER).Attributes = FileAttributes.Hidden;
                 using var file = File.Create($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg");
-                var stream = Application.GetResourceStream(new Uri("img/schwarz.jpg", UriKind.Relative)).Stream;
+                var imgUri = "img/sound.jpg";
+#if ME
+                imgUri = "img/schwarz.jpg";
+#endif
+                var stream = Application.GetResourceStream(new Uri(imgUri, UriKind.Relative)).Stream;
                 stream.CopyTo(file);
             }
             keepThumbnailOpen ??= File.Open($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg", FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -517,6 +523,18 @@ namespace bgmPlayer
                         AppDomain.CurrentDomain.BaseDirectory + $"{AppConstants.CACHE_FOLDER}\\thumbnail.jpg"
                     )
             );
+        }
+
+        private bool IsValidCache()
+        {
+            if(!File.Exists($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg")) return false;
+            var md5 = MD5.Create();
+            var expectedHash = AppConstants.THUMBNAIL_HASH;
+#if ME
+            expectedHash = AppConstants.THUMBNAIL_ME_HASH;
+#endif
+            using var stream = File.OpenRead($"{AppConstants.CACHE_FOLDER}/thumbnail.jpg");
+            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "") == expectedHash;
         }
 
         /// <summary>
@@ -539,6 +557,6 @@ namespace bgmPlayer
             }
             return null;
         }
-        #endregion
+#endregion
     }
 }

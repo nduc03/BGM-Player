@@ -16,6 +16,11 @@
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
         public const int SAVE_PREFERENCES_DELAY = 1000;
+
+        public const string THUMBNAIL_HASH = "133036E793F11F8ABE38F1B9020998C0";
+#if ME
+        public const string THUMBNAIL_ME_HASH = "1316F87FAEAECDBF2FE42F1B6CE99E92";
+#endif
     }
 
     public enum AudioManagerState
