@@ -20,13 +20,26 @@
 		<SignAssembly>False</SignAssembly>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
-		<Copyright>Phạm Nhật Đức</Copyright>
+		<Copyright></Copyright>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
 	  <Optimize>True</Optimize>
-	  <DefineConstants>ME;RELEASE;NET;NET6_0;NETCOREAPP</DefineConstants>
+	  <DefineConstants>RELEASE</DefineConstants>
+	  <DebugType>none</DebugType>
+	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DebugType>none</DebugType>
+	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DebugType>none</DebugType>
+	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<ItemGroup>
