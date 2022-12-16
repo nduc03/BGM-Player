@@ -8,11 +8,12 @@
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
         public const string DATA_FOLDER = "BGM_Player_Data";
         public const string CONFIG_LOCATION = $"{DATA_FOLDER}/preferences.json";
-        public const string OLD_DATA_FOLDER = "BGM_Player_Data";
-        public const string OLD_CONFIG_LOCATION = $"{OLD_DATA_FOLDER}/data.json";
         public const string INTRO_END = "_intro";
         public const string LOOP_END = "_loop";
         public const string CACHE_FOLDER = ".cache";
+        public const string THUMBNAIL_CACHE_LOCATION = $"{CACHE_FOLDER}/thumbnail.jpg";
+        public const string DEFAULT_MUSIC_TITLE = "BGM Player";
+
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
         public const int SAVE_PREFERENCES_DELAY = 1000;

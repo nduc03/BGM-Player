@@ -12,7 +12,7 @@
 		<StartupObject></StartupObject>
 		<IsPublishable>False</IsPublishable>
 		<Authors>nduc</Authors>
-		<AssemblyVersion>1.6.2</AssemblyVersion>
+		<AssemblyVersion>1.6.3</AssemblyVersion>
 		<Configurations>Debug;Release;Me</Configurations>
 		<RepositoryUrl>https://github.com/nduc03/BGM-Player</RepositoryUrl>
 		<FileVersion></FileVersion>
@@ -27,17 +27,17 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
 		<Optimize>True</Optimize>
 		<DefineConstants>RELEASE</DefineConstants>
-		<DebugType>none</DebugType>
+		<DebugType>full</DebugType>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DebugType>none</DebugType>
+		<DebugType>full</DebugType>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DebugType>none</DebugType>
+		<DebugType>full</DebugType>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
