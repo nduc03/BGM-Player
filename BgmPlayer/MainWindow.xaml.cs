@@ -172,7 +172,7 @@ namespace bgmPlayer
                 try
                 {
                     AudioManager.Continue();
-                    SMTCHelper.UpdateState(MediaPlaybackStatus.Playing);
+                    SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
                     timer.Start();
                 }
                 catch (NAudio.MmException)
@@ -223,7 +223,7 @@ namespace bgmPlayer
             }
 
             timer.Start();
-            SMTCHelper.UpdateState(MediaPlaybackStatus.Playing);
+            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
         }
 
         private void Stop_Click(object? sender, RoutedEventArgs? e)
@@ -234,7 +234,7 @@ namespace bgmPlayer
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
             pause_button.IsEnabled = false;
-            SMTCHelper.UpdateState(MediaPlaybackStatus.Stopped);
+            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Stopped);
             TaskbarChangeToPlay();
             timer.Stop();
             timer.Reset();
@@ -247,7 +247,7 @@ namespace bgmPlayer
             pause_button.IsEnabled = false;
             play_button.IsEnabled = true;
             stop_button.IsEnabled = true;
-            SMTCHelper.UpdateState(MediaPlaybackStatus.Paused);
+            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Paused);
             TaskbarChangeToPlay();
             timer.Stop();
         }

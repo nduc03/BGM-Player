@@ -53,7 +53,7 @@ namespace bgmPlayer
             smtc.IsEnabled = false;
         }
 
-        public static void UpdateState(MediaPlaybackStatus playbackStatus)
+        public static void UpdateStatus(MediaPlaybackStatus playbackStatus)
         {
             smtc.PlaybackStatus = playbackStatus;
         }
