@@ -8,7 +8,6 @@ using Windows.Storage.Streams;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Security.Cryptography;
-using System.Security.Policy;
 
 namespace bgmPlayer
 {
@@ -380,17 +379,12 @@ namespace bgmPlayer
 
         private void VolSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            SetVolume((float)VolSlider.Value);
+            SetVolume((int)VolSlider.Value);
         }
 
         private void Window_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            currentVolume = Math.Clamp(currentVolume + (e.Delta / AppConstants.MOUSE_WHEEL_SCALE), 0, 100);
-            if (currentVolume != (int)AudioManager.GetVolume())
-            {
-                AudioManager.SetVolume(currentVolume);
-                VolSlider.Value = currentVolume;
-            }
+            SetVolume(Math.Clamp(currentVolume + (e.Delta / AppConstants.MOUSE_WHEEL_SCALE), 0, 100));
         }
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
@@ -474,10 +468,11 @@ namespace bgmPlayer
             PreferencesHelper.SavePreferences(LoopPath: loopPath);
         }
 
-        private void SetVolume(float Volume)
+        private void SetVolume(int Volume)
         {
+            currentVolume = Volume;
             VolSlider.Value = Volume;
-            VolValue.Text = ((int)Volume).ToString();
+            VolValue.Text = Volume.ToString();
             AudioManager.SetVolume(Volume / AppConstants.VOLUME_SCALE);
             PreferencesHelper.SavePreferences(Volume: Volume);
         }
