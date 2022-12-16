@@ -37,7 +37,7 @@ namespace bgmPlayer
             smtc.IsPreviousEnabled = false;
             smtc.ButtonPressed += OnPlayPause;
             updater.Type = MediaPlaybackType.Music;
-            UpdateTitle(null, null);
+            updater.MusicProperties.Title = AppConstants.DEFAULT_MUSIC_TITLE;
             UpdateThumbnail();
             smtc.IsEnabled = true;
             isInitialized = true;
@@ -61,7 +61,8 @@ namespace bgmPlayer
         public static void UpdateTitle(string? IntroPath, string? LoopPath)
         {
             if (!isInitialized) return;
-            string? title = IntroPath == null || LoopPath == null ? null : Utils.GetBgmFileName(IntroPath, LoopPath);
+            string? title = IntroPath == null || LoopPath == null ? 
+                AppConstants.DEFAULT_MUSIC_TITLE : Utils.GetBgmFileName(IntroPath, LoopPath);
             string artist = string.Empty;
             if (title == null)
             {
