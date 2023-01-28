@@ -41,6 +41,7 @@ namespace bgmPlayer
             UpdateThumbnail();
             smtc.IsEnabled = true;
             isInitialized = true;
+            PathHelper.AllEmpty += Disable;
         }
 
         public static void Enable() 
@@ -88,7 +89,7 @@ namespace bgmPlayer
         {
             if (!isInitialized) return;
             // Create temp file as a workaround since creating thumbnail
-            // from RandomAccessStreamReference.CreateFromStream does not work
+            // from RandomAccessStreamReference.CreateFromStream doesn't work
             if (!Utils.IsValidCache())
             {
                 Directory.CreateDirectory(AppConstants.CACHE_FOLDER).Attributes = FileAttributes.Hidden;

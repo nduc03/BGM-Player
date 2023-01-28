@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows;
 using System.Diagnostics;
-using Microsoft.Win32;
 using Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -14,21 +13,18 @@ namespace bgmPlayer
         private readonly Preferences? preferences;
         private readonly Timer timer = Timer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
-        private OpenFileDialog IntroPath;
-        private OpenFileDialog LoopPath;
 
         private bool isPause = false;
         private int currentVolume = 100;
 
         public MainWindow()
         {
-            IntroPath = new OpenFileDialog();
-            LoopPath = new OpenFileDialog();
             preferences = PreferencesHelper.LoadPreferences();
             dispatcherTimer = new DispatcherTimer();
 
             InitializeComponent();
-            InitPathData();
+            PathHelper.Init(preferences);
+            PathHelper.TurnOnAutoUpdateGUI(IntroField, LoopField);
             InitVolume();
             SMTCHelper.InitSMTC(OnPlayPause);
             SMTCHelper.UpdateThumbnail();
@@ -38,34 +34,6 @@ namespace bgmPlayer
         }
 
         #region Initialize
-        private void InitPathData()
-        {
-            if (IntroPath == null || LoopPath == null)
-            {
-                Debug.WriteLine("InitPathData error: startPath or loopPath is null. Init path again.");
-                IntroPath = new OpenFileDialog();
-                LoopPath = new OpenFileDialog();
-            }
-            IntroPath.Filter = "Wave sound|*.wav|MP3 (not recommended)|*.mp3";
-            LoopPath.Filter = "Wave sound|*.wav|MP3 (not recommended)|*.mp3";
-            if (preferences != null)
-            {
-                // if configData not null -> configData is specified
-                // then check configData has valid path using File.Exists()
-                // if path does not exist -> ignore setting up path
-                if (File.Exists(preferences.IntroPath))
-                {
-                    IntroField.Text = preferences.IntroPath; // show path in GUI
-                    IntroPath.FileName = preferences.IntroPath; // set path in app logic
-                }
-                if (File.Exists(preferences.LoopPath))
-                {
-                    LoopField.Text = preferences.LoopPath;
-                    LoopPath.FileName = preferences.LoopPath;
-                }
-            }
-        }
-
         private void InitVolume()
         {
             if (preferences == null)
@@ -91,6 +59,7 @@ namespace bgmPlayer
                 autoFill.IsChecked = false;
                 PreferencesHelper.SavePreferences(AutoFill: false);
             }
+            PathHelper.AutoFill = autoFill.IsChecked ?? false;
         }
 
         private void InitBackground()
@@ -125,13 +94,9 @@ namespace bgmPlayer
         private void Intro_Click(object sender, RoutedEventArgs e)
         {
             SMTCHelper.Disable();
-            if (IntroPath.ShowDialog() == true)
+            if (PathHelper.OpenIntroPathDialog() != null)
             {
-                SetIntroPath(IntroPath.FileName);
-                TryAutoSetLoop();
-                SMTCHelper.UpdateTitle(IntroField.Text, LoopField.Text);
-                SMTCHelper.Enable();
-                return;
+                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
             SMTCHelper.Enable();
         }
@@ -139,20 +104,16 @@ namespace bgmPlayer
         private void Loop_Click(object sender, RoutedEventArgs e)
         {
             SMTCHelper.Disable();
-            if (LoopPath.ShowDialog() == true)
+            if (PathHelper.OpenLoopPathDialog() != null)
             {
-                SetLoopPath(LoopPath.FileName);
-                TryAutoSetIntro();
-                SMTCHelper.UpdateTitle(IntroField.Text, LoopField.Text);
-                SMTCHelper.Enable();
-                return;
+                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
             SMTCHelper.Enable();
         }
 
         private void Play_Click(object sender, RoutedEventArgs? e)
         {
-            if (!File.Exists(IntroField.Text) && !File.Exists(LoopField.Text))
+            if (!File.Exists(PathHelper.Intro) && !File.Exists(LoopField.Text))
             {
                 // If both 2 two files is not found or not set -> show error message.
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
@@ -195,13 +156,13 @@ namespace bgmPlayer
             }
 
             // If only one file is not found or not set -> still play music but in loop mode.
-            if (!File.Exists(IntroField.Text) || !File.Exists(LoopField.Text))
+            if (PathHelper.Intro == string.Empty || PathHelper.Loop == string.Empty)
             {
                 Mp3Check();
                 // Check if start path is found -> PlayLoop start path
                 // else -> PlayLoop loop path
-                string filePath = File.Exists(IntroField.Text) ? IntroField.Text : LoopField.Text;
-                SMTCHelper.UpdateTitle(IntroField.Text, LoopField.Text);
+                string filePath = PathHelper.Intro == string.Empty ? PathHelper.Intro : PathHelper.Loop;
+                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
                 if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -212,14 +173,13 @@ namespace bgmPlayer
             else
             {
                 Mp3Check();
-                if (AudioManager.PlayBGM(IntroField.Text, LoopField.Text) == AudioManagerState.FAILED)
+                if (AudioManager.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     TaskbarChangeToPlay();
                     return;
                 }
-                //updater.MusicProperties.Title = Utils.GetBgmFileName(IntroField.Text, LoopField.Text) ?? "BGM Player";
-                SMTCHelper.UpdateTitle(IntroField.Text, LoopField.Text);
+                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
 
             timer.Start();
@@ -254,12 +214,11 @@ namespace bgmPlayer
 
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
-            if (IntroPath.FileName == string.Empty && IntroField.Text == string.Empty) return;
+            if (PathHelper.Intro == string.Empty) return;
             if (AudioManager.IsStopped)
             {
-                SetIntroPath(string.Empty);
-                SMTCHelper.UpdateTitle(IntroField.Text, LoopField.Text);
-                if (LoopField.Text == string.Empty) SMTCHelper.Disable();
+                PathHelper.Intro = string.Empty;
+                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
             else
             {
@@ -269,12 +228,11 @@ namespace bgmPlayer
 
         private void RemoveLoop_Click(object sender, RoutedEventArgs e)
         {
-            if (LoopPath.FileName == string.Empty && LoopField.Text == string.Empty) return;
+            if (PathHelper.Loop == string.Empty) return;
             if (AudioManager.IsStopped)
             {
-                SetLoopPath(string.Empty);
-                SMTCHelper.UpdateTitle(IntroField.Text, LoopField.Text);
-                if (IntroField.Text == string.Empty) SMTCHelper.Disable();
+                PathHelper.Loop = string.Empty;
+                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
             else
             {
@@ -341,11 +299,13 @@ namespace bgmPlayer
         private void OnChecked(object sender, RoutedEventArgs e)
         {
             PreferencesHelper.SavePreferences(AutoFill: true);
+            PathHelper.AutoFill = true;
         }
 
         private void OnUnchecked(object sender, RoutedEventArgs e)
         {
             PreferencesHelper.SavePreferences(AutoFill: false);
+            PathHelper.AutoFill = false;
         }
 
         private void VolSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -373,7 +333,7 @@ namespace bgmPlayer
 
         private void Mp3Check()
         {
-            if (Path.GetExtension(IntroField.Text) == ".mp3" || Path.GetExtension(LoopField.Text) == ".mp3")
+            if (Path.GetExtension(PathHelper.Intro) == ".mp3" || Path.GetExtension(LoopField.Text) == ".mp3")
                 MessageBox.Show(
                     "You are using compressed file mp3, which is not recommended for BGM playback.\n" +
                         "Consider convert the file to .wav for smoother experience.",
@@ -381,38 +341,6 @@ namespace bgmPlayer
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning
                 );
-        }
-
-        private void TryAutoSetLoop()
-        {
-            if (autoFill == null) return;
-            if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
-            string introPath = IntroField.Text;
-
-            if (!Path.GetFileNameWithoutExtension(introPath).EndsWith("_intro")) return;
-
-            string expectedLoopPath = introPath[..introPath.LastIndexOf('_')] + AppConstants.LOOP_END + Path.GetExtension(introPath);
-
-            if (File.Exists(expectedLoopPath))
-            {
-                SetLoopPath(expectedLoopPath);
-            }
-        }
-
-        private void TryAutoSetIntro()
-        {
-            if (autoFill == null) return;
-            if (autoFill.IsChecked == false || autoFill.IsChecked == null) return;
-            string loopPath = LoopField.Text;
-
-            if (!Path.GetFileNameWithoutExtension(loopPath).EndsWith("_loop")) return;
-
-            string expectedIntroPath = loopPath[..loopPath.LastIndexOf('_')] + AppConstants.INTRO_END + Path.GetExtension(loopPath);
-
-            if (File.Exists(expectedIntroPath))
-            {
-                SetIntroPath(expectedIntroPath);
-            }
         }
 
         private void TaskbarChangeToPlay()
@@ -423,20 +351,6 @@ namespace bgmPlayer
         private void TaskbarChangeToPause()
         {
             play_pause_taskbar.ImageSource = new BitmapImage(new Uri("pack://application:,,,/img/pause.png"));
-        }
-
-        private void SetIntroPath(string introPath)
-        {
-            IntroField.Text = introPath;
-            IntroPath.FileName = introPath;
-            PreferencesHelper.SavePreferences(IntroPath: introPath);
-        }
-
-        private void SetLoopPath(string loopPath)
-        {
-            LoopField.Text = loopPath;
-            LoopPath.FileName = loopPath;
-            PreferencesHelper.SavePreferences(LoopPath: loopPath);
         }
 
         private void SetVolume(int Volume)
