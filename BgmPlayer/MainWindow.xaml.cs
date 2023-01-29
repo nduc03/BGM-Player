@@ -113,9 +113,9 @@ namespace bgmPlayer
 
         private void Play_Click(object sender, RoutedEventArgs? e)
         {
-            if (!File.Exists(PathHelper.Intro) && !File.Exists(LoopField.Text))
+            // If both 2 two files is not set
+            if (PathHelper.Intro == string.Empty && LoopField.Text == string.Empty)
             {
-                // If both 2 two files is not found or not set -> show error message.
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return;
             }
@@ -155,10 +155,9 @@ namespace bgmPlayer
                 return;
             }
 
-            // If only one file is not found or not set -> still play music but in loop mode.
+            // If only one file is not set -> still play music but in loop mode.
             if (PathHelper.Intro == string.Empty || PathHelper.Loop == string.Empty)
             {
-                Mp3Check();
                 // Check if start path is found -> PlayLoop start path
                 // else -> PlayLoop loop path
                 string filePath = PathHelper.Intro == string.Empty ? PathHelper.Intro : PathHelper.Loop;
@@ -172,7 +171,6 @@ namespace bgmPlayer
             }
             else
             {
-                Mp3Check();
                 if (AudioManager.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -181,7 +179,6 @@ namespace bgmPlayer
                 }
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
-
             timer.Start();
             SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
         }
@@ -329,18 +326,6 @@ namespace bgmPlayer
         {
             intro_button.IsEnabled = isAllow;
             loop_button.IsEnabled = isAllow;
-        }
-
-        private void Mp3Check()
-        {
-            if (Path.GetExtension(PathHelper.Intro) == ".mp3" || Path.GetExtension(LoopField.Text) == ".mp3")
-                MessageBox.Show(
-                    "You are using compressed file mp3, which is not recommended for BGM playback.\n" +
-                        "Consider convert the file to .wav for smoother experience.",
-                    "Warning!",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
         }
 
         private void TaskbarChangeToPlay()
