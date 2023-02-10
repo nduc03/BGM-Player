@@ -12,7 +12,6 @@
 		<StartupObject></StartupObject>
 		<IsPublishable>False</IsPublishable>
 		<Authors>nduc</Authors>
-		<AssemblyVersion>1.6.3</AssemblyVersion>
 		<Configurations>Debug;Release;Me</Configurations>
 		<RepositoryUrl>https://github.com/nduc03/BGM-Player</RepositoryUrl>
 		<Description>Music playback app for looping BGM</Description>
@@ -21,9 +20,11 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
+		<AssemblyVersion>1.7.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
+		
 		<Optimize>True</Optimize>
 		<DefineConstants>RELEASE</DefineConstants>
 		<DebugType>none</DebugType>

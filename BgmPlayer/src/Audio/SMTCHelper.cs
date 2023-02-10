@@ -76,6 +76,7 @@ namespace bgmPlayer
             else
             {
 #if ME
+                title = Utils.GetArknightsOstName(title);
                 artist = "Monster Siren Records";
 #endif
             }

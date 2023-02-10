@@ -28,6 +28,27 @@ namespace bgmPlayer
             return null;
         }
 
+#if ME
+        public static string GetArknightsOstName(string ParsedInGameFileName)
+        {
+            return ParsedInGameFileName switch
+            {
+                "m_bat_abyssalhunters" => "Under Tides",
+                "m_bat_act20side_01"=> "滑梯衝浪 (Slide and Surf)",
+                "m_bat_ccs10" => "Crawling Forward!",
+                "m_bat_ccs8_b1" => "Fading Sky",
+                "m_bat_ccs5" => "Operation Spectrum Battle Theme",
+                "m_bat_dsdevr"=> "愚人曲 (Stultifer Cantus)",
+                "m_avg_doubledragons" => "雙龍 (Double Dragons)",
+                "m_avg_towerfierce" => "高塔冲突 (Tower Fierce)",
+                "m_sys_ccs10" => "Operation Ashring",
+                "m_sys_ccs8" => "Operation Dawnseeker",
+                "m_sys_tech" => "Vigilo",
+                _ => ParsedInGameFileName,
+            };
+        }
+#endif
+
         public static bool IsValidCache()
         {
             if (!File.Exists(AppConstants.THUMBNAIL_CACHE_LOCATION)) return false;
