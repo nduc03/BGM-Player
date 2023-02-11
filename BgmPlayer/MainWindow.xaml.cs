@@ -115,7 +115,7 @@ namespace bgmPlayer
         private void Play_Click(object sender, RoutedEventArgs? e)
         {
             // If both 2 two files is not set
-            if (PathHelper.Intro == string.Empty && LoopField.Text == string.Empty)
+            if (PathHelper.Intro == string.Empty && PathHelper.Loop == string.Empty)
             {
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return;
@@ -161,9 +161,10 @@ namespace bgmPlayer
             {
                 // Check if start path is found -> PlayLoop start path
                 // else -> PlayLoop loop path
-                string filePath = PathHelper.Intro == string.Empty ? PathHelper.Intro : PathHelper.Loop;
+                string filePath = PathHelper.Intro != string.Empty ? PathHelper.Intro : PathHelper.Loop;
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
-                if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
+                var playState = AudioManager.PlayLoop(filePath);
+                if (playState == AudioManagerState.FAILED || playState == AudioManagerState.FILE_MISSING)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     TaskbarChangeToPlay();
