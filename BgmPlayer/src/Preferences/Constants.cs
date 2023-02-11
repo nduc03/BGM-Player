@@ -27,7 +27,7 @@
 
     public enum AudioManagerState
     {
-        OK, FILE_MISSING, FAILED
+        OK, FAILED
     }
 
     public enum AudioState

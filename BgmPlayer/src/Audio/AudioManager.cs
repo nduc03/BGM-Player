@@ -48,7 +48,7 @@ namespace bgmPlayer
             if (!File.Exists(audioPath))
             {
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
-                return AudioManagerState.FILE_MISSING;
+                return AudioManagerState.FAILED;
             }
             try
             {

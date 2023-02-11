@@ -163,8 +163,7 @@ namespace bgmPlayer
                 // else -> PlayLoop loop path
                 string filePath = PathHelper.Intro != string.Empty ? PathHelper.Intro : PathHelper.Loop;
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
-                var playState = AudioManager.PlayLoop(filePath);
-                if (playState == AudioManagerState.FAILED || playState == AudioManagerState.FILE_MISSING)
+                if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     TaskbarChangeToPlay();
