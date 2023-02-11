@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 
 namespace bgmPlayer
 {
+    public static class Utils
+    {
     /// <summary>
     /// Get BGM name of intro and loop file.
     /// Only work correctly with correct pattern.
@@ -13,8 +15,6 @@ namespace bgmPlayer
     /// <param name="path1">Full absolute path to intro or loop file</param>
     /// <param name="path2">Full absolute path to intro or loop file</param>
     /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
-    public static class Utils
-    {
         public static string? GetBgmFileName(string path1, string path2)
         {
             string p1 = Path.GetFileNameWithoutExtension(path1);

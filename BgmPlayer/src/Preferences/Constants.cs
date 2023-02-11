@@ -21,6 +21,7 @@
         public const string THUMBNAIL_HASH = "133036E793F11F8ABE38F1B9020998C0";
 #if ME
         public const string THUMBNAIL_ME_HASH = "1316F87FAEAECDBF2FE42F1B6CE99E92";
+        public const string DISABLE_OST_NAME = $"{DATA_FOLDER}/disable_ost_name";
 #endif
     }
 

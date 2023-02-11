@@ -76,7 +76,8 @@ namespace bgmPlayer
             else
             {
 #if ME
-                title = Utils.GetArknightsOstName(title);
+                if (!File.Exists(AppConstants.DISABLE_OST_NAME))
+                    title = Utils.GetArknightsOstName(title);
                 artist = "Monster Siren Records";
 #endif
             }
