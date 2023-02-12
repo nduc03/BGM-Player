@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace bgmPlayer
@@ -18,23 +18,21 @@ namespace bgmPlayer
         public static event PathState? AllEmpty;
 
         public static bool AutoFill = false;
-        public static bool Mp3Checking = true;
         public static string Intro
         {
             get
             {
-#if DEBUG
                 var ip = IntroPath.FileName;
                 if (ip != string.Empty && !File.Exists(ip)) throw new FileNotFoundException("Cannot find the intro file!");
-#endif
-                return IntroPath.FileName;
+                if (ip != string.Empty && !ip.EndsWith(".wav")) throw new Exception("Wrong file format");
+                return ip;
             }
             set
             {
+                if (!value.EndsWith(".wav")) return;
                 if (File.Exists(value) || value == string.Empty) IntroPath.FileName = value; else return;
                 if (autoUpdateGUI) UpdateGUI();
                 if (AutoFill) TryAutoSetLoop();
-                if (Mp3Checking) CheckMp3(value);
                 if (value == string.Empty) CheckAllEmpty();
                 PreferencesHelper.SavePreferences(IntroPath: Intro);
             }
@@ -43,28 +41,26 @@ namespace bgmPlayer
         {
             get
             {
-#if DEBUG
                 var lp = LoopPath.FileName;
                 if (lp != string.Empty && !File.Exists(lp)) throw new FileNotFoundException("Cannot find the loop file!");
-#endif
-                return LoopPath.FileName;
+                if (lp != string.Empty && !lp.EndsWith(".wav")) throw new Exception("Wrong file format");
+                return lp;
             }
             set 
             {
+                if (!value.EndsWith(".wav")) return;
                 LoopPath.FileName = (File.Exists(value) || value == string.Empty) ? value : Loop;
                 if (autoUpdateGUI) UpdateGUI();
                 if (AutoFill) TryAutoSetIntro();
-                if (Mp3Checking) CheckMp3(value);
                 if (value != string.Empty) CheckAllEmpty();
                 PreferencesHelper.SavePreferences(LoopPath: Loop);
             }
         }
-        public static void Init(Preferences? preferences = null, bool autoFill = false, bool Mp3Check = true)
+        public static void Init(Preferences? preferences = null, bool autoFill = false)
         {
-            IntroPath.Filter = "Wave sound|*.wav|MP3 (not recommended)|*.mp3";
-            LoopPath.Filter = "Wave sound|*.wav|MP3 (not recommended)|*.mp3";
+            IntroPath.Filter = "Wave sound|*.wav";
+            LoopPath.Filter = "Wave sound|*.wav";
             AutoFill = autoFill;
-            Mp3Checking = Mp3Check;
 
             if (preferences != null)
             {
@@ -172,18 +168,6 @@ namespace bgmPlayer
         private static void OnFileOkEvent(object? o, System.ComponentModel.CancelEventArgs e)
         {
             UpdateGUI();
-        }
-
-        private static void CheckMp3(string FilePath)
-        {
-            if (Path.GetExtension(FilePath) == ".mp3")
-                MessageBox.Show(
-                    "You are using compressed file mp3, which is not recommended for BGM playback.\n" +
-                        "Consider convert the file to .wav for better listening experience.",
-                    "Warning!",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
         }
     }
 }

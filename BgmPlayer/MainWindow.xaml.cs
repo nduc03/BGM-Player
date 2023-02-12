@@ -15,7 +15,7 @@ namespace bgmPlayer
         private readonly DispatcherTimer dispatcherTimer;
 
         private bool isPause = false;
-        private bool allowControlSMTC = false;
+        private bool allowControlBySMTC = false;
         private int currentVolume = 100;
 
         public MainWindow()
@@ -94,22 +94,22 @@ namespace bgmPlayer
         #region Button handler
         private void Intro_Click(object sender, RoutedEventArgs e)
         {
-            allowControlSMTC = false;
+            allowControlBySMTC = false;
             if (PathHelper.OpenIntroPathDialog() != null)
             {
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
-            allowControlSMTC = true;
+            allowControlBySMTC = true;
         }
 
         private void Loop_Click(object sender, RoutedEventArgs e)
         {
-            allowControlSMTC = false;
+            allowControlBySMTC = false;
             if (PathHelper.OpenLoopPathDialog() != null)
             {
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
             }
-            allowControlSMTC = true;
+            allowControlBySMTC = true;
         }
 
         private void Play_Click(object sender, RoutedEventArgs? e)
@@ -182,7 +182,7 @@ namespace bgmPlayer
             }
             timer.Start();
             SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
-            allowControlSMTC = true;
+            allowControlBySMTC = true;
         }
 
         private void Stop_Click(object? sender, RoutedEventArgs? e)
@@ -269,7 +269,7 @@ namespace bgmPlayer
         #region Event handler
         private void OnPlayPause(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs e)
         {
-            if (!allowControlSMTC) return;
+            if (!allowControlBySMTC) return;
             switch (e.Button)
             {
                 case SystemMediaTransportControlsButton.Play:
