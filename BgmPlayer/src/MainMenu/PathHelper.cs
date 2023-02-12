@@ -29,7 +29,7 @@ namespace bgmPlayer
             }
             set
             {
-                if (!value.EndsWith(".wav")) return;
+                if (value != string.Empty /* Holy shit, IntelliSense fixed my bug :D */ && !value.EndsWith(".wav")) return;
                 if (File.Exists(value) || value == string.Empty) IntroPath.FileName = value; else return;
                 if (autoUpdateGUI) UpdateGUI();
                 if (AutoFill) TryAutoSetLoop();
@@ -48,7 +48,7 @@ namespace bgmPlayer
             }
             set 
             {
-                if (!value.EndsWith(".wav")) return;
+                if (value != string.Empty /* same here */ && !value.EndsWith(".wav")) return;
                 LoopPath.FileName = (File.Exists(value) || value == string.Empty) ? value : Loop;
                 if (autoUpdateGUI) UpdateGUI();
                 if (AutoFill) TryAutoSetIntro();
