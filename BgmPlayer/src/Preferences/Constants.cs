@@ -3,7 +3,6 @@
     struct AppConstants
     {
         public const string USER_ERROR_TITLE = "User Error! Invalid input";
-        public const string DEV_ERROR_TITLE = "Dev-Error! Bug appear";
         public const string ERROR_TITLE = "Error!";
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
         public const string DATA_FOLDER = "BGM_Player_Data";
@@ -13,6 +12,8 @@
         public const string CACHE_FOLDER = ".cache";
         public const string THUMBNAIL_CACHE_LOCATION = $"{CACHE_FOLDER}/thumbnail.jpg";
         public const string DEFAULT_MUSIC_TITLE = "BGM Player";
+        public const string FILTER = "Wave sound|*.wav";
+        public const string VALID_PATH_REGEX = ".wav$";
 
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
