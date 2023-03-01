@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System;
 using System.Windows;
 using NAudio.Wave;
+using NAudio.Vorbis;
 
 namespace bgmPlayer
 {
@@ -53,9 +54,16 @@ namespace bgmPlayer
             try
             {
                 InitAudio();
-                AudioFileReader audioFile = new(audioPath);
-                BGMLoopStream loopStream = new(audioFile);
-                outputDevice!.Init(loopStream);
+                if (audioPath.EndsWith(".ogg"))
+                {
+                    VorbisBGMLoopStream loopStream = new(audioPath);
+                    outputDevice!.Init(loopStream);
+                }
+                else
+                {
+                    BGMLoopStream loopStream = new(new AudioFileReader(audioPath));
+                    outputDevice!.Init(loopStream);
+                }
                 outputDevice.Play();
                 AudioState = AudioState.PLAY;
                 return AudioManagerState.OK;
@@ -78,8 +86,17 @@ namespace bgmPlayer
             try
             {
                 InitAudio();
-                BGMLoopStream bgmLoopStream = new(new AudioFileReader(introPath), new AudioFileReader(loopPath));
-                outputDevice!.Init(bgmLoopStream);
+                if (introPath.EndsWith(".ogg") && loopPath.EndsWith(".ogg"))
+                {
+                    VorbisBGMLoopStream bgmLoopStream = new(introPath, loopPath);
+                    outputDevice!.Init(bgmLoopStream);
+                }
+                else
+                {
+                    BGMLoopStream bgmLoopStream = new(new AudioFileReader(introPath), new AudioFileReader(loopPath));
+                    outputDevice!.Init(bgmLoopStream);
+
+                }
                 SetVolume(volume);
                 outputDevice.Play();
                 AudioState = AudioState.PLAY;

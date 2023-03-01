@@ -238,7 +238,7 @@ namespace bgmPlayer
                 MessageBox.Show("Stop music before removing music file.");
             }
         }
-        #endregion
+#endregion
 
         #region Taskbar handler
         private void TaskbarPlayPause_handler(object sender, EventArgs? e)

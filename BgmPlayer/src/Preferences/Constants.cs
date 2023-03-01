@@ -12,8 +12,8 @@
         public const string CACHE_FOLDER = ".cache";
         public const string THUMBNAIL_CACHE_LOCATION = $"{CACHE_FOLDER}/thumbnail.jpg";
         public const string DEFAULT_MUSIC_TITLE = "BGM Player";
-        public const string FILTER = "Wave sound|*.wav";
-        public const string VALID_PATH_REGEX = ".wav$";
+        public const string FILTER = "Wave sound|*.wav|Vorbis|*.ogg";
+        public const string VALID_PATH_REGEX = ".(wav|ogg)$";
 
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
