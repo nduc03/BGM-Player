@@ -26,7 +26,7 @@ namespace bgmPlayer
             {
                 int introRead = introStream.Read(buffer, offset, count);
                 if (introRead < count)
-                    return introRead + loopStream.Read(buffer, offset + introRead, count - introRead);
+                    return introRead + base.Read(buffer, offset + introRead, count - introRead);
                 return introRead;
             }
             else

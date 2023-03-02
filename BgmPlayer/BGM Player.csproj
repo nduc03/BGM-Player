@@ -20,7 +20,7 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
-		<AssemblyVersion>1.8.0</AssemblyVersion>
+		<AssemblyVersion>1.8.1</AssemblyVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">

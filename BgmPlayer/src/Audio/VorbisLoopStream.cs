@@ -1,6 +1,5 @@
 ﻿using NAudio.Vorbis;
 using NAudio.Wave;
-using System.IO;
 
 namespace bgmPlayer
 {
@@ -9,7 +8,6 @@ namespace bgmPlayer
     {
         public VorbisLoopStream(string path) : base(path)
         {
-            if (!File.Exists(path)) throw new FileNotFoundException("Vorbis loop not found file");
             EnableLooping = true;
         }
 
