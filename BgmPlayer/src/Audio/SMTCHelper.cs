@@ -64,7 +64,6 @@ namespace bgmPlayer
             if (!isInitialized) return;
             string? title = IntroPath == null || LoopPath == null ? 
                 AppConstants.DEFAULT_MUSIC_TITLE : Utils.GetBgmFileName(IntroPath, LoopPath);
-            string artist = string.Empty;
             if (title == null)
             {
                 if (IntroPath != string.Empty && LoopPath == string.Empty)
@@ -78,11 +77,9 @@ namespace bgmPlayer
 #if ME
                 if (!File.Exists(AppConstants.DISABLE_OST_NAME))
                     title = Utils.GetArknightsOstName(title);
-                artist = "Monster Siren Records";
 #endif
             }
             updater.MusicProperties.Title = title ?? AppConstants.DEFAULT_MUSIC_TITLE;
-            updater.MusicProperties.Artist = artist ?? string.Empty;
             Application.Current.MainWindow.Title = title ?? AppConstants.DEFAULT_MUSIC_TITLE;
             updater.Update();
         }
