@@ -166,7 +166,7 @@ namespace bgmPlayer
                 if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    TaskbarChangeToPlay();
+                    Stop_Click(null, null);
                     return;
                 }
             }
@@ -175,7 +175,7 @@ namespace bgmPlayer
                 if (AudioManager.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioManagerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    TaskbarChangeToPlay();
+                    Stop_Click(null, null);
                     return;
                 }
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
