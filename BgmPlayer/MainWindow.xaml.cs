@@ -47,7 +47,7 @@ namespace bgmPlayer
                 currentVolume = (int)AppConstants.VOLUME_SCALE;
 
             VolSlider.Value = currentVolume;
-            AudioManager.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
+            AudioPlayer.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
         }
 
         private void InitCheckbox()
@@ -133,7 +133,7 @@ namespace bgmPlayer
                 isPause = false;
                 try
                 {
-                    AudioManager.Continue();
+                    AudioPlayer.Continue();
                     SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
                     timer.Start();
                 }
@@ -163,7 +163,7 @@ namespace bgmPlayer
                 // else -> PlayLoop loop path
                 string filePath = PathHelper.Intro != string.Empty ? PathHelper.Intro : PathHelper.Loop;
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
-                if (AudioManager.PlayLoop(filePath) == AudioManagerState.FAILED)
+                if (AudioPlayer.PlayLoop(filePath) == AudioPlayerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Stop_Click(null, null);
@@ -172,7 +172,7 @@ namespace bgmPlayer
             }
             else
             {
-                if (AudioManager.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioManagerState.FAILED)
+                if (AudioPlayer.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioPlayerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Stop_Click(null, null);
@@ -188,7 +188,7 @@ namespace bgmPlayer
         private void Stop_Click(object? sender, RoutedEventArgs? e)
         {
             isPause = false;
-            AudioManager.Stop();
+            AudioPlayer.Stop();
             AllowChooseFile(true);
             play_button.IsEnabled = true;
             stop_button.IsEnabled = false;
@@ -202,7 +202,7 @@ namespace bgmPlayer
         private void Pause_Click(object sender, RoutedEventArgs? e)
         {
             isPause = true;
-            AudioManager.Pause();
+            AudioPlayer.Pause();
             pause_button.IsEnabled = false;
             play_button.IsEnabled = true;
             stop_button.IsEnabled = true;
@@ -214,7 +214,7 @@ namespace bgmPlayer
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
             if (PathHelper.Intro == string.Empty) return;
-            if (AudioManager.IsStopped)
+            if (AudioPlayer.IsStopped)
             {
                 PathHelper.Intro = string.Empty;
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
@@ -228,7 +228,7 @@ namespace bgmPlayer
         private void RemoveLoop_Click(object sender, RoutedEventArgs e)
         {
             if (PathHelper.Loop == string.Empty) return;
-            if (AudioManager.IsStopped)
+            if (AudioPlayer.IsStopped)
             {
                 PathHelper.Loop = string.Empty;
                 SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
@@ -320,7 +320,11 @@ namespace bgmPlayer
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             FileHelper.InstantSave();
-            base.OnClosing(e);
+            Hide();
+            // Garbage collector make some wierd problems in the app.
+            // Using Hide() as a temporary solution to fix.
+
+            //base.OnClosing(e);
         }
         #endregion
 
@@ -346,7 +350,7 @@ namespace bgmPlayer
             currentVolume = Volume;
             VolSlider.Value = Volume;
             VolValue.Text = Volume.ToString();
-            AudioManager.SetVolume(Volume / AppConstants.VOLUME_SCALE);
+            AudioPlayer.SetVolume(Volume / AppConstants.VOLUME_SCALE);
             PreferencesHelper.SavePreferences(Volume: Volume);
         }
         #endregion

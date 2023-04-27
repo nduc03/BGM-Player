@@ -20,7 +20,7 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
-		<AssemblyVersion>1.9.0</AssemblyVersion>
+		<AssemblyVersion>1.9.1</AssemblyVersion>
 		<UseWindowsForms>True</UseWindowsForms>
 	</PropertyGroup>
 
@@ -54,19 +54,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="icon\music.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="NAudio.Core" Version="2.1.0" />
 		<PackageReference Include="NAudio.Extras" Version="2.1.0" />
 		<PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="icon\dusk_arknights.ico">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Resource>
+		<Resource Include="icon\music.ico" />
+		<Resource Include="icon\dusk_arknights.ico" />
 		<Resource Include="icon\schwarz.ico" />
 		<Resource Include="img\pause.png" />
 		<Resource Include="img\play.png" />

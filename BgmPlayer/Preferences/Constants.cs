@@ -26,7 +26,7 @@
 #endif
     }
 
-    public enum AudioManagerState
+    public enum AudioPlayerState
     {
         OK, FAILED
     }

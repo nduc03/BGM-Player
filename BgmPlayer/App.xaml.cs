@@ -6,12 +6,16 @@ namespace bgmPlayer
 {
     public partial class App : Application
     {
-        public static System.Windows.Forms.NotifyIcon icon;
+        private static System.Windows.Forms.NotifyIcon icon;
         private static Mutex? mutex = null;
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            mutex = new Mutex(true, "BgmPlayer", out bool IsNewInstance);
+            var MutexName = "BgmPlayer";
+#if DEBUG
+            MutexName = "Debug";
+#endif
+            mutex = new Mutex(true, MutexName, out bool IsNewInstance);
             if (!IsNewInstance)
             {
                 MessageBox.Show("App is running.");
@@ -30,7 +34,7 @@ namespace bgmPlayer
             IconUri = "icon/dusk_arknights.ico";
 #endif
             System.Windows.Forms.ToolStripMenuItem menuItem = new("Exit");
-            menuItem.Click += new EventHandler(LeftClick);
+            menuItem.Click += new EventHandler(ExitContext);
             menuItem.Name = "Exit";
             icon = new System.Windows.Forms.NotifyIcon();
             icon.DoubleClick += new EventHandler(ShowMainWindow);
@@ -40,7 +44,7 @@ namespace bgmPlayer
             icon.ContextMenuStrip.Items.Add(menuItem);
         }
 
-        private void LeftClick(object? sender, EventArgs? e)
+        private void ExitContext(object? sender, EventArgs? e)
         {
             Current.Shutdown();
         }

@@ -3,14 +3,14 @@ using System.Diagnostics;
 using System;
 using System.Windows;
 using NAudio.Wave;
-using NAudio.Vorbis;
 
 namespace bgmPlayer
 {
     /// <summary>
-    /// Provide set of funtions to manage and control music using NAudio library.
+    /// Wrapper of NAudio library for bgmPlayer
+    /// Provide set of funtions to manage and control music by using NAudio library.
     /// </summary>
-    public static class AudioManager
+    public static class AudioPlayer
     {
         private static WaveOutEvent? outputDevice;
         private static AudioFileReader? audioFile;
@@ -44,19 +44,19 @@ namespace bgmPlayer
         /// Start looping new music.
         /// </summary>
         /// <param name="audioPath">Path to music file that needs to loop.</param>
-        public static AudioManagerState PlayLoop(string audioPath)
+        public static AudioPlayerState PlayLoop(string audioPath)
         {
             if (!File.Exists(audioPath))
             {
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
-                return AudioManagerState.FAILED;
+                return AudioPlayerState.FAILED;
             }
             try
             {
                 InitAudio();
                 if (audioPath.EndsWith(".ogg"))
                 {
-                    VorbisBGMLoopStream loopStream = new(audioPath);
+                    VorbisLoopStream loopStream = new(audioPath);
                     outputDevice!.Init(loopStream);
                 }
                 else
@@ -66,12 +66,12 @@ namespace bgmPlayer
                 }
                 outputDevice.Play();
                 AudioState = AudioState.PLAY;
-                return AudioManagerState.OK;
+                return AudioPlayerState.OK;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
-                return AudioManagerState.FAILED;
+                return AudioPlayerState.FAILED;
             }
         }
 
@@ -81,7 +81,7 @@ namespace bgmPlayer
         /// Function plays from start music file then plays a loop music file unlimited times.
         /// An output device need to be initialized by calling <see cref="InitAudio"/>
         /// </summary>
-        public static AudioManagerState PlayBGM(string introPath, string loopPath)
+        public static AudioPlayerState PlayBGM(string introPath, string loopPath)
         {
             try
             {
@@ -100,36 +100,36 @@ namespace bgmPlayer
                 SetVolume(volume);
                 outputDevice.Play();
                 AudioState = AudioState.PLAY;
-                return AudioManagerState.OK;
+                return AudioPlayerState.OK;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
-                return AudioManagerState.FAILED;
+                return AudioPlayerState.FAILED;
             }
         }
 
         /// <summary>
         /// Continue the paused audio.
         /// </summary>
-        public static AudioManagerState Continue()
+        public static AudioPlayerState Continue()
         {
-            if (outputDevice == null) return AudioManagerState.FAILED;
+            if (outputDevice == null) return AudioPlayerState.FAILED;
             SetVolume(volume);
             outputDevice.Play();
             AudioState = AudioState.PLAY;
-            return AudioManagerState.OK;
+            return AudioPlayerState.OK;
         }
 
         /// <summary>
         /// Pause audio.
         /// </summary>
-        public static AudioManagerState Pause()
+        public static AudioPlayerState Pause()
         {
-            if (outputDevice == null) return AudioManagerState.FAILED;
+            if (outputDevice == null) return AudioPlayerState.FAILED;
             outputDevice.Pause();
             AudioState = AudioState.PAUSE;
-            return AudioManagerState.OK;
+            return AudioPlayerState.OK;
         }
 
         /// <summary>
@@ -155,13 +155,13 @@ namespace bgmPlayer
         /// Set volume for audio.
         /// <paramref name="Volume"/>: Should be between 0f and 1f
         /// </summary>
-        public static AudioManagerState SetVolume(float Volume)
+        public static AudioPlayerState SetVolume(float Volume)
         {
             volume = Math.Clamp(Volume, 0.0f, 1.0f);
             if (outputDevice == null)
             {
                 Debug.WriteLine("SetVolume: outputDevice = null");
-                return AudioManagerState.FAILED;
+                return AudioPlayerState.FAILED;
             }
 
             // Decided not delete this old code because it is fun
@@ -182,7 +182,7 @@ namespace bgmPlayer
             // Better new code:
             outputDevice.Volume = Math.Clamp(Volume, 0.0f, 1.0f);
 
-            return AudioManagerState.OK;
+            return AudioPlayerState.OK;
         }
 
         /// <summary>
