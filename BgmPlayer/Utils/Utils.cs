@@ -6,14 +6,14 @@ namespace bgmPlayer
 {
     public static class Utils
     {
-    /// <summary>
-    /// Get BGM name of intro and loop file.
-    /// Only work correctly with correct pattern.
-    /// Pattern: file_name_intro, file_name_loop
-    /// </summary>
-    /// <param name="path1">Full absolute path to intro or loop file</param>
-    /// <param name="path2">Full absolute path to intro or loop file</param>
-    /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
+        /// <summary>
+        /// Get BGM name of intro and loop file.
+        /// Only work correctly with correct pattern.
+        /// Pattern: file_name_intro, file_name_loop
+        /// </summary>
+        /// <param name="path1">Full absolute path to intro or loop file</param>
+        /// <param name="path2">Full absolute path to intro or loop file</param>
+        /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
         public static string? GetBgmFileName(string path1, string path2)
         {
             string p1 = Path.GetFileNameWithoutExtension(path1);
@@ -39,6 +39,7 @@ namespace bgmPlayer
                 "m_bat_ccs8_b1"        => "Fading Sky",
                 "m_bat_ccs9"           => "Surging Tide",
                 "m_bat_ccs10"          => "Crawling Forward!",
+                "m_bat_martyr"         => "殉道之人 (The Martyr)",
                 "m_bat_dsdevr"         => "愚人曲 (Stultifer Cantus)",
                 "m_avg_doubledragons"  => "雙龍 (Double Dragons)",
                 "m_avg_towerfierce"    => "高塔冲突 (Tower Fierce)",

@@ -20,7 +20,8 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
-		<AssemblyVersion>1.8.3</AssemblyVersion>
+		<AssemblyVersion>1.9.0</AssemblyVersion>
+		<UseWindowsForms>True</UseWindowsForms>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|AnyCPU'">
@@ -41,6 +42,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="icon\dusk_arknights.ico" />
+		<None Remove="icon\schwarz.ico" />
 		<None Remove="img\pause.png" />
 		<None Remove="img\play.png" />
 		<None Remove="img\schwarz.jpg" />
@@ -51,7 +54,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="icon\music.ico" />
+		<Resource Include="icon\music.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,6 +64,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="icon\dusk_arknights.ico">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="icon\schwarz.ico" />
 		<Resource Include="img\pause.png" />
 		<Resource Include="img\play.png" />
 		<Resource Include="img\schwarz.jpg" />
