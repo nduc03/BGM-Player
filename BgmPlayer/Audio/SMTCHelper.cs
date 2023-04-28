@@ -9,14 +9,16 @@ namespace bgmPlayer
 {
     public static class SMTCHelper
     {
-        public static bool IsSmtcEnable
+        public static bool IsEnable
         {
             get
             {
                 if (!isInitialized) return false;
                 return smtc.IsEnabled;
             }
+            set { smtc.IsEnabled = value; }
         }
+        public static string? Title { get; private set; }
 
         private static readonly Windows.Media.Playback.MediaPlayer mediaPlayer = new();
         private static readonly SystemMediaTransportControls smtc = mediaPlayer.SystemMediaTransportControls;
@@ -41,17 +43,10 @@ namespace bgmPlayer
             UpdateThumbnail();
             smtc.IsEnabled = true;
             isInitialized = true;
-            PathHelper.AllEmpty += Disable;
-        }
-
-        public static void Enable() 
-        {
-            smtc.IsEnabled = true;
-        }
-
-        public static void Disable()
-        {
-            smtc.IsEnabled = false;
+            PathHelper.AllEmpty += () =>
+            {
+                IsEnable = false;
+            };
         }
 
         public static void UpdateStatus(MediaPlaybackStatus playbackStatus)
@@ -62,25 +57,14 @@ namespace bgmPlayer
         public static void UpdateTitle(string? IntroPath, string? LoopPath)
         {
             if (!isInitialized) return;
-            string? title = IntroPath == null || LoopPath == null ? 
-                AppConstants.DEFAULT_MUSIC_TITLE : Utils.GetBgmFileName(IntroPath, LoopPath);
-            if (title == null)
-            {
-                if (IntroPath != string.Empty && LoopPath == string.Empty)
-                    title = Path.GetFileNameWithoutExtension(IntroPath);
-                else if (LoopPath != string.Empty && IntroPath == string.Empty)
-                    title = Path.GetFileNameWithoutExtension(LoopPath);
-                else title = AppConstants.DEFAULT_MUSIC_TITLE;
-            }
-            else
-            {
+            Title = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE);
 #if ME
-                if (!File.Exists(AppConstants.DISABLE_OST_NAME))
-                    title = Utils.GetArknightsOstName(title);
+            if (!File.Exists(AppConstants.DISABLE_OST_NAME))
+                Title = Utils.GetArknightsOstName(Title!);
 #endif
-            }
-            updater.MusicProperties.Title = title ?? AppConstants.DEFAULT_MUSIC_TITLE;
-            Application.Current.MainWindow.Title = title ?? AppConstants.DEFAULT_MUSIC_TITLE;
+            updater.MusicProperties.Title = Title!;
+            if (Application.Current.MainWindow != null)
+                Application.Current.MainWindow.Title = Title!;
             updater.Update();
         }
 

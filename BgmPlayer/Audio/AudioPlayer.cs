@@ -1,14 +1,15 @@
-﻿using System.IO;
-using System.Diagnostics;
+﻿using NAudio.Wave;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
-using NAudio.Wave;
+using Windows.Media;
 
 namespace bgmPlayer
 {
     /// <summary>
     /// Wrapper of NAudio library for bgmPlayer
-    /// Provide set of funtions to manage and control music by using NAudio library.
+    /// Provide set of functions to manage and control music by using NAudio library.
     /// </summary>
     public static class AudioPlayer
     {
@@ -16,7 +17,10 @@ namespace bgmPlayer
         private static AudioFileReader? audioFile;
         private static float volume = 1f;
 
-        public static AudioState AudioState = AudioState.STOP;
+        public static AudioState CurrentState = AudioState.STOP;
+
+        public delegate void PlayState(AudioState state);
+        public static event PlayState? StateChanged;
         public static bool IsStopped
         {
             get
@@ -27,7 +31,8 @@ namespace bgmPlayer
                 else return false;
             }
         }
-        public static bool IsPlaying { get { return !IsStopped; } }
+        public static bool IsPlaying { get { return CurrentState == AudioState.PLAY; } }
+        public static bool IsPause { get { return CurrentState == AudioState.PAUSE; } }
 
         private static void InitAudio()
         {
@@ -41,10 +46,10 @@ namespace bgmPlayer
         }
 
         /// <summary>
-        /// Start looping new music.
+        /// Play looped music seamlessly.
         /// </summary>
         /// <param name="audioPath">Path to music file that needs to loop.</param>
-        public static AudioPlayerState PlayLoop(string audioPath)
+        public static AudioPlayerState PlayLoop(string? audioPath)
         {
             if (!File.Exists(audioPath))
             {
@@ -65,7 +70,10 @@ namespace bgmPlayer
                     outputDevice!.Init(loopStream);
                 }
                 outputDevice.Play();
-                AudioState = AudioState.PLAY;
+                SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
+                CurrentState = AudioState.PLAY;
+                StateChanged?.Invoke(AudioState.PLAY);
+                SMTCHelper.UpdateTitle(null, audioPath);
                 return AudioPlayerState.OK;
             }
             catch (Exception e)
@@ -76,13 +84,22 @@ namespace bgmPlayer
         }
 
         /// <summary>
-        /// Special method that auto arrange music part and play an infinite BGM.
-        /// An infinite BGM requires two part: start part and loop part.
-        /// Function plays from start music file then plays a loop music file unlimited times.
-        /// An output device need to be initialized by calling <see cref="InitAudio"/>
+        /// Play seamless BGM with optional intro segment.
+        /// If both <paramref name="introPath"/> and <paramref name="loopPath"/> is specified, play looped BGM with 
+        /// intro segment from <paramref name="introPath"/>.
+        /// If intro segment is not needed, <paramref name="introPath"/> and <paramref name="loopPath"/> have the same
+        /// purpose, set one path and leave the remaining param to <c>string.Empty</c> or <c>null</c>.
         /// </summary>
-        public static AudioPlayerState PlayBGM(string introPath, string loopPath)
+        public static AudioPlayerState PlayBGM(string? introPath, string? loopPath)
         {
+            if (introPath == null || loopPath == null)
+            {
+                return PlayLoop(introPath ?? loopPath);
+            }
+            if (introPath == string.Empty || loopPath == string.Empty)
+            {
+                return PlayLoop(introPath != string.Empty ? introPath : loopPath);
+            }
             try
             {
                 InitAudio();
@@ -99,7 +116,10 @@ namespace bgmPlayer
                 }
                 SetVolume(volume);
                 outputDevice.Play();
-                AudioState = AudioState.PLAY;
+                SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
+                CurrentState = AudioState.PLAY;
+                StateChanged?.Invoke(AudioState.PLAY);
+                SMTCHelper.UpdateTitle(introPath, loopPath);
                 return AudioPlayerState.OK;
             }
             catch (Exception e)
@@ -117,7 +137,9 @@ namespace bgmPlayer
             if (outputDevice == null) return AudioPlayerState.FAILED;
             SetVolume(volume);
             outputDevice.Play();
-            AudioState = AudioState.PLAY;
+            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
+            CurrentState = AudioState.PLAY;
+            StateChanged?.Invoke(AudioState.PLAY);
             return AudioPlayerState.OK;
         }
 
@@ -128,7 +150,9 @@ namespace bgmPlayer
         {
             if (outputDevice == null) return AudioPlayerState.FAILED;
             outputDevice.Pause();
-            AudioState = AudioState.PAUSE;
+            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Paused);
+            CurrentState = AudioState.PAUSE;
+            StateChanged?.Invoke(AudioState.PAUSE);
             return AudioPlayerState.OK;
         }
 
@@ -148,7 +172,9 @@ namespace bgmPlayer
                 audioFile.Dispose();
                 audioFile = null;
             }
-            AudioState = AudioState.STOP;
+            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Stopped);
+            CurrentState = AudioState.STOP;
+            StateChanged?.Invoke(AudioState.STOP);
         }
 
         /// <summary>

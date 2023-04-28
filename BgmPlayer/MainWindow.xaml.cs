@@ -1,10 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Windows;
 using System.Diagnostics;
-using Windows.Media;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Windows.Media;
 
 namespace bgmPlayer
 {
@@ -14,7 +13,6 @@ namespace bgmPlayer
         private readonly Timer timer = Timer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
 
-        private bool isPause = false;
         private bool allowControlBySMTC = false;
         private int currentVolume = 100;
 
@@ -32,6 +30,12 @@ namespace bgmPlayer
             InitCheckbox();
             InitBackground();
             InitTimer();
+
+            UpdateAudioControlButton(AudioPlayer.CurrentState);
+            AllowChooseFile(AudioPlayer.IsStopped);
+            Title = SMTCHelper.Title ?? AppConstants.DEFAULT_MUSIC_TITLE;
+
+            AudioPlayer.StateChanged += UpdateAudioControlButton;
         }
 
         #region Initialize
@@ -114,7 +118,6 @@ namespace bgmPlayer
 
         private void Play_Click(object sender, RoutedEventArgs? e)
         {
-            // If both 2 two files is not set
             if (PathHelper.Intro == string.Empty && PathHelper.Loop == string.Empty)
             {
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
@@ -122,92 +125,51 @@ namespace bgmPlayer
             }
 
             AllowChooseFile(false);
-            play_button.IsEnabled = false;
-            stop_button.IsEnabled = true;
-            pause_button.IsEnabled = true;
-            SMTCHelper.Enable();
-            TaskbarChangeToPause();
+            UpdateAudioControlButton(AudioState.PLAY);
+            SMTCHelper.IsEnable = true;
+            TaskbarChangeIconToPause();
 
-            if (isPause)
+            if (AudioPlayer.IsPause)
             {
-                isPause = false;
                 try
                 {
                     AudioPlayer.Continue();
-                    SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
                     timer.Start();
                 }
                 catch (NAudio.MmException)
                 {
-                    if (MessageBox.Show(
-                            "Some problem with audio devices or drivers, the music cannot be played, consider restart this app or computer.\n" +
-                                "Choose 'Yes' to restart the app or 'No' to stop the music.",
-                            "Error!",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Error
-                        ) == MessageBoxResult.Yes)
-                    {
-                        Process.Start(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetExecutingAssembly().Location));
-                        Application.Current.Shutdown();
-                    }
-                    else
-                        Stop_Click(null, null);
+                    MessageBox.Show(AppConstants.AUDIO_DEVICE_ERROR_MSG, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Stop_Click(null, null);
                 }
                 return;
             }
 
-            // If only one file is not set -> still play music but in loop mode.
-            if (PathHelper.Intro == string.Empty || PathHelper.Loop == string.Empty)
+            if (AudioPlayer.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioPlayerState.FAILED)
             {
-                // Check if start path is found -> PlayLoop start path
-                // else -> PlayLoop loop path
-                string filePath = PathHelper.Intro != string.Empty ? PathHelper.Intro : PathHelper.Loop;
-                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
-                if (AudioPlayer.PlayLoop(filePath) == AudioPlayerState.FAILED)
-                {
-                    MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Stop_Click(null, null);
-                    return;
-                }
+                MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                Stop_Click(null, null);
+                return;
             }
-            else
-            {
-                if (AudioPlayer.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioPlayerState.FAILED)
-                {
-                    MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Stop_Click(null, null);
-                    return;
-                }
-                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
-            }
+
             timer.Start();
-            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
             allowControlBySMTC = true;
         }
 
         private void Stop_Click(object? sender, RoutedEventArgs? e)
         {
-            isPause = false;
             AudioPlayer.Stop();
             AllowChooseFile(true);
-            play_button.IsEnabled = true;
-            stop_button.IsEnabled = false;
-            pause_button.IsEnabled = false;
-            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Stopped);
-            TaskbarChangeToPlay();
+            UpdateAudioControlButton(AudioState.STOP);
+            TaskbarChangeIconToPlay();
             timer.Stop();
             timer.Reset();
         }
 
         private void Pause_Click(object sender, RoutedEventArgs? e)
         {
-            isPause = true;
             AudioPlayer.Pause();
-            pause_button.IsEnabled = false;
-            play_button.IsEnabled = true;
-            stop_button.IsEnabled = true;
-            SMTCHelper.UpdateStatus(MediaPlaybackStatus.Paused);
-            TaskbarChangeToPlay();
+            UpdateAudioControlButton(AudioState.PAUSE);
+            TaskbarChangeIconToPlay();
             timer.Stop();
         }
 
@@ -238,30 +200,27 @@ namespace bgmPlayer
                 MessageBox.Show("Stop music before removing music file.");
             }
         }
-#endregion
+        #endregion
 
         #region Taskbar handler
         private void TaskbarPlayPause_handler(object sender, EventArgs? e)
         {
-            if (play_button.IsEnabled && SMTCHelper.IsSmtcEnable)
+            if ((AudioPlayer.IsPause || AudioPlayer.IsStopped) && SMTCHelper.IsEnable)
             {
-                TaskbarChangeToPause();
+                TaskbarChangeIconToPause();
                 Play_Click(sender, null);
             }
-            else if (pause_button.IsEnabled)
+            else if (AudioPlayer.IsPlaying)
             {
-                TaskbarChangeToPlay();
+                TaskbarChangeIconToPlay();
                 Pause_Click(sender, null);
             }
-            else
-            {
-                return;
-            }
+            else return;
         }
 
         private void TaskbarStop_handler(object sender, EventArgs? e)
         {
-            if (stop_button.IsEnabled)
+            if (!AudioPlayer.IsStopped)
                 Stop_Click(sender, null);
         }
         #endregion
@@ -317,15 +276,6 @@ namespace bgmPlayer
         {
             SetVolume(Math.Clamp(currentVolume + (e.Delta / AppConstants.MOUSE_WHEEL_SCALE), 0, 100));
         }
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
-        {
-            FileHelper.InstantSave();
-            Hide();
-            // Garbage collector make some wierd problems in the app.
-            // Using Hide() as a temporary solution to fix.
-
-            //base.OnClosing(e);
-        }
         #endregion
 
         #region Private helper methods
@@ -335,12 +285,12 @@ namespace bgmPlayer
             loop_button.IsEnabled = isAllow;
         }
 
-        private void TaskbarChangeToPlay()
+        private void TaskbarChangeIconToPlay()
         {
             play_pause_taskbar.ImageSource = new BitmapImage(new Uri("pack://application:,,,/img/play.png"));
         }
 
-        private void TaskbarChangeToPause()
+        private void TaskbarChangeIconToPause()
         {
             play_pause_taskbar.ImageSource = new BitmapImage(new Uri("pack://application:,,,/img/pause.png"));
         }
@@ -352,6 +302,27 @@ namespace bgmPlayer
             VolValue.Text = Volume.ToString();
             AudioPlayer.SetVolume(Volume / AppConstants.VOLUME_SCALE);
             PreferencesHelper.SavePreferences(Volume: Volume);
+        }
+        private void UpdateAudioControlButton(AudioState audioState)
+        {
+            switch (audioState)
+            {
+                case AudioState.PLAY:
+                    play_button.IsEnabled = false;
+                    stop_button.IsEnabled = true;
+                    pause_button.IsEnabled = true;
+                    break;
+                case AudioState.PAUSE:
+                    pause_button.IsEnabled = false;
+                    play_button.IsEnabled = true;
+                    stop_button.IsEnabled = true;
+                    break;
+                case AudioState.STOP:
+                    play_button.IsEnabled = true;
+                    stop_button.IsEnabled = false;
+                    pause_button.IsEnabled = false;
+                    break;
+            }
         }
         #endregion
     }

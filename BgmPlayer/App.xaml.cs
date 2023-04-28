@@ -8,6 +8,7 @@ namespace bgmPlayer
     {
         private static System.Windows.Forms.NotifyIcon icon;
         private static Mutex? mutex = null;
+        private static bool exitBoxShowing = false;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -34,7 +35,7 @@ namespace bgmPlayer
             IconUri = "icon/dusk_arknights.ico";
 #endif
             System.Windows.Forms.ToolStripMenuItem menuItem = new("Exit");
-            menuItem.Click += new EventHandler(ExitContext);
+            menuItem.Click += new EventHandler(ExitApp);
             menuItem.Name = "Exit";
             icon = new System.Windows.Forms.NotifyIcon();
             icon.DoubleClick += new EventHandler(ShowMainWindow);
@@ -44,9 +45,16 @@ namespace bgmPlayer
             icon.ContextMenuStrip.Items.Add(menuItem);
         }
 
-        private void ExitContext(object? sender, EventArgs? e)
+        private void ExitApp(object? sender, EventArgs? e)
         {
-            Current.Shutdown();
+            if (exitBoxShowing) return;
+            exitBoxShowing = true;
+            if (MessageBox.Show("Are you sure to quit?", "Exit confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                FileHelper.InstantSave();
+                Shutdown();
+            }
+            exitBoxShowing = false;
         }
         private void ShowMainWindow(object? sender, EventArgs? e)
         {

@@ -13,18 +13,22 @@ namespace bgmPlayer
         /// </summary>
         /// <param name="path1">Full absolute path to intro or loop file</param>
         /// <param name="path2">Full absolute path to intro or loop file</param>
-        /// <returns>If correct pattern return BGM name. Return null when function cannot find the pattern</returns>
-        public static string? GetBgmFileName(string path1, string path2)
+        /// <param name="invalidReturn">Set the return value when function cannot find pattern</param>
+        /// <returns>If correct pattern return BGM name, else return <paramref name="invalidReturn"/></returns>
+        public static string? GetBgmFileName(string? path1, string? path2, string? invalidReturn = null)
         {
+            if (path1 == null && path2 == null) return invalidReturn;
+            if (path1 == null) return Path.GetFileNameWithoutExtension(path2) ?? invalidReturn;
+            if (path2 == null) return Path.GetFileNameWithoutExtension(path1) ?? invalidReturn;
             string p1 = Path.GetFileNameWithoutExtension(path1);
             string p2 = Path.GetFileNameWithoutExtension(path2);
             if ((p1.EndsWith(AppConstants.INTRO_END) && p2.EndsWith(AppConstants.LOOP_END)) || (p2.EndsWith(AppConstants.INTRO_END) && p1.EndsWith(AppConstants.LOOP_END)))
             {
                 if (p1[..p1.LastIndexOf(AppConstants.INTRO_END)] == p2[..p2.LastIndexOf(AppConstants.LOOP_END)])
                     return p1[..p1.LastIndexOf(AppConstants.INTRO_END)];
-                return null;
+                return invalidReturn;
             }
-            return null;
+            return invalidReturn;
         }
 
 #if ME

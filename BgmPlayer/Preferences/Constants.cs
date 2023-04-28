@@ -14,7 +14,11 @@
         public const string DEFAULT_MUSIC_TITLE = "BGM Player";
         public const string FILTER = "Wave sound|*.wav|Vorbis|*.ogg";
         public const string VALID_PATH_REGEX = ".(wav|ogg)$";
-
+        public const string AUDIO_DEVICE_ERROR_MSG = """
+            Some problem with audio devices or drivers, the music cannot be played
+            Choose 'Ok' stop the music.
+            In case the problem still occurs, consider close and reopen the app or restart the computer.
+            """;
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
         public const int SAVE_PREFERENCES_DELAY = 1000;
