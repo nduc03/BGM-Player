@@ -6,7 +6,7 @@ namespace bgmPlayer
 {
     public partial class App : Application
     {
-        private static System.Windows.Forms.NotifyIcon icon;
+        private static System.Windows.Forms.NotifyIcon? icon;
         private static Mutex? mutex = null;
         private static bool exitBoxShowing = false;
 
@@ -37,11 +37,14 @@ namespace bgmPlayer
             System.Windows.Forms.ToolStripMenuItem menuItem = new("Exit");
             menuItem.Click += new EventHandler(ExitApp);
             menuItem.Name = "Exit";
-            icon = new System.Windows.Forms.NotifyIcon();
+            icon = new System.Windows.Forms.NotifyIcon
+            {
+                Text = "BGM Player",
+                Icon = new System.Drawing.Icon(GetResourceStream(new Uri(IconUri, UriKind.Relative)).Stream),
+                Visible = true,
+                ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip()
+            };
             icon.DoubleClick += new EventHandler(ShowMainWindow);
-            icon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            icon.Icon = new System.Drawing.Icon(GetResourceStream(new Uri(IconUri, UriKind.Relative)).Stream);
-            icon.Visible = true;
             icon.ContextMenuStrip.Items.Add(menuItem);
         }
 
