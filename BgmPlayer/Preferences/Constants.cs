@@ -1,8 +1,8 @@
 ﻿namespace bgmPlayer
 {
-    struct AppConstants
+    readonly struct AppConstants
     {
-        public const string USER_ERROR_TITLE = "User Error! Invalid input";
+        public const string USER_ERROR_TITLE = "User Error!";
         public const string ERROR_TITLE = "Error!";
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
         public const string DATA_FOLDER = "BGM_Player_Data";
@@ -15,8 +15,9 @@
         public const string FILTER = "Wave sound|*.wav|Vorbis|*.ogg";
         public const string VALID_PATH_REGEX = ".(wav|ogg)$";
         public const string AUDIO_DEVICE_ERROR_MSG = """
-            Some problem with audio devices or drivers, the music cannot be played
+            Audio devices or drivers error, the audio file(s) cannot be played.
             Choose 'Ok' stop the music.
+
             In case the problem still occurs, consider close and reopen the app or restart the computer.
             """;
         public const float VOLUME_SCALE = 100f;

@@ -12,7 +12,7 @@ namespace bgmPlayer
         {
             get
             {
-                if (instance == null) { instance = new Timer(); }
+                instance ??= new Timer();
                 return instance;
             }
         }
