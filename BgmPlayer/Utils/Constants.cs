@@ -6,7 +6,7 @@
         public const string ERROR_TITLE = "Error!";
         public const string FILE_MISSING = "Audio file missing! Please check again both start and loop file";
         public const string DATA_FOLDER = "BGM_Player_Data";
-        public const string CONFIG_LOCATION = $"{DATA_FOLDER}/preferences.json";
+        public const string SAVED_STATE_LOCATION = $"{DATA_FOLDER}/state.json";
         public const string INTRO_END = "_intro";
         public const string LOOP_END = "_loop";
         public const string CACHE_FOLDER = ".cache";

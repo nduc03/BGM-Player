@@ -6,17 +6,15 @@ using System.Windows.Controls;
 
 namespace bgmPlayer
 {
-    public static partial class PathHelper
+    public static partial class AudioPathManager
     {
-        // private static Note ExtRegex().IsMatch(string) = string.Endswith(a list of allowed extensions);
-
-        private static bool autoUpdateGUI = false;
-
+        // TODO: need refactor
         private static readonly OpenFileDialog IntroPath = new();
         private static readonly OpenFileDialog LoopPath = new();
         private static TextBlock? introField;
         private static TextBlock? loopField;
 
+        // private static Note ExtRegex().IsMatch(string) = string.Endswith(a list of allowed extensions);
         [GeneratedRegex(AppConstants.VALID_PATH_REGEX)]
         private static partial Regex ExtRegex();
 
@@ -37,10 +35,10 @@ namespace bgmPlayer
             {
                 if (value != string.Empty && !ExtRegex().IsMatch(value)) return;
                 if (File.Exists(value) || value == string.Empty) IntroPath.FileName = value; else return;
-                if (autoUpdateGUI) UpdateGUI();
+                UpdateGUI();
                 if (AutoFill) TryAutoSetLoop();
                 if (value == string.Empty) CheckAllEmpty();
-                PreferencesHelper.SavePreferences(IntroPath: Intro);
+                PersistedStateManager.SaveState(IntroPath: Intro);
             }
         }
         public static string Loop
@@ -56,55 +54,39 @@ namespace bgmPlayer
             {
                 if (value != string.Empty && !ExtRegex().IsMatch(value)) return;
                 LoopPath.FileName = (File.Exists(value) || value == string.Empty) ? value : Loop;
-                if (autoUpdateGUI) UpdateGUI();
+                UpdateGUI();
                 if (AutoFill) TryAutoSetIntro();
                 if (value != string.Empty) CheckAllEmpty();
-                PreferencesHelper.SavePreferences(LoopPath: Loop);
+                PersistedStateManager.SaveState(LoopPath: Loop);
             }
         }
-        public static void Init(Preferences? preferences = null, bool autoFill = false)
+        public static void Init(PersistedState? state = null, bool autoFill = false)
         {
             IntroPath.Filter = AppConstants.FILTER;
             LoopPath.Filter = AppConstants.FILTER;
             AutoFill = autoFill;
 
-            if (preferences != null)
+            if (state != null)
             {
-                if (File.Exists(preferences.IntroPath))
+                if (File.Exists(state.IntroPath))
                 {
-                    IntroPath.FileName = preferences.IntroPath;
+                    IntroPath.FileName = state.IntroPath;
                 }
-                if (File.Exists(preferences.LoopPath))
+                if (File.Exists(state.LoopPath))
                 {
-                    LoopPath.FileName = preferences.LoopPath;
+                    LoopPath.FileName = state.LoopPath;
                 }
             }
             CheckAllEmpty();
         }
 
-        public static void TurnOnAutoUpdateGUI(TextBlock IntroField, TextBlock LoopField)
+        public static void InitTextBlock(TextBlock IntroField, TextBlock LoopField)
         {
-            autoUpdateGUI= true;
             introField = IntroField;
             loopField = LoopField;
             IntroPath.FileOk += OnFileOkEvent;
             LoopPath.FileOk += OnFileOkEvent;
             UpdateGUI();
-        }
-
-        public static void TurnOffAutoUpdateGUI() 
-        {
-            autoUpdateGUI = false;
-            introField = null;
-            loopField = null;
-            IntroPath.FileOk -= OnFileOkEvent;
-            LoopPath.FileOk -= OnFileOkEvent;
-        }
-
-        public static void UpdateGUI(TextBlock IntroField, TextBlock LoopField)
-        {
-            IntroField.Text = Intro;
-            LoopField.Text = Loop;
         }
 
         public static string? OpenIntroPathDialog()
@@ -130,11 +112,10 @@ namespace bgmPlayer
         public static void TryAutoSetIntro()
         {
             if (AutoFill == false) return;
-            string loopPath = Loop;
 
-            if (!Path.GetFileNameWithoutExtension(loopPath).EndsWith(AppConstants.LOOP_END)) return;
+            string? expectedIntroPath = GetOtherPattern(Loop, AppConstants.LOOP_END, AppConstants.INTRO_END);
 
-            string expectedIntroPath = loopPath[..loopPath.LastIndexOf(AppConstants.LOOP_END[0])] + AppConstants.INTRO_END + Path.GetExtension(loopPath);
+            if (expectedIntroPath == null) return;
 
             if (Intro == expectedIntroPath) return;
 
@@ -147,11 +128,10 @@ namespace bgmPlayer
         public static void TryAutoSetLoop()
         {
             if (AutoFill == false) return;
-            string introPath = Intro;
 
-            if (!Path.GetFileNameWithoutExtension(introPath).EndsWith(AppConstants.INTRO_END)) return;
+            string? expectedLoopPath = GetOtherPattern(Intro, AppConstants.INTRO_END, AppConstants.LOOP_END);
 
-            string expectedLoopPath = introPath[..introPath.LastIndexOf(AppConstants.INTRO_END[0])] + AppConstants.LOOP_END + Path.GetExtension(introPath);
+            if (expectedLoopPath == null) return;
 
             if (Loop == expectedLoopPath) return;
 
@@ -160,6 +140,13 @@ namespace bgmPlayer
                 Loop = expectedLoopPath;
             }
         }
+
+        public static string? GetOtherPattern(string path, string currentEndPattern, string expectedEndPattern)
+        {
+            if (!Path.GetFileNameWithoutExtension(path).EndsWith(currentEndPattern)) return null;
+            return path[..path.LastIndexOf(currentEndPattern[0])] + expectedEndPattern + Path.GetExtension(path);
+        }
+
         private static void CheckAllEmpty()
         {
             if (Intro == string.Empty && Loop == string.Empty) AllEmpty?.Invoke();

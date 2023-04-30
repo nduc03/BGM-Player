@@ -9,7 +9,7 @@ namespace bgmPlayer
 {
     public partial class MainWindow : Window
     {
-        private readonly Preferences? preferences;
+        private readonly PersistedState? preferences;
         private readonly Timer timer = Timer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
 
@@ -18,12 +18,12 @@ namespace bgmPlayer
 
         public MainWindow()
         {
-            preferences = PreferencesHelper.LoadPreferences();
+            preferences = PersistedStateManager.LoadState();
             dispatcherTimer = new DispatcherTimer();
 
             InitializeComponent();
-            PathHelper.Init(preferences);
-            PathHelper.TurnOnAutoUpdateGUI(IntroField, LoopField);
+            AudioPathManager.Init(preferences);
+            AudioPathManager.InitTextBlock(IntroField, LoopField);
             InitVolume();
             SMTCHelper.InitSMTC(OnPlayPause);
             SMTCHelper.UpdateThumbnail();
@@ -56,15 +56,15 @@ namespace bgmPlayer
 
         private void InitCheckbox()
         {
-            var config = PreferencesHelper.LoadPreferences();
+            var config = PersistedStateManager.LoadState();
             if (config != null && config.AutoFill != null)
                 autoFill.IsChecked = config.AutoFill;
             else
             {
                 autoFill.IsChecked = false;
-                PreferencesHelper.SavePreferences(AutoFill: false);
+                PersistedStateManager.SaveState(AutoFill: false);
             }
-            PathHelper.AutoFill = autoFill.IsChecked ?? false;
+            AudioPathManager.AutoFill = autoFill.IsChecked ?? false;
         }
 
         private void InitBackground()
@@ -99,9 +99,9 @@ namespace bgmPlayer
         private void Intro_Click(object sender, RoutedEventArgs e)
         {
             allowControlBySMTC = false;
-            if (PathHelper.OpenIntroPathDialog() != null)
+            if (AudioPathManager.OpenIntroPathDialog() != null)
             {
-                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
+                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             allowControlBySMTC = true;
         }
@@ -109,16 +109,16 @@ namespace bgmPlayer
         private void Loop_Click(object sender, RoutedEventArgs e)
         {
             allowControlBySMTC = false;
-            if (PathHelper.OpenLoopPathDialog() != null)
+            if (AudioPathManager.OpenLoopPathDialog() != null)
             {
-                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
+                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             allowControlBySMTC = true;
         }
 
         private void Play_Click(object sender, RoutedEventArgs? e)
         {
-            if (PathHelper.Intro == string.Empty && PathHelper.Loop == string.Empty)
+            if (AudioPathManager.Intro == string.Empty && AudioPathManager.Loop == string.Empty)
             {
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return;
@@ -144,7 +144,7 @@ namespace bgmPlayer
                 return;
             }
 
-            if (AudioPlayer.PlayBGM(PathHelper.Intro, PathHelper.Loop) == AudioPlayerState.FAILED)
+            if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
             {
                 MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 Stop_Click(null, null);
@@ -175,11 +175,11 @@ namespace bgmPlayer
 
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
-            if (PathHelper.Intro == string.Empty) return;
+            if (AudioPathManager.Intro == string.Empty) return;
             if (AudioPlayer.IsStopped)
             {
-                PathHelper.Intro = string.Empty;
-                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
+                AudioPathManager.Intro = string.Empty;
+                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             else
             {
@@ -189,11 +189,11 @@ namespace bgmPlayer
 
         private void RemoveLoop_Click(object sender, RoutedEventArgs e)
         {
-            if (PathHelper.Loop == string.Empty) return;
+            if (AudioPathManager.Loop == string.Empty) return;
             if (AudioPlayer.IsStopped)
             {
-                PathHelper.Loop = string.Empty;
-                SMTCHelper.UpdateTitle(PathHelper.Intro, PathHelper.Loop);
+                AudioPathManager.Loop = string.Empty;
+                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             else
             {
@@ -257,14 +257,14 @@ namespace bgmPlayer
 
         private void OnChecked(object sender, RoutedEventArgs e)
         {
-            PreferencesHelper.SavePreferences(AutoFill: true);
-            PathHelper.AutoFill = true;
+            PersistedStateManager.SaveState(AutoFill: true);
+            AudioPathManager.AutoFill = true;
         }
 
         private void OnUnchecked(object sender, RoutedEventArgs e)
         {
-            PreferencesHelper.SavePreferences(AutoFill: false);
-            PathHelper.AutoFill = false;
+            PersistedStateManager.SaveState(AutoFill: false);
+            AudioPathManager.AutoFill = false;
         }
 
         private void VolSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -301,7 +301,7 @@ namespace bgmPlayer
             VolSlider.Value = Volume;
             VolValue.Text = Volume.ToString();
             AudioPlayer.SetVolume(Volume / AppConstants.VOLUME_SCALE);
-            PreferencesHelper.SavePreferences(Volume: Volume);
+            PersistedStateManager.SaveState(Volume: Volume);
         }
         private void UpdateAudioControlButton(AudioState audioState)
         {

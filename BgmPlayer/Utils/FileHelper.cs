@@ -7,11 +7,11 @@ namespace bgmPlayer
     public static class FileHelper
     {
         private static System.Timers.Timer? timer = null;
-        private static Preferences? data = null;
+        private static PersistedState? data = null;
 
         // Reduce pressure on hard drive by only save data to RAM first
         // then wait for a delay before saving the last data on RAM to hard drive
-        public static void ApplyPreferences(Preferences preferences)
+        public static void ApplyState(PersistedState state)
         {
             if (timer == null)
             {
@@ -22,19 +22,19 @@ namespace bgmPlayer
                 };
                 timer.Elapsed += (sender, args) =>
                 {
-                    SaveData(AppConstants.CONFIG_LOCATION);
+                    SaveData(AppConstants.SAVED_STATE_LOCATION);
                     timer.Stop();
                     timer.Dispose();
                     timer = null;
                 };
                 timer.Start();
             }
-            data = preferences;
+            data = state;
         }
 
         public static void InstantSave()
         {
-            SaveData(AppConstants.CONFIG_LOCATION);
+            SaveData(AppConstants.SAVED_STATE_LOCATION);
             if (timer != null)
             {
                 timer.Stop();

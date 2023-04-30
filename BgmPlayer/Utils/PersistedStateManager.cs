@@ -4,21 +4,21 @@ using System.Text.Json;
 
 namespace bgmPlayer
 {
-    public static class PreferencesHelper
+    public static class PersistedStateManager
     {
-        private static Preferences? dataCache = null;
+        private static PersistedState? dataCache = null;
 
-        public static Preferences? LoadPreferences()
+        public static PersistedState? LoadState()
         {
             if (dataCache != null) return dataCache;
 
-            Preferences? data;
-            if (!File.Exists(AppConstants.CONFIG_LOCATION)) return null;
+            PersistedState? data;
+            if (!File.Exists(AppConstants.SAVED_STATE_LOCATION)) return null;
 
-            string fileContent = File.ReadAllText(AppConstants.CONFIG_LOCATION);
+            string fileContent = File.ReadAllText(AppConstants.SAVED_STATE_LOCATION);
             try
             {
-                data = JsonSerializer.Deserialize<Preferences>(fileContent);
+                data = JsonSerializer.Deserialize<PersistedState>(fileContent);
             }
             catch
             {
@@ -29,19 +29,19 @@ namespace bgmPlayer
             return data;
         }
 
-        public static void SavePreferences(
+        public static void SaveState(
             string? IntroPath = null,
             string? LoopPath = null,
             float? Volume = null,
             bool? AutoFill = null
         )
         {
-            Preferences? data = dataCache ?? LoadPreferences();
+            PersistedState? data = dataCache ?? LoadState();
             if (data == null)
             {
                 Directory.CreateDirectory(AppConstants.DATA_FOLDER);
-                File.Create(AppConstants.CONFIG_LOCATION).Close();
-                data = new Preferences();
+                File.Create(AppConstants.SAVED_STATE_LOCATION).Close();
+                data = new PersistedState();
             }
 
             if (IntroPath != null) data.IntroPath = IntroPath;
@@ -50,7 +50,7 @@ namespace bgmPlayer
             if (AutoFill != null) data.AutoFill = AutoFill;
 
             dataCache = data;
-            FileHelper.ApplyPreferences(data);
+            FileHelper.ApplyState(data);
         }
     }
 }

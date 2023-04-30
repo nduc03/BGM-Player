@@ -43,7 +43,7 @@ namespace bgmPlayer
             UpdateThumbnail();
             smtc.IsEnabled = true;
             isInitialized = true;
-            PathHelper.AllEmpty += () =>
+            AudioPathManager.AllEmpty += () =>
             {
                 IsEnable = false;
             };
