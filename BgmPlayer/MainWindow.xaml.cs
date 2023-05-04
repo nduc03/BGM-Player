@@ -115,7 +115,7 @@ namespace bgmPlayer
             allowControlBySMTC = true;
         }
 
-        private void Play_Click(object sender, RoutedEventArgs? e)
+        private void PlayPause_Click(object sender, RoutedEventArgs? e)
         {
             if (AudioPathManager.Intro == string.Empty && AudioPathManager.Loop == string.Empty)
             {
@@ -126,13 +126,17 @@ namespace bgmPlayer
             {
                 AllowChooseFile(false);
                 UpdateAudioControlButton(AudioState.PLAY);
+                allowControlBySMTC = true;
                 TaskbarChangeIconToPause();
+                timer.Start();
+
                 if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Stop_Click(null, null);
                     return;
                 }
+                return;
             }
 
             if (AudioPlayer.IsPause)
@@ -140,16 +144,25 @@ namespace bgmPlayer
                 try
                 {
                     AudioPlayer.Continue();
+                    UpdateAudioControlButton(AudioState.PLAY);
+                    timer.Start();
                 }
                 catch (NAudio.MmException)
                 {
                     MessageBox.Show(AppConstants.AUDIO_DEVICE_ERROR_MSG, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Stop_Click(null, null);
                 }
+                return;
             }
 
-            timer.Start();
-            allowControlBySMTC = true;
+            if (AudioPlayer.IsPlaying)
+            {
+                AudioPlayer.Pause();
+                UpdateAudioControlButton(AudioState.PAUSE);
+                TaskbarChangeIconToPlay();
+                timer.Stop();
+                return;
+            }
         }
 
         private void Stop_Click(object? sender, RoutedEventArgs? e)
@@ -162,13 +175,6 @@ namespace bgmPlayer
             timer.Reset();
         }
 
-        private void Pause_Click(object sender, RoutedEventArgs? e)
-        {
-            AudioPlayer.Pause();
-            UpdateAudioControlButton(AudioState.PAUSE);
-            TaskbarChangeIconToPlay();
-            timer.Stop();
-        }
 
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
@@ -205,12 +211,12 @@ namespace bgmPlayer
             if ((AudioPlayer.IsPause || AudioPlayer.IsStopped) && SMTCHelper.IsEnable)
             {
                 TaskbarChangeIconToPause();
-                Play_Click(sender, null);
+                PlayPause_Click(sender, null);
             }
             else if (AudioPlayer.IsPlaying)
             {
                 TaskbarChangeIconToPlay();
-                Pause_Click(sender, null);
+                PlayPause_Click(sender, null);
             }
             else return;
         }
@@ -312,19 +318,16 @@ namespace bgmPlayer
             switch (audioState)
             {
                 case AudioState.PLAY:
-                    play_button.IsEnabled = false;
+                    play_pause_button.Content = "Pause";
                     stop_button.IsEnabled = true;
-                    pause_button.IsEnabled = true;
                     break;
                 case AudioState.PAUSE:
-                    pause_button.IsEnabled = false;
-                    play_button.IsEnabled = true;
+                    play_pause_button.Content = "Play";
                     stop_button.IsEnabled = true;
                     break;
                 case AudioState.STOP:
-                    play_button.IsEnabled = true;
+                    play_pause_button.Content = "Play";
                     stop_button.IsEnabled = false;
-                    pause_button.IsEnabled = false;
                     break;
             }
         }
