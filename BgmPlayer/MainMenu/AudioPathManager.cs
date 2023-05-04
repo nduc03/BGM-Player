@@ -50,7 +50,7 @@ namespace bgmPlayer
                 if (lp != string.Empty && !ExtRegex().IsMatch(lp)) throw new Exception("Wrong file format");
                 return lp;
             }
-            set 
+            set
             {
                 if (value != string.Empty && !ExtRegex().IsMatch(value)) return;
                 LoopPath.FileName = (File.Exists(value) || value == string.Empty) ? value : Loop;
@@ -60,23 +60,21 @@ namespace bgmPlayer
                 PersistedStateManager.SaveState(LoopPath: Loop);
             }
         }
-        public static void Init(PersistedState? state = null, bool autoFill = false)
+        public static void Init(PersistedState state)
         {
             IntroPath.Filter = AppConstants.FILTER;
             LoopPath.Filter = AppConstants.FILTER;
-            AutoFill = autoFill;
+            AutoFill = state.AutoFill ?? false;
 
-            if (state != null)
+            if (File.Exists(state.IntroPath))
             {
-                if (File.Exists(state.IntroPath))
-                {
-                    IntroPath.FileName = state.IntroPath;
-                }
-                if (File.Exists(state.LoopPath))
-                {
-                    LoopPath.FileName = state.LoopPath;
-                }
+                IntroPath.FileName = state.IntroPath;
             }
+            if (File.Exists(state.LoopPath))
+            {
+                LoopPath.FileName = state.LoopPath;
+            }
+
             CheckAllEmpty();
         }
 

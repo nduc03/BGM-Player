@@ -9,7 +9,6 @@ namespace bgmPlayer
 {
     public partial class MainWindow : Window
     {
-        private readonly PersistedState? preferences;
         private readonly Timer timer = Timer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
 
@@ -18,15 +17,14 @@ namespace bgmPlayer
 
         public MainWindow()
         {
-            preferences = PersistedStateManager.LoadState();
             dispatcherTimer = new DispatcherTimer();
 
             InitializeComponent();
-            AudioPathManager.Init(preferences);
+            AudioPathManager.Init(PersistedStateManager.LoadState() ?? new PersistedState());
             AudioPathManager.InitTextBlock(IntroField, LoopField);
-            InitVolume();
             SMTCHelper.InitSMTC(OnPlayPause);
             SMTCHelper.UpdateThumbnail();
+            InitVolume();
             InitCheckbox();
             InitBackground();
             InitTimer();
@@ -41,12 +39,13 @@ namespace bgmPlayer
         #region Initialize
         private void InitVolume()
         {
-            if (preferences == null)
+            var state = PersistedStateManager.LoadState();
+            if (state == null)
                 Debug.WriteLine("InitVolume: config data is null, set volume to default value.");
-            else if (preferences.Volume == null)
+            else if (state.Volume == null)
                 Debug.WriteLine("InitVolume: configData doesn't have Volume value");
-            else if (preferences.Volume >= 0 && preferences.Volume <= AppConstants.VOLUME_SCALE)
-                currentVolume = (int)preferences.Volume;
+            else if (state.Volume >= 0 && state.Volume <= AppConstants.VOLUME_SCALE)
+                currentVolume = (int)state.Volume;
             else
                 currentVolume = (int)AppConstants.VOLUME_SCALE;
 
@@ -56,9 +55,9 @@ namespace bgmPlayer
 
         private void InitCheckbox()
         {
-            var config = PersistedStateManager.LoadState();
-            if (config != null && config.AutoFill != null)
-                autoFill.IsChecked = config.AutoFill;
+            var state = PersistedStateManager.LoadState();
+            if (state != null && state.AutoFill != null)
+                autoFill.IsChecked = state.AutoFill;
             else
             {
                 autoFill.IsChecked = false;
@@ -123,32 +122,30 @@ namespace bgmPlayer
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return;
             }
-
-            AllowChooseFile(false);
-            UpdateAudioControlButton(AudioState.PLAY);
-            SMTCHelper.IsEnable = true;
-            TaskbarChangeIconToPause();
+            if (AudioPlayer.IsStopped)
+            {
+                AllowChooseFile(false);
+                UpdateAudioControlButton(AudioState.PLAY);
+                TaskbarChangeIconToPause();
+                if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
+                {
+                    MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Stop_Click(null, null);
+                    return;
+                }
+            }
 
             if (AudioPlayer.IsPause)
             {
                 try
                 {
                     AudioPlayer.Continue();
-                    timer.Start();
                 }
                 catch (NAudio.MmException)
                 {
                     MessageBox.Show(AppConstants.AUDIO_DEVICE_ERROR_MSG, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Stop_Click(null, null);
                 }
-                return;
-            }
-
-            if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
-            {
-                MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                Stop_Click(null, null);
-                return;
             }
 
             timer.Start();
@@ -276,6 +273,13 @@ namespace bgmPlayer
         {
             SetVolume(Math.Clamp(currentVolume + (e.Delta / AppConstants.MOUSE_WHEEL_SCALE), 0, 100));
         }
+#if DEBUG
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            GC.Collect();
+        }
+#endif
         #endregion
 
         #region Private helper methods

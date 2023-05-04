@@ -3,7 +3,7 @@ using NAudio.Wave;
 
 namespace bgmPlayer
 {
-    // Inspired from NAudio.Extras.LoopStream but modified for VorbisWave
+    // Inspired by NAudio.Extras.LoopStream but modified for VorbisWave
     public class VorbisLoopStream : VorbisWaveReader
     {
         public VorbisLoopStream(string path) : base(path)

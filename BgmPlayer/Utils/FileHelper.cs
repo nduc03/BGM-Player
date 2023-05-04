@@ -1,28 +1,25 @@
 ﻿using System.IO;
 using System.Text.Json;
-using System.Windows;
 
 namespace bgmPlayer
 {
     public static class FileHelper
     {
         private static System.Timers.Timer? timer = null;
-        private static PersistedState? data = null;
+        private static object? data = null;
 
-        // Reduce pressure on hard drive by only save data to RAM first
-        // then wait for a delay before saving the last data on RAM to hard drive
         public static void ApplyState(PersistedState state)
         {
             if (timer == null)
             {
                 timer = new System.Timers.Timer
                 {
-                    Interval = AppConstants.SAVE_PREFERENCES_DELAY,
+                    Interval = AppConstants.SAVE_DATA_DELAY,
                     AutoReset = false
                 };
                 timer.Elapsed += (sender, args) =>
                 {
-                    SaveData(AppConstants.SAVED_STATE_LOCATION);
+                    SaveData(AppConstants.SAVED_STATE_FILE_NAME);
                     timer.Stop();
                     timer.Dispose();
                     timer = null;
@@ -32,9 +29,9 @@ namespace bgmPlayer
             data = state;
         }
 
-        public static void InstantSave()
+        public static void InstantSaveState()
         {
-            SaveData(AppConstants.SAVED_STATE_LOCATION);
+            SaveData(AppConstants.SAVED_STATE_FILE_NAME);
             if (timer != null)
             {
                 timer.Stop();
@@ -43,18 +40,12 @@ namespace bgmPlayer
             }
         }
 
-        private static void SaveData(string path)
+        private static void SaveData(string filename)
         {
             if (data != null)
             {
-                try
-                {
-                    File.WriteAllText(path, JsonSerializer.Serialize(data));
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    MessageBox.Show("Data directory not found! Data cannot be saved.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                Directory.CreateDirectory(AppConstants.DATA_FOLDER);
+                File.WriteAllText(filename, JsonSerializer.Serialize(data));
                 data = null;
             }
         }

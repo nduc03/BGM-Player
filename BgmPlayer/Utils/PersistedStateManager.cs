@@ -8,6 +8,10 @@ namespace bgmPlayer
     {
         private static PersistedState? dataCache = null;
 
+        /// <summary>
+        /// Used to get the <c>PersistedState</c> or just to cached <c>PersistedState</c> to RAM when initialize app
+        /// </summary>
+        /// <returns></returns>
         public static PersistedState? LoadState()
         {
             if (dataCache != null) return dataCache;
@@ -36,13 +40,7 @@ namespace bgmPlayer
             bool? AutoFill = null
         )
         {
-            PersistedState? data = dataCache ?? LoadState();
-            if (data == null)
-            {
-                Directory.CreateDirectory(AppConstants.DATA_FOLDER);
-                File.Create(AppConstants.SAVED_STATE_LOCATION).Close();
-                data = new PersistedState();
-            }
+            PersistedState data = dataCache ?? LoadState() ?? new PersistedState();
 
             if (IntroPath != null) data.IntroPath = IntroPath;
             if (LoopPath != null) data.LoopPath = LoopPath;
@@ -51,6 +49,36 @@ namespace bgmPlayer
 
             dataCache = data;
             FileHelper.ApplyState(data);
+        }
+
+        /// <summary>
+        /// Save the app state to disk.
+        /// <para>If <c>updateMode</c> is set to <c>UpdateMode.Update</c>, only save non-null property in <c>state</c></para>
+        /// </summary>
+        public static void SaveState(PersistedState state, UpdateMode updateMode = UpdateMode.Update)
+        {
+            // TODO: Make this function more convenient to use then delete the other SaveState above
+            if (updateMode == UpdateMode.Update)
+            {
+                PersistedState data = dataCache ?? LoadState() ?? new PersistedState();
+                var hasUpdate = false;
+                foreach (var stateProp in typeof(PersistedState).GetProperties())
+                {
+                    hasUpdate = true;
+                    var stateVal = stateProp.GetValue(state);
+                    if (stateVal != null) stateProp.SetValue(data, stateVal);
+                }
+                if (hasUpdate)
+                {
+                    dataCache = data;
+                    FileHelper.ApplyState(data);
+                }
+            }
+            else
+            {
+                dataCache = state;
+                FileHelper.ApplyState(state);
+            }
         }
     }
 }

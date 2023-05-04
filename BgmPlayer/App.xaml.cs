@@ -54,7 +54,7 @@ namespace bgmPlayer
             exitBoxShowing = true;
             if (MessageBox.Show("Are you sure to quit?", "Exit confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                FileHelper.InstantSave();
+                FileHelper.InstantSaveState();
                 Shutdown();
             }
             exitBoxShowing = false;

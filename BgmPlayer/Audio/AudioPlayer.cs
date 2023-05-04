@@ -70,6 +70,7 @@ namespace bgmPlayer
                     outputDevice!.Init(loopStream);
                 }
                 outputDevice.Play();
+                SMTCHelper.IsEnable = true;
                 SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
                 CurrentState = AudioState.PLAY;
                 StateChanged?.Invoke(AudioState.PLAY);
@@ -116,6 +117,7 @@ namespace bgmPlayer
                 }
                 SetVolume(volume);
                 outputDevice.Play();
+                SMTCHelper.IsEnable = true;
                 SMTCHelper.UpdateStatus(MediaPlaybackStatus.Playing);
                 CurrentState = AudioState.PLAY;
                 StateChanged?.Invoke(AudioState.PLAY);
