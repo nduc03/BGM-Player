@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Windows;
 
 namespace bgmPlayer
 {
@@ -36,25 +37,29 @@ namespace bgmPlayer
         {
             return ParsedInGameFileName switch
             {
-                "demo" => new OstInfo("Demo"),
-
-                "m_bat_abyssalhunters" => new OstInfo("Under Tides"),
-                "m_bat_act12side_02"   => new OstInfo("Stop Breathing"),
+                "m_bat_abyssalhunters" => new OstInfo("Under Tides", "Steven Grove"),
+                "m_bat_act12side_02"   => new OstInfo("Stop Breathing", "BaoUner"),
+                "m_bat_act19side_01"   => new OstInfo("因變量 (Dependent Variables)", "Gareth Coker"),
                 "m_bat_act20side_01"   => new OstInfo("滑梯衝浪 (Slide and Surf)"),
                 "m_bat_ccs5"           => new OstInfo("Operation Spectrum Battle Theme"),
+                "m_bat_bbrain"         => new OstInfo("夢境蘇醒 (Awaken From Dreamland)", "Gareth Coker"),
                 "m_bat_ccs8_b1"        => new OstInfo("Fading Sky"),
                 "m_bat_ccs9"           => new OstInfo("Surging Tide"),
                 "m_bat_ccs10"          => new OstInfo("Crawling Forward!"),
                 "m_bat_dsdevr"         => new OstInfo("愚人曲 (Stultifer Cantus)"),
-                "m_bat_martyr"         => new OstInfo("殉道之人 (The Martyr)"),
-                "m_bat_rglk2boss1"     => new OstInfo("大群之殤 (The Fall of We Many)", "Gareth Coker"),
-                "m_bat_rglk2boss2"     => new OstInfo("旅者//征服者 (Voyager//Subjugator)", "Gareth Coker"),
+                "m_bat_martyr"         => new OstInfo("殉道之人 (The Martyr)", "Erik Castro"),
+                "m_bat_rglk2boss1"     => new OstInfo("大群之殤 (Sorrow of We Many)", "Gareth Coker"),
+                "m_bat_rglk2boss2"     => new OstInfo("旅者//征服者 (Traveler//Conqueror)", "Gareth Coker"),
+                "m_bat_stmkgt_01_loop" => new OstInfo("Wecgas fore tham Cynge, Searu fore tham Ethle (Second half)", "LJCH"),
+                "m_bat_stmkgt_02"      => new OstInfo("Wecgas fore tham Cynge, Searu fore tham Ethle (First half)", "LJCH"),
 
-                "m_avg_doubledragons"  => new OstInfo("雙龍 (Double Dragons)"),
-                "m_avg_towerfierce"    => new OstInfo("高塔冲突 (Tower Fierce)"),
+                "m_avg_doubledragons"  => new OstInfo("雙龍 (Double Dragons)", "Sterling Maffe"),
+                "m_avg_towerfierce"    => new OstInfo("高塔冲突 (Tower Fierce)", "Go Shiina"),
 
-                "m_sys_act12side"      => new OstInfo("Dossoles Holiday"),
-                "m_sys_ccs8"           => new OstInfo("Operation Dawnseeker"),
+                "m_sys_act12side"      => new OstInfo("Dossoles Holiday", "David Westbom"),
+                "m_sys_act19side"      => new OstInfo("旅程 (Journey)", "Gareth Coker"),
+                "m_sys_act21side"      => new OstInfo("Il Siracusano", "Adam Gubman"),
+                "m_sys_ccs8"           => new OstInfo("Operation Dawnseeker", "Terry Zhong"),
                 "m_sys_ccs9"           => new OstInfo("Operation Deepness"),
                 "m_sys_ccs10"          => new OstInfo("Operation Ashring"),
                 "m_sys_fesready"       => new OstInfo("Ready?"),

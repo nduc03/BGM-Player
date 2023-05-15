@@ -23,6 +23,7 @@ namespace bgmPlayer
             AudioPathManager.Init(PersistedStateManager.LoadState() ?? new PersistedState());
             AudioPathManager.InitTextBlock(IntroField, LoopField);
             SMTCHelper.InitSMTC(OnPlayPause);
+            SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             SMTCHelper.UpdateThumbnail();
             InitVolume();
             InitCheckbox();

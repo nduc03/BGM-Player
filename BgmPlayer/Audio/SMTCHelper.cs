@@ -67,7 +67,7 @@ namespace bgmPlayer
                 else
                 {
                     Title = info.Value.Title;
-                    updater.MusicProperties.Artist = info.Value.Artist ?? string.Empty;
+                    updater.MusicProperties.Artist = info.Value.Composer ?? string.Empty;
                 }
             }
 #endif
