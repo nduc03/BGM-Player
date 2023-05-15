@@ -57,12 +57,21 @@ namespace bgmPlayer
         public static void UpdateTitle(string? IntroPath, string? LoopPath)
         {
             if (!isInitialized) return;
-            Title = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE);
+            Title = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE)!;
 #if ME
             if (!File.Exists(AppConstants.DISABLE_OST_NAME))
-                Title = Utils.GetArknightsOstName(Title!);
+            {
+                OstInfo? info = Utils.GetArknightsOstName(Title);
+                if (info == null)
+                    updater.MusicProperties.Artist = string.Empty;
+                else
+                {
+                    Title = info.Value.Title;
+                    updater.MusicProperties.Artist = info.Value.Artist ?? string.Empty;
+                }
+            }
 #endif
-            updater.MusicProperties.Title = Title!;
+            updater.MusicProperties.Title = Title;
             if (Application.Current.MainWindow != null)
                 Application.Current.MainWindow.Title = Title!;
             updater.Update();

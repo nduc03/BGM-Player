@@ -11,7 +11,7 @@ namespace bgmPlayer
         /// <summary>
         /// Used to get the <c>PersistedState</c> or just to cached <c>PersistedState</c> to RAM when initialize app
         /// </summary>
-        /// <returns></returns>
+        /// <returns><c>PersistedState</c> object or <c>null</c> when saved state file does not exist</returns>
         public static PersistedState? LoadState()
         {
             if (dataCache != null) return dataCache;
