@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text.Json;
-using System.Windows;
 
 namespace bgmPlayer
 {
@@ -47,7 +46,6 @@ namespace bgmPlayer
             {
                 Directory.CreateDirectory(AppConstants.DATA_FOLDER);
                 File.WriteAllText(Path.Combine(AppConstants.DATA_FOLDER, filename), JsonSerializer.Serialize(data));
-                MessageBox.Show("ok");
                 data = null;
             }
         }
