@@ -7,7 +7,7 @@ using Windows.Storage.Streams;
 
 namespace bgmPlayer
 {
-    public static class SMTCHelper
+    public static class SMTCManager
     {
         public static bool IsEnable
         {
@@ -19,6 +19,7 @@ namespace bgmPlayer
             set { smtc.IsEnabled = value; }
         }
         public static string? Title { get; private set; }
+        public static string? WindowTitle { get; private set; }
 
         private static readonly Windows.Media.Playback.MediaPlayer mediaPlayer = new();
         private static readonly SystemMediaTransportControls smtc = mediaPlayer.SystemMediaTransportControls;
@@ -67,13 +68,14 @@ namespace bgmPlayer
                 else
                 {
                     Title = info.Value.Title;
-                    updater.MusicProperties.Artist = info.Value.Composer ?? string.Empty;
+                    WindowTitle = info.Value.GetWindowTitle();
+                    updater.MusicProperties.Artist = info.Value.Artist ?? string.Empty;
                 }
             }
 #endif
             updater.MusicProperties.Title = Title;
             if (Application.Current.MainWindow != null)
-                Application.Current.MainWindow.Title = Title!;
+                Application.Current.MainWindow.Title = WindowTitle ?? Title;
             updater.Update();
         }
 

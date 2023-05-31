@@ -22,9 +22,9 @@ namespace bgmPlayer
             InitializeComponent();
             AudioPathManager.Init(PersistedStateManager.LoadState() ?? new PersistedState());
             AudioPathManager.InitTextBlock(IntroField, LoopField);
-            SMTCHelper.InitSMTC(OnPlayPause);
-            SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
-            SMTCHelper.UpdateThumbnail();
+            SMTCManager.InitSMTC(OnPlayPause);
+            SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
+            SMTCManager.UpdateThumbnail();
             InitVolume();
             InitCheckbox();
             InitBackground();
@@ -32,7 +32,7 @@ namespace bgmPlayer
 
             UpdateAudioControlButton(AudioPlayer.CurrentState);
             AllowChooseFile(AudioPlayer.IsStopped);
-            Title = SMTCHelper.Title ?? AppConstants.DEFAULT_MUSIC_TITLE;
+            Title = SMTCManager.Title ?? AppConstants.DEFAULT_MUSIC_TITLE;
 
             AudioPlayer.StateChanged += UpdateAudioControlButton;
         }
@@ -101,7 +101,7 @@ namespace bgmPlayer
             allowControlBySMTC = false;
             if (AudioPathManager.OpenIntroPathDialog() != null)
             {
-                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
+                SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             allowControlBySMTC = true;
         }
@@ -111,12 +111,12 @@ namespace bgmPlayer
             allowControlBySMTC = false;
             if (AudioPathManager.OpenLoopPathDialog() != null)
             {
-                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
+                SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             allowControlBySMTC = true;
         }
 
-        private void PlayPause_Click(object sender, RoutedEventArgs? e)
+        private void PlayPause_Click(object? sender, RoutedEventArgs? e)
         {
             if (AudioPathManager.Intro == string.Empty && AudioPathManager.Loop == string.Empty)
             {
@@ -183,7 +183,7 @@ namespace bgmPlayer
             if (AudioPlayer.IsStopped)
             {
                 AudioPathManager.Intro = string.Empty;
-                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
+                SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             else
             {
@@ -197,7 +197,7 @@ namespace bgmPlayer
             if (AudioPlayer.IsStopped)
             {
                 AudioPathManager.Loop = string.Empty;
-                SMTCHelper.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
+                SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
             }
             else
             {
@@ -207,9 +207,9 @@ namespace bgmPlayer
         #endregion
 
         #region Taskbar handler
-        private void TaskbarPlayPause_handler(object sender, EventArgs? e)
+        private void TaskbarPlayPause_handler(object? sender, EventArgs? e)
         {
-            if ((AudioPlayer.IsPause || AudioPlayer.IsStopped) && SMTCHelper.IsEnable)
+            if ((AudioPlayer.IsPause || AudioPlayer.IsStopped) && SMTCManager.IsEnable)
             {
                 TaskbarChangeIconToPause();
                 PlayPause_Click(sender, null);
@@ -222,7 +222,7 @@ namespace bgmPlayer
             else return;
         }
 
-        private void TaskbarStop_handler(object sender, EventArgs? e)
+        private void TaskbarStop_handler(object? sender, EventArgs? e)
         {
             if (!AudioPlayer.IsStopped)
                 Stop_Click(sender, null);
@@ -254,7 +254,6 @@ namespace bgmPlayer
                     });
                     break;
                 default:
-                    Trace.TraceWarning("Incorrect input");
                     break;
             }
         }
@@ -320,14 +319,17 @@ namespace bgmPlayer
             {
                 case AudioState.PLAY:
                     play_pause_button.Content = "Pause";
+                    TaskbarChangeIconToPause();
                     stop_button.IsEnabled = true;
                     break;
                 case AudioState.PAUSE:
                     play_pause_button.Content = "Play";
+                    TaskbarChangeIconToPlay();
                     stop_button.IsEnabled = true;
                     break;
                 case AudioState.STOP:
                     play_pause_button.Content = "Play";
+                    TaskbarChangeIconToPlay();
                     stop_button.IsEnabled = false;
                     break;
             }
