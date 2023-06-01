@@ -1,6 +1,6 @@
 ﻿namespace bgmPlayer
 {
-    readonly ref struct AppConstants
+    public readonly ref struct AppConstants
     {
         public const string USER_ERROR_TITLE = "User Error!";
         public const string ERROR_TITLE = "Error!";

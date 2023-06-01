@@ -17,11 +17,11 @@ namespace bgmPlayer
         public string GetWindowTitle()
         {
             string result = Title;
-            if (EventName != null || EventName != string.Empty)
+            if (EventName != null && EventName != string.Empty)
             {
                 result += $" [{EventName}]";
             }
-            if (Artist != null || Artist != string.Empty)
+            if (Artist != null && Artist != string.Empty)
             {
                 result += $" - {Artist}";
             }

@@ -27,12 +27,12 @@ namespace bgmPlayer
             SMTCManager.UpdateThumbnail();
             InitVolume();
             InitCheckbox();
-            InitBackground();
+            InitBackgroundImage();
             InitTimer();
 
             UpdateAudioControlButton(AudioPlayer.CurrentState);
             AllowChooseFile(AudioPlayer.IsStopped);
-            Title = SMTCManager.Title ?? AppConstants.DEFAULT_MUSIC_TITLE;
+            Title = SMTCManager.WindowTitle ?? SMTCManager.Title ?? AppConstants.DEFAULT_MUSIC_TITLE;
 
             AudioPlayer.StateChanged += UpdateAudioControlButton;
         }
@@ -67,7 +67,7 @@ namespace bgmPlayer
             AudioPathManager.AutoFill = autoFill.IsChecked ?? false;
         }
 
-        private void InitBackground()
+        private void InitBackgroundImage()
         {
 #if ME
             System.Windows.Media.ImageBrush background = new(new BitmapImage(new Uri("pack://application:,,,/img/schwarz_blured.png")))
@@ -130,7 +130,7 @@ namespace bgmPlayer
                 allowControlBySMTC = true;
                 TaskbarChangeIconToPause();
                 timer.Start();
-
+                
                 if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
                 {
                     MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);

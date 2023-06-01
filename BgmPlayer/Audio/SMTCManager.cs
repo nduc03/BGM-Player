@@ -54,7 +54,6 @@ namespace bgmPlayer
         {
             smtc.PlaybackStatus = playbackStatus;
         }
-
         public static void UpdateTitle(string? IntroPath, string? LoopPath)
         {
             if (!isInitialized) return;
@@ -62,9 +61,12 @@ namespace bgmPlayer
 #if ME
             if (!File.Exists(AppConstants.DISABLE_OST_NAME))
             {
-                OstInfo? info = Utils.GetArknightsOstName(Title);
+                OstInfo? info = Utils.GetArknightsOstInfo(Title);
                 if (info == null)
+                {
                     updater.MusicProperties.Artist = string.Empty;
+                    WindowTitle = null;
+                }
                 else
                 {
                     Title = info.Value.Title;

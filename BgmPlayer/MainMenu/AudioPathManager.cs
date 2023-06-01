@@ -22,6 +22,7 @@ namespace bgmPlayer
         public static event PathState? AllEmpty;
 
         public static bool AutoFill = false;
+
         public static string Intro
         {
             get
@@ -107,7 +108,7 @@ namespace bgmPlayer
             else return null;
         }
 
-        public static void TryAutoSetIntro()
+        private static void TryAutoSetIntro()
         {
             if (AutoFill == false) return;
 
@@ -123,7 +124,7 @@ namespace bgmPlayer
             }
         }
 
-        public static void TryAutoSetLoop()
+        private static void TryAutoSetLoop()
         {
             if (AutoFill == false) return;
 
@@ -139,7 +140,7 @@ namespace bgmPlayer
             }
         }
 
-        public static string? GetOtherPattern(string path, string currentEndPattern, string expectedEndPattern)
+        private static string? GetOtherPattern(string path, string currentEndPattern, string expectedEndPattern)
         {
             if (!Path.GetFileNameWithoutExtension(path).EndsWith(currentEndPattern)) return null;
             return path[..path.LastIndexOf(currentEndPattern[0])] + expectedEndPattern + Path.GetExtension(path);

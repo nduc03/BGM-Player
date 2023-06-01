@@ -40,12 +40,13 @@ namespace bgmPlayer
         /// </summary>
         /// <param name="ParsedInGameFileName"></param>
         /// <returns></returns>
-        public static OstInfo? GetArknightsOstName(string ParsedInGameFileName)
+        public static OstInfo? GetArknightsOstInfo(string? ParsedInGameFileName)
         {
             return ParsedInGameFileName switch
             {
                 "m_bat_abyssalhunters"   => new OstInfo("Under Tides", "Steven Grove", "Under Tides"),
                 "m_bat_act12side_02"     => new OstInfo("Stop Breathing", "BaoUner", "Dossoles Holiday"),
+                "m_bat_act16side_01"     => new OstInfo("潛在危機 (Latent Threat)", "Erik Castro", "Guide Ahead"),
                 "m_bat_act19side_01"     => new OstInfo("因變量 (Dependent Variables)", "Gareth Coker", "Dorothy's Vision"),
                 "m_bat_act20side_01"     => new OstInfo("滑梯衝浪 (Slide and Surf)", "PMP Music", "Ideal City"),
                 "m_bat_act25side_01"     => new OstInfo("The Coming of the Future", "Steven Grove", "Lone Trail"),
@@ -57,7 +58,7 @@ namespace bgmPlayer
                 "m_bat_cstlrs"           => new OstInfo("Control's Wishes", "Steven Grove", "Lone Trail"),
                 "m_bat_dsdevr"           => new OstInfo("愚人曲 (Stultifer Cantus)", "Steven Grove", "Stultifera Navis"),
                 "m_bat_manfri_02"        => new OstInfo("提卡茲之根 (Teekazwurtzen)", "BaoUner", "Episode 10: Shatterpoint"),
-                "m_bat_martyr"           => new OstInfo("殉道之人 (The Martyr)", "Erik Castro", "Guild Ahead"),
+                "m_bat_martyr"           => new OstInfo("殉道之人 (The Martyr)", "Erik Castro", "Guide Ahead"),
                 "m_bat_rglk2boss1"       => new OstInfo("Sorrow of We Many", "Gareth Coker", "Mizuki & Caerula Arbor"),
                 "m_bat_rglk2boss2"       => new OstInfo("Traveler//Conqueror", "Gareth Coker", "Mizuki & Caerula Arbor"),
                 "m_bat_stmkgt_01_loop"   => new OstInfo("Wecgas fore tham Cynge, Searu fore tham Ethle (Second half)", "LJCH", "Episode 11: Return to Mist"),
@@ -67,6 +68,7 @@ namespace bgmPlayer
                 "m_avg_towerfierce"      => new OstInfo("高塔冲突 (Tower Fierce)", "Go Shiina", "Episode 08: Roaring Flare"),
                                          
                 "m_sys_act12side"        => new OstInfo("Dossoles Holiday", "David Westbom", "Dossoles Holiday"),
+                "m_sys_act16side"        => new OstInfo("聖城日常 (Holy City Daily)", "Erik Castro", "Guide Ahead"),
                 "m_sys_act19side"        => new OstInfo("旅程 (Journey)", "Gareth Coker", "Dorothy's Vision"),
                 "m_sys_act21side"        => new OstInfo("Il Siracusano", "Adam Gubman", "Il Siracusano"),
                 "m_sys_act25side"        => new OstInfo("Ad astra", "Steven Grove", "Lone Trail"),
