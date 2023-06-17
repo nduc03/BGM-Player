@@ -3,10 +3,18 @@ namespace bgmPlayer
 {
     public readonly struct OstInfo
     {
-        public readonly string Title;
+        public readonly string  Title;
+        public readonly string? TranslatedTitle;
         public readonly string? Artist;
         public readonly string? EventName;
 
+        public OstInfo(string title, string translatedTitle, string? artist = null, string? eventName = null)
+        {
+            Title = title;
+            TranslatedTitle = translatedTitle;
+            Artist = artist;
+            EventName = eventName;
+        }
         public OstInfo(string title, string? artist = null, string? eventName = null)
         {
             Title = title;
@@ -14,9 +22,20 @@ namespace bgmPlayer
             EventName = eventName;
         }
 
-        public string GetWindowTitle()
+        public string GetParsedTitle(int? TitleOption = null)
         {
-            string result = Title;
+            return TitleOption switch
+            {
+                2 => Title,
+                3 => TranslatedTitle ?? Title,
+                _ => TranslatedTitle == null ? Title : Title + $" ({TranslatedTitle})"
+            };
+        }
+
+        public string GetWindowTitle(int? TitleOption = null)
+        {
+            string result = GetParsedTitle(TitleOption);
+            
             if (EventName != null && EventName != string.Empty)
             {
                 result += $" [{EventName}]";

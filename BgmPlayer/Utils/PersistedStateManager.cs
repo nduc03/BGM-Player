@@ -37,7 +37,8 @@ namespace bgmPlayer
             string? IntroPath = null,
             string? LoopPath = null,
             float? Volume = null,
-            bool? AutoFill = null
+            bool? AutoFill = null,
+            int? TitleOption = null
         )
         {
             PersistedState data = dataCache ?? LoadState() ?? new PersistedState();
@@ -46,6 +47,7 @@ namespace bgmPlayer
             if (LoopPath != null) data.LoopPath = LoopPath;
             if (Volume != null) data.Volume = Volume;
             if (AutoFill != null) data.AutoFill = AutoFill;
+            if (TitleOption != null) data.TitleOption = TitleOption;
 
             dataCache = data;
             FileHelper.ApplyState(data);

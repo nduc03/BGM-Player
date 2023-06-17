@@ -14,7 +14,7 @@ namespace bgmPlayer
         {
             var MutexName = "BgmPlayer";
 #if DEBUG
-            MutexName = "Debug";
+            MutexName = "BgmPlayerDebug";
 #endif
             mutex = new Mutex(true, MutexName, out bool IsNewInstance);
             if (!IsNewInstance)
@@ -22,9 +22,7 @@ namespace bgmPlayer
                 MessageBox.Show("App is running.");
                 Current.Shutdown();
             }
-            
             InitNotifyIcon();
-            
             base.OnStartup(e);
         }
 

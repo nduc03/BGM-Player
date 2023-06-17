@@ -28,8 +28,10 @@ namespace bgmPlayer
             get
             {
                 var ip = IntroPath.FileName;
+#if DEBUG
                 if (ip != string.Empty && !File.Exists(ip)) throw new FileNotFoundException("Cannot find the intro file!");
                 if (ip != string.Empty && !ExtRegex().IsMatch(ip)) throw new Exception("Wrong file format");
+#endif
                 return ip;
             }
             set
@@ -47,8 +49,10 @@ namespace bgmPlayer
             get
             {
                 var lp = LoopPath.FileName;
+#if DEBUG
                 if (lp != string.Empty && !File.Exists(lp)) throw new FileNotFoundException("Cannot find the loop file!");
                 if (lp != string.Empty && !ExtRegex().IsMatch(lp)) throw new Exception("Wrong file format");
+#endif
                 return lp;
             }
             set

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         MouseWheel="Window_MouseWheel"
-        Title="BGM Player" Height="450" MinHeight="450" Width="800" MinWidth="600">
+        Title="BGM Player" Height="470" MinHeight="470" Width="820" MinWidth="600">
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="mediaControl">
             <TaskbarItemInfo.ThumbButtonInfos>
@@ -49,9 +49,18 @@
                 <Button x:Name="intro_button" Content="Intro" Margin="0,0,5,0" VerticalAlignment="Top" Width="94" Height="32" Click="Intro_Click"/>
                 <Button x:Name="loop_button" Content="Loop" Margin="5,0,0,0" VerticalAlignment="Top" Width="94" Height="32" Click="Loop_Click"/>
             </StackPanel>
-            <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,20,0,0" HorizontalAlignment="Center">
-                <Button x:Name="play_pause_button" Content="Play" Margin="0,10,0,0" VerticalAlignment="Top" Height="34" Width="94" Click="PlayPause_Click"/>
-                <Button x:Name="stop_button" Content="Stop" Margin="0,10,0,0" VerticalAlignment="Top" Width="94" Height="32" IsEnabled="False" Click="Stop_Click"/>
+
+            <StackPanel Orientation="Horizontal" Height="Auto" Width="Auto" Margin="0,30,0,0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,0,0,0">
+                    <Button x:Name="play_pause_button" Content="Play" Margin="0,10,0,0" VerticalAlignment="Top" Height="34" Width="94" Click="PlayPause_Click"/>
+                    <Button x:Name="stop_button" Content="Stop" Margin="0,10,0,0" VerticalAlignment="Top" Width="94" Height="32" IsEnabled="False" Click="Stop_Click"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" x:Name="TitleOption" Visibility="Collapsed" Height="Auto" Width="Auto" Margin="20,0,0,0">
+                    <Label Content="Title preference"/>
+                    <RadioButton x:Name="titleShowAll" Padding="0,0,0,5" Content="Show all" Checked="UpdateTitleOption"/>
+                    <RadioButton x:Name="titleOfficialOnly" Padding="0,0,0,5" Content="Hide translation" Checked="UpdateTitleOption"/>
+                    <RadioButton x:Name="titleTransOnly" Padding="0,0,0,5" Content="Hide official title" Checked="UpdateTitleOption"/>
+                </StackPanel>
             </StackPanel>
 
         </StackPanel>

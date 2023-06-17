@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Windows.Media;
@@ -11,6 +12,7 @@ namespace bgmPlayer
     {
         private readonly Timer timer = Timer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
+        private readonly PersistedState? initState;
 
         private bool allowControlBySMTC = false;
         private int currentVolume = 100;
@@ -18,6 +20,7 @@ namespace bgmPlayer
         public MainWindow()
         {
             dispatcherTimer = new DispatcherTimer();
+            initState = PersistedStateManager.LoadState();
 
             InitializeComponent();
             AudioPathManager.Init(PersistedStateManager.LoadState() ?? new PersistedState());
@@ -27,8 +30,11 @@ namespace bgmPlayer
             SMTCManager.UpdateThumbnail();
             InitVolume();
             InitCheckbox();
-            InitBackgroundImage();
             InitTimer();
+#if ME
+            InitBackgroundImage();
+            InitTitleOption();
+#endif
 
             UpdateAudioControlButton(AudioPlayer.CurrentState);
             AllowChooseFile(AudioPlayer.IsStopped);
@@ -40,13 +46,12 @@ namespace bgmPlayer
         #region Initialize
         private void InitVolume()
         {
-            var state = PersistedStateManager.LoadState();
-            if (state == null)
+            if (initState == null)
                 Debug.WriteLine("InitVolume: config data is null, set volume to default value.");
-            else if (state.Volume == null)
+            else if (initState.Volume == null)
                 Debug.WriteLine("InitVolume: configData doesn't have Volume value");
-            else if (state.Volume >= 0 && state.Volume <= AppConstants.VOLUME_SCALE)
-                currentVolume = (int)state.Volume;
+            else if (initState.Volume >= 0 && initState.Volume <= AppConstants.VOLUME_SCALE)
+                currentVolume = (int)initState.Volume;
             else
                 currentVolume = (int)AppConstants.VOLUME_SCALE;
 
@@ -56,26 +61,14 @@ namespace bgmPlayer
 
         private void InitCheckbox()
         {
-            var state = PersistedStateManager.LoadState();
-            if (state != null && state.AutoFill != null)
-                autoFill.IsChecked = state.AutoFill;
+            if (initState != null && initState.AutoFill != null)
+                autoFill.IsChecked = initState.AutoFill;
             else
             {
                 autoFill.IsChecked = false;
                 PersistedStateManager.SaveState(AutoFill: false);
             }
             AudioPathManager.AutoFill = autoFill.IsChecked ?? false;
-        }
-
-        private void InitBackgroundImage()
-        {
-#if ME
-            System.Windows.Media.ImageBrush background = new(new BitmapImage(new Uri("pack://application:,,,/img/schwarz_blured.png")))
-            {
-                Stretch = System.Windows.Media.Stretch.UniformToFill
-            };
-            Background = background;
-#endif
         }
 
         private void InitTimer()
@@ -93,6 +86,39 @@ namespace bgmPlayer
                 else dispatcherTimer.Start();
             };
         }
+
+#if ME
+        private void InitBackgroundImage()
+        {
+            System.Windows.Media.ImageBrush background = new(new BitmapImage(new Uri("pack://application:,,,/img/schwarz_blured.png")))
+            {
+                Stretch = System.Windows.Media.Stretch.UniformToFill
+            };
+            Background = background;
+        }
+
+        /// <summary>
+        /// Option 1: show all
+        /// Option 2: Official title only
+        /// Option 3: Translated title only (if applicable, else show official title)
+        /// </summary>
+        private void InitTitleOption()
+        {
+            TitleOption.Visibility = Visibility.Visible;
+            switch (initState?.TitleOption)
+            {
+                case 2:
+                    titleOfficialOnly.IsChecked = true;
+                    break;
+                case 3:
+                    titleTransOnly.IsChecked = true;
+                    break;
+                default:
+                    titleShowAll.IsChecked = true;
+                    break;
+            }
+        }
+#endif
         #endregion
 
         #region Button handler
@@ -203,6 +229,25 @@ namespace bgmPlayer
             {
                 MessageBox.Show("Stop music before removing music file.");
             }
+        }
+        private void UpdateTitleOption(object sender, RoutedEventArgs e)
+        {
+#if ME
+            RadioButton? opttion = sender as RadioButton;
+            switch (opttion?.Name) 
+            {
+                case "titleOfficialOnly":
+                    PersistedStateManager.SaveState(TitleOption: 2);
+                    break;
+                case "titleTransOnly":
+                    PersistedStateManager.SaveState(TitleOption: 3);
+                    break;
+                default:
+                    PersistedStateManager.SaveState(TitleOption: 1);
+                    break;
+            }
+            SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
+#endif
         }
         #endregion
 

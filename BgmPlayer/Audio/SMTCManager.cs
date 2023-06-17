@@ -59,6 +59,7 @@ namespace bgmPlayer
             if (!isInitialized) return;
             Title = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE)!;
 #if ME
+            int? titleOption = PersistedStateManager.LoadState()?.TitleOption;
             if (!File.Exists(AppConstants.DISABLE_OST_NAME))
             {
                 OstInfo? info = Utils.GetArknightsOstInfo(Title);
@@ -69,8 +70,8 @@ namespace bgmPlayer
                 }
                 else
                 {
-                    Title = info.Value.Title;
-                    WindowTitle = info.Value.GetWindowTitle();
+                    Title = info.Value.GetParsedTitle(titleOption);
+                    WindowTitle = info.Value.GetWindowTitle(titleOption);
                     updater.MusicProperties.Artist = info.Value.Artist ?? string.Empty;
                 }
             }
