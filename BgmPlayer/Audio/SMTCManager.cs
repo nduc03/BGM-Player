@@ -66,6 +66,7 @@ namespace bgmPlayer
                 if (info == null)
                 {
                     updater.MusicProperties.Artist = string.Empty;
+                    Title = AppConstants.DEFAULT_MUSIC_TITLE;
                     WindowTitle = null;
                 }
                 else

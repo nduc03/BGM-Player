@@ -20,7 +20,8 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
-		<AssemblyVersion>2.3.0</AssemblyVersion>
+		<AssemblyVersion Condition="$(Configuration)==Debug Or $(Configuration)==Release">2.3.0</AssemblyVersion>
+		<AssemblyVersion Condition="$(Configuration)==Me">2.3.1</AssemblyVersion>
 		<UseWindowsForms>True</UseWindowsForms>
 		<WindowsPackageType>None</WindowsPackageType>
 		<Platforms>x64</Platforms>
