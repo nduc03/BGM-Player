@@ -50,6 +50,7 @@ namespace bgmPlayer
                 "m_bat_act19side_01"     => new OstInfo("因變量", "Dependent Variables", "Gareth Coker", "Dorothy's Vision"),
                 "m_bat_act20side_01"     => new OstInfo("滑梯衝浪", "Slide and Surf", "PMP Music", "Ideal City"),
                 "m_bat_act22side_01"     => new OstInfo("火與灰", "Cinders and Ashes", "PMP Music", "What the Firelight Casts"),
+                "m_bat_act23side_01"     => new OstInfo("度關山", "Crossing the Mountain Passes", "Adam Gubman", "Where Vernal Winds Will Never Blow"),
                 "m_bat_act25side_01"     => new OstInfo("The Coming of the Future", "Steven Grove", "Lone Trail"),
                 "m_bat_act26side"        => new OstInfo("裁決日", "Judgement Day", "Erik Castro", "Hortus de Escapismo"),
                 "m_bat_ccs5"             => new OstInfo("Operation Spectrum Battle Theme", "Cybermiso, DOT96, & Tigerlily", "Contingency Contract Spectrum (CC#5)"),

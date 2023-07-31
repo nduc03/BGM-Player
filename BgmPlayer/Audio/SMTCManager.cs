@@ -57,7 +57,7 @@ namespace bgmPlayer
         public static void UpdateTitle(string? IntroPath, string? LoopPath)
         {
             if (!isInitialized) return;
-            Title = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE)!;
+            Title = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE);
 #if ME
             int? titleOption = PersistedStateManager.LoadState()?.TitleOption;
             if (!File.Exists(AppConstants.DISABLE_OST_NAME))
@@ -66,7 +66,7 @@ namespace bgmPlayer
                 if (info == null)
                 {
                     updater.MusicProperties.Artist = string.Empty;
-                    Title = AppConstants.DEFAULT_MUSIC_TITLE;
+                    Title ??= AppConstants.DEFAULT_MUSIC_TITLE;
                     WindowTitle = null;
                 }
                 else
