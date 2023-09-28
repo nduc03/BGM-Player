@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
-using System.Windows;
 
 namespace bgmPlayer
 {
