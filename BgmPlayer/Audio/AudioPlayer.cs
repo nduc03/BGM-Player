@@ -31,9 +31,9 @@ namespace bgmPlayer
             }
         }
         public static bool IsPlaying { get { return CurrentState == AudioState.PLAY; } }
-        public static bool IsPause { get { return CurrentState == AudioState.PAUSE; } }
+        public static bool IsPaused { get { return CurrentState == AudioState.PAUSE; } }
 
-        private static void InitAudio()
+        private static void Initialize()
         {
             if (outputDevice != null)
             {
@@ -57,7 +57,7 @@ namespace bgmPlayer
             }
             try
             {
-                InitAudio();
+                Initialize();
                 if (audioPath.EndsWith(".ogg"))
                 {
                     VorbisLoopStream loopStream = new(audioPath);
@@ -86,7 +86,7 @@ namespace bgmPlayer
         /// <summary>
         /// Play seamless BGM with optional intro segment.
         /// If both <paramref name="introPath"/> and <paramref name="loopPath"/> is specified, play looped BGM with 
-        /// intro segment from <paramref name="introPath"/>.
+        /// intro segment from <paramref name="introPath"/>. Note that two segments must have the same audio format.
         /// If intro segment is not needed, <paramref name="introPath"/> and <paramref name="loopPath"/> have the same
         /// purpose, set one path and leave the remaining param to <c>string.Empty</c> or <c>null</c>.
         /// </summary>
@@ -102,7 +102,7 @@ namespace bgmPlayer
             }
             try
             {
-                InitAudio();
+                Initialize();
                 if (introPath.EndsWith(".ogg") && loopPath.EndsWith(".ogg"))
                 {
                     VorbisBGMLoopStream bgmLoopStream = new(introPath, loopPath);
@@ -158,7 +158,7 @@ namespace bgmPlayer
         }
 
         /// <summary>
-        /// Stop playing audio in app. If no playing audio, no action will be performed.
+        /// Stop playing audio in app and dispose the outputDevice.
         /// </summary>
         public static void Stop()
         {
@@ -186,7 +186,7 @@ namespace bgmPlayer
                 return AudioPlayerState.FAILED;
             }
 
-            // Decided not delete this old code because it is fun
+            // Decided to do not delete this old code because it is fun
             // Old normal code:
             // switch (Volume)
             // {
@@ -194,7 +194,7 @@ namespace bgmPlayer
             //     case > 1: outputDevice.Volume = 1; break;
             //     default: outputDevice.Volume = Volume; break;
             // }
-            // Visual Studio suggest this new and fun code:
+            // Visual Studio suggested this new and fun code:
             // outputDevice.Volume = Volume switch
             // {
             //     <= 0 => 0, // wtf is this :))
@@ -205,20 +205,6 @@ namespace bgmPlayer
             outputDevice.Volume = Math.Clamp(Volume, 0.0f, 1.0f);
 
             return AudioPlayerState.OK;
-        }
-
-        /// <summary>
-        /// Get the current volume value
-        /// </summary>
-        /// <returns>The volume value between 0f and 1f</returns>
-        public static float GetVolume()
-        {
-            if (outputDevice == null)
-            {
-                Debug.WriteLine("GetVolume: outputDevice = null");
-                return 0;
-            }
-            else return Math.Clamp(outputDevice.Volume, 0, 100);
         }
     }
 }

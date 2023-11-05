@@ -155,7 +155,6 @@ namespace bgmPlayer
                 UpdateAudioControlButton(AudioState.PLAY);
                 allowControlBySMTC = true;
                 TaskbarChangeIconToPause();
-                timer.Start();
                 
                 if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
                 {
@@ -163,10 +162,11 @@ namespace bgmPlayer
                     Stop_Click(null, null);
                     return;
                 }
+                timer.Start(); // Moved this after AudioPlayer.PlayBGM call, because sometimes opening stream from disk takes too much time which makes timer inaccurate
                 return;
             }
 
-            if (AudioPlayer.IsPause)
+            if (AudioPlayer.IsPaused)
             {
                 try
                 {
@@ -254,7 +254,7 @@ namespace bgmPlayer
         #region Taskbar handler
         private void TaskbarPlayPause_handler(object? sender, EventArgs? e)
         {
-            if ((AudioPlayer.IsPause || AudioPlayer.IsStopped) && SMTCManager.IsEnable)
+            if ((AudioPlayer.IsPaused || AudioPlayer.IsStopped) && SMTCManager.IsEnable)
             {
                 TaskbarChangeIconToPause();
                 PlayPause_Click(sender, null);

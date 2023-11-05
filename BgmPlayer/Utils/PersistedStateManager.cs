@@ -54,6 +54,7 @@ namespace bgmPlayer
         }
 
         /// <summary>
+        /// Experimental.
         /// Save the app state to disk.
         /// <para>If <c>updateMode</c> is set to <c>UpdateMode.Update</c>, only save non-null property in <c>state</c></para>
         /// </summary>
