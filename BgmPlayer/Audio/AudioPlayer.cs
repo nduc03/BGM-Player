@@ -40,7 +40,11 @@ namespace bgmPlayer
                 outputDevice.Dispose();
                 outputDevice = null;
             }
-            outputDevice = new();
+            outputDevice = new()
+            {
+                DesiredLatency = 700,
+                NumberOfBuffers = 3
+            };
             SetVolume(volume);
         }
 

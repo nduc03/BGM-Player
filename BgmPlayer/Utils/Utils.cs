@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 
 namespace bgmPlayer
@@ -51,6 +52,7 @@ namespace bgmPlayer
                 "m_bat_act23side_01"     => new OstInfo("度關山", "Crossing the Mountain Passes", "Adam Gubman", "Where Vernal Winds Will Never Blow"),
                 "m_bat_act25side_01"     => new OstInfo("The Coming of the Future", "Steven Grove", "Lone Trail"),
                 "m_bat_act26side"        => new OstInfo("裁決日", "Judgement Day", "Erik Castro", "Hortus de Escapismo"),
+                "m_act29side_bat2_loop"  => new OstInfo("Der Hexenkönig", "Lappy", "Zwillingstürme im Herbst"),
                 "m_bat_ccs5"             => new OstInfo("Operation Spectrum Battle Theme", "Cybermiso, DOT96, & Tigerlily", "Contingency Contract Spectrum (CC#5)"),
                 "m_bat_bbrain"           => new OstInfo("夢境蘇醒", "Awaken From Dreamland", "Gareth Coker", "Dorothy's Vision"),
                 "m_bat_ccs8_b1"          => new OstInfo("Fading Sky", "AJURIKA", "Contingency Contract Dawnseeker (CC#8)"),
@@ -86,7 +88,7 @@ namespace bgmPlayer
 
                 "stmkgt_mix"             => new OstInfo("Wecgas fore tham Cynge, Searu fore tham Ethle", "LJCH", "Episode 11: Return to Mist"),
                 _ => null,
-            };
+            };;
         }
 #endif
 
