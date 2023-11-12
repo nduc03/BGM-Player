@@ -18,14 +18,15 @@ namespace bgmPlayer
             }
             set { smtc.IsEnabled = value; }
         }
-        public static string? Title { get; private set; }
+        public static string? MusicTitle { get; private set; }
         public static string? WindowTitle { get; private set; }
 
         private static readonly Windows.Media.Playback.MediaPlayer mediaPlayer = new();
         private static readonly SystemMediaTransportControls smtc = mediaPlayer.SystemMediaTransportControls;
         private static readonly SystemMediaTransportControlsDisplayUpdater updater = smtc.DisplayUpdater;
 
-        private static object? keepThumbnailOpen = null;
+        // only used for keeping thumbnail img file from not being closed to prevent potential bug
+        private static object? keepThumbnailOpen = null; 
         private static bool isInitialized = false;
 
         public static void InitSMTC(
@@ -54,32 +55,36 @@ namespace bgmPlayer
         {
             smtc.PlaybackStatus = playbackStatus;
         }
-        public static void UpdateTitle(string? IntroPath, string? LoopPath)
+
+        /// <summary>
+        /// If only 1 path is provided, order of IntroPath and LoopPath is not important,
+        /// both will work the same.
+        /// </summary>
+        /// <param name="IntroPath"></param>
+        /// <param name="LoopPath"></param>
+        public static void UpdateTitle(string? IntroPath = null, string? LoopPath = null)
         {
             if (!isInitialized) return;
-            Title = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE);
+            MusicTitle = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE);
 #if ME
             int? titleOption = PersistedStateManager.LoadState()?.TitleOption;
-            if (!File.Exists(AppConstants.DISABLE_OST_NAME))
+            OstInfo? info = Utils.GetArknightsOstInfo(MusicTitle);
+            if (info == null)
             {
-                OstInfo? info = Utils.GetArknightsOstInfo(Title);
-                if (info == null)
-                {
-                    updater.MusicProperties.Artist = string.Empty;
-                    Title ??= AppConstants.DEFAULT_MUSIC_TITLE;
-                    WindowTitle = null;
-                }
-                else
-                {
-                    Title = info.Value.GetParsedTitle(titleOption);
-                    WindowTitle = info.Value.GetWindowTitle(titleOption);
-                    updater.MusicProperties.Artist = info.Value.Artist ?? string.Empty;
-                }
+                updater.MusicProperties.Artist = string.Empty;
+                MusicTitle ??= AppConstants.DEFAULT_MUSIC_TITLE;
+                WindowTitle = null;
+            }
+            else
+            {
+                MusicTitle = info.Value.GetParsedTitle(titleOption);
+                WindowTitle = info.Value.GetWindowTitle(titleOption);
+                updater.MusicProperties.Artist = info.Value.Artist ?? string.Empty;
             }
 #endif
-            updater.MusicProperties.Title = Title;
+            updater.MusicProperties.Title = MusicTitle;
             if (Application.Current.MainWindow != null)
-                Application.Current.MainWindow.Title = WindowTitle ?? Title;
+                Application.Current.MainWindow.Title = WindowTitle ?? MusicTitle;
             updater.Update();
         }
 

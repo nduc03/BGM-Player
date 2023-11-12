@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
@@ -8,7 +7,6 @@ namespace bgmPlayer
 {
     public static partial class AudioPathManager
     {
-        // TODO: need refactor
         private static readonly OpenFileDialog IntroPath = new();
         private static readonly OpenFileDialog LoopPath = new();
         private static TextBlock? introField;
@@ -25,15 +23,7 @@ namespace bgmPlayer
 
         public static string Intro
         {
-            get
-            {
-                var ip = IntroPath.FileName;
-#if DEBUG
-                if (ip != string.Empty && !File.Exists(ip)) throw new FileNotFoundException("Cannot find the intro file!");
-                if (ip != string.Empty && !ExtRegex().IsMatch(ip)) throw new Exception("Wrong file format");
-#endif
-                return ip;
-            }
+            get { return IntroPath.FileName; }
             set
             {
                 if (value != string.Empty && !ExtRegex().IsMatch(value)) return;
@@ -46,15 +36,7 @@ namespace bgmPlayer
         }
         public static string Loop
         {
-            get
-            {
-                var lp = LoopPath.FileName;
-#if DEBUG
-                if (lp != string.Empty && !File.Exists(lp)) throw new FileNotFoundException("Cannot find the loop file!");
-                if (lp != string.Empty && !ExtRegex().IsMatch(lp)) throw new Exception("Wrong file format");
-#endif
-                return lp;
-            }
+            get { return LoopPath.FileName;}
             set
             {
                 if (value != string.Empty && !ExtRegex().IsMatch(value)) return;

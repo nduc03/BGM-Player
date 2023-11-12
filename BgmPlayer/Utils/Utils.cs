@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 
 namespace bgmPlayer
@@ -10,7 +9,8 @@ namespace bgmPlayer
         /// <summary>
         /// Get BGM name of intro and loop file.
         /// Only work correctly with correct pattern.
-        /// Pattern: file_name_intro, file_name_loop
+        /// Pattern: file_name_intro, file_name_loop.
+        /// If the argument is empty string, that argument is considered as null
         /// </summary>
         /// <param name="path1">Full absolute path to intro or loop file</param>
         /// <param name="path2">Full absolute path to intro or loop file</param>
@@ -18,6 +18,8 @@ namespace bgmPlayer
         /// <returns>If correct pattern return BGM name, else return <paramref name="invalidReturn"/></returns>
         public static string? GetBgmFileName(string? path1, string? path2, string? invalidReturn = null)
         {
+            if (path1 == string.Empty) path1 = null; 
+            if (path2 == string.Empty) path2 = null;
             if (path1 == null && path2 == null) return invalidReturn;
             if (path1 == null) return Path.GetFileNameWithoutExtension(path2) ?? invalidReturn;
             if (path2 == null) return Path.GetFileNameWithoutExtension(path1) ?? invalidReturn;
@@ -43,6 +45,7 @@ namespace bgmPlayer
         {
             return ParsedInGameFileName switch
             {
+                "m_act29side_bat2_loop"  => new OstInfo("Der Hexenkönig", "Lappy", "Zwillingstürme im Herbst"),
                 "m_bat_abyssalhunters"   => new OstInfo("Under Tides", "Steven Grove", "Under Tides"),
                 "m_bat_act12side_02"     => new OstInfo("Stop Breathing", "BaoUner", "Dossoles Holiday"),
                 "m_bat_act16side_01"     => new OstInfo("潛在危機", "Latent Threat", "Erik Castro", "Guide Ahead"),
@@ -52,7 +55,6 @@ namespace bgmPlayer
                 "m_bat_act23side_01"     => new OstInfo("度關山", "Crossing the Mountain Passes", "Adam Gubman", "Where Vernal Winds Will Never Blow"),
                 "m_bat_act25side_01"     => new OstInfo("The Coming of the Future", "Steven Grove", "Lone Trail"),
                 "m_bat_act26side"        => new OstInfo("裁決日", "Judgement Day", "Erik Castro", "Hortus de Escapismo"),
-                "m_act29side_bat2_loop"  => new OstInfo("Der Hexenkönig", "Lappy", "Zwillingstürme im Herbst"),
                 "m_bat_ccs5"             => new OstInfo("Operation Spectrum Battle Theme", "Cybermiso, DOT96, & Tigerlily", "Contingency Contract Spectrum (CC#5)"),
                 "m_bat_bbrain"           => new OstInfo("夢境蘇醒", "Awaken From Dreamland", "Gareth Coker", "Dorothy's Vision"),
                 "m_bat_ccs8_b1"          => new OstInfo("Fading Sky", "AJURIKA", "Contingency Contract Dawnseeker (CC#8)"),

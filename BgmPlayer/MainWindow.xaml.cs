@@ -23,7 +23,7 @@ namespace bgmPlayer
             initState = PersistedStateManager.LoadState();
 
             InitializeComponent();
-            AudioPathManager.Init(PersistedStateManager.LoadState() ?? new PersistedState());
+            AudioPathManager.Init(initState ?? new PersistedState());
             AudioPathManager.InitTextBlock(IntroField, LoopField);
             SMTCManager.InitSMTC(OnPlayPause);
             SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
@@ -38,7 +38,7 @@ namespace bgmPlayer
 
             UpdateAudioControlButton(AudioPlayer.CurrentState);
             AllowChooseFile(AudioPlayer.IsStopped);
-            Title = SMTCManager.WindowTitle ?? SMTCManager.Title ?? AppConstants.DEFAULT_MUSIC_TITLE;
+            Title = SMTCManager.WindowTitle ?? SMTCManager.MusicTitle ?? AppConstants.DEFAULT_MUSIC_TITLE;
 
             AudioPlayer.StateChanged += UpdateAudioControlButton;
         }

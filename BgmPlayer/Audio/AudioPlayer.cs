@@ -77,7 +77,7 @@ namespace bgmPlayer
                 SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
                 CurrentState = AudioState.PLAY;
                 StateChanged?.Invoke(AudioState.PLAY);
-                SMTCManager.UpdateTitle(null, audioPath);
+                SMTCManager.UpdateTitle(audioPath);
                 return AudioPlayerState.OK;
             }
             catch (Exception e)
