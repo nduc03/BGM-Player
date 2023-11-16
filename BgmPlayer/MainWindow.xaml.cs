@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Windows.Media;
@@ -233,7 +232,7 @@ namespace bgmPlayer
         private void UpdateTitleOption(object sender, RoutedEventArgs e)
         {
 #if ME
-            RadioButton? opttion = sender as RadioButton;
+            System.Windows.Controls.RadioButton? opttion = sender as System.Windows.Controls.RadioButton;
             switch (opttion?.Name) 
             {
                 case "titleOfficialOnly":

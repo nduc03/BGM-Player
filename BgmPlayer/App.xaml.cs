@@ -8,7 +8,6 @@ namespace bgmPlayer
     {
         private static System.Windows.Forms.NotifyIcon? icon;
         private static Mutex? mutex = null;
-        private static bool exitBoxShowing = false;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -48,14 +47,8 @@ namespace bgmPlayer
 
         private void ExitApp(object? sender, EventArgs? e)
         {
-            if (exitBoxShowing) return;
-            exitBoxShowing = true;
-            if (MessageBox.Show("Are you sure to quit?", "Exit confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                FileHelper.InstantSaveState();
-                Shutdown();
-            }
-            exitBoxShowing = false;
+            FileHelper.InstantSaveState();
+            Shutdown();
         }
         private void ShowMainWindow(object? sender, EventArgs? e)
         {

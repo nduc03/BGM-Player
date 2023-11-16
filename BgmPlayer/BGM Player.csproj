@@ -20,8 +20,7 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
-		<AssemblyVersion Condition="$(Configuration)==Debug Or $(Configuration)==Release">2.3.6</AssemblyVersion>
-		<AssemblyVersion Condition="$(Configuration)==Me">2.3.6</AssemblyVersion>
+		<AssemblyVersion>2.3.7</AssemblyVersion>
 		<UseWindowsForms>True</UseWindowsForms>
 		<WindowsPackageType>None</WindowsPackageType>
 		<Platforms>x64</Platforms>
@@ -46,7 +45,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="D:\pkg-cache\.nuget\packages\naudio.vorbis\1.5.0\contentFiles\any\netstandard2.0\README.md" />
 		<None Remove="icon\dusk_arknights.ico" />
 		<None Remove="icon\schwarz.ico" />
 		<None Remove="img\pause.png" />
