@@ -63,11 +63,13 @@ namespace bgmPlayer
                 "m_bat_cledub"           => new OstInfo("無罪之人", "The Sinless", "Erik Castro", "Hortus de Escapismo"),
                 "m_bat_cstlrs"           => new OstInfo("Control's Wishes", "Steven Grove", "Lone Trail"),
                 "m_bat_dsdevr"           => new OstInfo("愚人曲", "Stultifer Cantus", "Steven Grove", "Stultifera Navis"),
+                "m_bat_lullaby"          => new OstInfo("Lullabye", "Obadiah Brown-Beach, Úyanga Bold", "Episode 08: Roaring Flare"),
                 "m_bat_manfri_02"        => new OstInfo("提卡茲之根", "Teekazwurtzen", "BaoUner", "Episode 10: Shatterpoint"),
                 "m_bat_martyr"           => new OstInfo("殉道之人", "The Martyr", "Erik Castro", "Guide Ahead"),
                 "m_bat_ncrmcr"           => new OstInfo("深池之影", "Shadow of Dublinn", "PMP Music", "What the Firelight Casts"),
                 "m_bat_rglk2boss1"       => new OstInfo("Sorrow of We Many", "Gareth Coker", "Mizuki & Caerula Arbor"),
                 "m_bat_rglk2boss2"       => new OstInfo("Traveler//Conqueror", "Gareth Coker", "Mizuki & Caerula Arbor"),
+                "m_bat_rglk2boss3"       => new OstInfo("Endospore", "Gareth Coker", "Mizuki & Caerula Arbor"),
                 "m_bat_stmkgt_01_loop"   => new OstInfo("Wecgas fore tham Cynge, Searu fore tham Ethle (First half)", "LJCH", "Episode 11: Return to Mist"),
                 "m_bat_stmkgt_02"        => new OstInfo("Wecgas fore tham Cynge, Searu fore tham Ethle (Second half)", "LJCH", "Episode 11: Return to Mist"),
                                          

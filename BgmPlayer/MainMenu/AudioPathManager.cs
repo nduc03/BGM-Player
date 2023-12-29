@@ -31,7 +31,7 @@ namespace bgmPlayer
                 UpdateGUI();
                 if (AutoFill) TryAutoSetLoop();
                 if (value == string.Empty) CheckAllEmpty();
-                PersistedStateManager.SaveState(IntroPath: Intro);
+                AppStateManager.SaveState(IntroPath: Intro);
             }
         }
         public static string Loop
@@ -44,10 +44,10 @@ namespace bgmPlayer
                 UpdateGUI();
                 if (AutoFill) TryAutoSetIntro();
                 if (value != string.Empty) CheckAllEmpty();
-                PersistedStateManager.SaveState(LoopPath: Loop);
+                AppStateManager.SaveState(LoopPath: Loop);
             }
         }
-        public static void Init(PersistedState state)
+        public static void Init(AppState state)
         {
             IntroPath.Filter = AppConstants.FILTER;
             LoopPath.Filter = AppConstants.FILTER;

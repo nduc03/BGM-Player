@@ -4,25 +4,25 @@ using System.Text.Json;
 
 namespace bgmPlayer
 {
-    public static class PersistedStateManager
+    public static class AppStateManager
     {
-        private static PersistedState? dataCache = null;
+        private static AppState? dataCache = null;
 
         /// <summary>
         /// Used to get the <c>PersistedState</c> or just to cached <c>PersistedState</c> to RAM when initialize app
         /// </summary>
         /// <returns><c>PersistedState</c> object or <c>null</c> when saved state file does not exist</returns>
-        public static PersistedState? LoadState()
+        public static AppState? LoadState()
         {
             if (dataCache != null) return dataCache;
 
-            PersistedState? data;
+            AppState? data;
             if (!File.Exists(AppConstants.SAVED_STATE_LOCATION)) return null;
 
             string fileContent = File.ReadAllText(AppConstants.SAVED_STATE_LOCATION);
             try
             {
-                data = JsonSerializer.Deserialize<PersistedState>(fileContent);
+                data = JsonSerializer.Deserialize<AppState>(fileContent);
             }
             catch
             {
@@ -41,7 +41,7 @@ namespace bgmPlayer
             int? TitleOption = null
         )
         {
-            PersistedState data = dataCache ?? LoadState() ?? new PersistedState();
+            AppState data = dataCache ?? LoadState() ?? new AppState();
 
             if (IntroPath != null) data.IntroPath = IntroPath;
             if (LoopPath != null) data.LoopPath = LoopPath;
@@ -58,17 +58,17 @@ namespace bgmPlayer
         /// Save the app state to disk.
         /// <para>If <c>updateMode</c> is set to <c>UpdateMode.Update</c>, only save non-null property in <c>state</c></para>
         /// </summary>
-        public static void SaveState(PersistedState state, UpdateMode updateMode = UpdateMode.Update)
+        public static void SaveState(AppState currentState, UpdateMode updateMode = UpdateMode.Update)
         {
             // TODO: Make this function more convenient to use then delete the other SaveState above
             if (updateMode == UpdateMode.Update)
             {
-                PersistedState data = dataCache ?? LoadState() ?? new PersistedState();
+                AppState data = dataCache ?? LoadState() ?? new AppState();
                 var hasUpdate = false;
-                foreach (var stateProp in typeof(PersistedState).GetProperties())
+                foreach (var stateProp in typeof(AppState).GetProperties())
                 {
                     hasUpdate = true;
-                    var stateVal = stateProp.GetValue(state);
+                    var stateVal = stateProp.GetValue(currentState);
                     if (stateVal != null) stateProp.SetValue(data, stateVal);
                 }
                 if (hasUpdate)
@@ -79,8 +79,8 @@ namespace bgmPlayer
             }
             else
             {
-                dataCache = state;
-                FileHelper.ApplyState(state);
+                dataCache = currentState;
+                FileHelper.ApplyState(currentState);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using NAudio.Extras;
+using NAudio.Wave;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -30,8 +31,8 @@ namespace bgmPlayer
                 else return false;
             }
         }
-        public static bool IsPlaying { get { return CurrentState == AudioState.PLAY; } }
-        public static bool IsPaused { get { return CurrentState == AudioState.PAUSE; } }
+        public static bool IsPlaying { get => CurrentState == AudioState.PLAY; }
+        public static bool IsPaused { get => CurrentState == AudioState.PAUSE; }
 
         private static void Initialize()
         {
@@ -42,8 +43,8 @@ namespace bgmPlayer
             }
             outputDevice = new()
             {
-                DesiredLatency = 700,
-                NumberOfBuffers = 3
+                DesiredLatency = 400,
+                NumberOfBuffers = 2
             };
             SetVolume(volume);
         }
@@ -69,11 +70,11 @@ namespace bgmPlayer
                 }
                 else
                 {
-                    BGMLoopStream loopStream = new(new AudioFileReader(audioPath));
+                    LoopStream loopStream = new(new AudioFileReader(audioPath));
                     outputDevice!.Init(loopStream);
                 }
                 outputDevice.Play();
-                SMTCManager.IsEnable = true;
+                SMTCManager.Enable();
                 SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
                 CurrentState = AudioState.PLAY;
                 StateChanged?.Invoke(AudioState.PLAY);
@@ -120,7 +121,7 @@ namespace bgmPlayer
                 }
                 SetVolume(volume);
                 outputDevice.Play();
-                SMTCManager.IsEnable = true;
+                SMTCManager.Enable();
                 SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
                 CurrentState = AudioState.PLAY;
                 StateChanged?.Invoke(AudioState.PLAY);

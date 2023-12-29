@@ -5,19 +5,15 @@ namespace bgmPlayer
 {
     public class Timer
     {
+        private readonly Stopwatch stopWatch;
         #region Singleton declaration
-        private Timer() { }
-        private static Timer? instance = null;
-        public static Timer Instance
+        private static readonly Lazy<Timer> instance = new(() => new Timer());
+        public static Timer Instance { get => instance.Value; }
+        private Timer()
         {
-            get
-            {
-                instance ??= new Timer();
-                return instance;
-            }
+            stopWatch = new Stopwatch();
         }
         #endregion
-        private readonly Stopwatch stopWatch = new();
 
         public void Start()
         {

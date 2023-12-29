@@ -4,12 +4,8 @@ namespace bgmPlayer
 {
     // Inspired by NAudio.Extras.LoopStream but modified for VorbisWave
     // Modified for always enable looping and removed some unnecessary field
-    public class VorbisLoopStream : VorbisWaveReader
+    public class VorbisLoopStream(string path) : VorbisWaveReader(path)
     {
-        public VorbisLoopStream(string path) : base(path)
-        {
-        }
-
         public override int Read(byte[] buffer, int offset, int count)
         {
             int totalBytesRead = 0;

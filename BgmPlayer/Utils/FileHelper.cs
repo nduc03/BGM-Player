@@ -8,7 +8,7 @@ namespace bgmPlayer
         private static System.Timers.Timer? timer = null;
         private static object? data = null;
 
-        public static void ApplyState(PersistedState state)
+        public static void ApplyState(AppState state)
         {
             if (timer == null)
             {

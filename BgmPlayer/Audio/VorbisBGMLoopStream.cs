@@ -2,23 +2,12 @@
 
 namespace bgmPlayer
 {
-    public class VorbisBGMLoopStream : VorbisLoopStream
+    public class VorbisBGMLoopStream(string introPath, string loopPath) : VorbisLoopStream(loopPath)
     {
-        private readonly VorbisWaveReader? introStream;
-
-        public VorbisBGMLoopStream(string introPath, string loopPath) : base(loopPath)
-        {
-            introStream = new VorbisWaveReader(introPath);
-        }
-
-        public VorbisBGMLoopStream(string loopPath) : base(loopPath)
-        {
-        }
+        private readonly VorbisWaveReader introStream = new(introPath);
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (introStream == null)
-                return base.Read(buffer, offset, count);
             if (introStream.Position < introStream.Length)
             {
                 int introRead = introStream.Read(buffer, offset, count);

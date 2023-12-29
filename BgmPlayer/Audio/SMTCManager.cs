@@ -16,7 +16,7 @@ namespace bgmPlayer
                 if (!isInitialized) return false;
                 return smtc.IsEnabled;
             }
-            set { smtc.IsEnabled = value; }
+            private set { smtc.IsEnabled = value; }
         }
         public static string? MusicTitle { get; private set; }
         public static string? WindowTitle { get; private set; }
@@ -67,7 +67,7 @@ namespace bgmPlayer
             if (!isInitialized) return;
             MusicTitle = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE);
 #if ME
-            int? titleOption = PersistedStateManager.LoadState()?.TitleOption;
+            int? titleOption = AppStateManager.LoadState()?.TitleOption;
             OstInfo? info = Utils.GetArknightsOstInfo(MusicTitle);
             if (info == null)
             {
@@ -111,6 +111,14 @@ namespace bgmPlayer
                     )
             );
             updater.Update();
+        }
+
+        public static void Enable()
+        {
+            if (!IsEnable)
+            {
+                IsEnable = true;
+            }
         }
     }
 }

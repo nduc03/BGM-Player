@@ -11,7 +11,7 @@ namespace bgmPlayer
     {
         private readonly Timer timer = Timer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
-        private readonly PersistedState? initState;
+        private readonly AppState? initState;
 
         private bool allowControlBySMTC = false;
         private int currentVolume = 100;
@@ -19,10 +19,10 @@ namespace bgmPlayer
         public MainWindow()
         {
             dispatcherTimer = new DispatcherTimer();
-            initState = PersistedStateManager.LoadState();
+            initState = AppStateManager.LoadState();
 
             InitializeComponent();
-            AudioPathManager.Init(initState ?? new PersistedState());
+            AudioPathManager.Init(initState ?? new AppState());
             AudioPathManager.InitTextBlock(IntroField, LoopField);
             SMTCManager.InitSMTC(OnPlayPause);
             SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
@@ -65,7 +65,7 @@ namespace bgmPlayer
             else
             {
                 autoFill.IsChecked = false;
-                PersistedStateManager.SaveState(AutoFill: false);
+                AppStateManager.SaveState(AutoFill: false);
             }
             AudioPathManager.AutoFill = autoFill.IsChecked ?? false;
         }
@@ -236,13 +236,13 @@ namespace bgmPlayer
             switch (opttion?.Name) 
             {
                 case "titleOfficialOnly":
-                    PersistedStateManager.SaveState(TitleOption: 2);
+                    AppStateManager.SaveState(TitleOption: 2);
                     break;
                 case "titleTransOnly":
-                    PersistedStateManager.SaveState(TitleOption: 3);
+                    AppStateManager.SaveState(TitleOption: 3);
                     break;
                 default:
-                    PersistedStateManager.SaveState(TitleOption: 1);
+                    AppStateManager.SaveState(TitleOption: 1);
                     break;
             }
             SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
@@ -304,13 +304,13 @@ namespace bgmPlayer
 
         private void OnChecked(object sender, RoutedEventArgs e)
         {
-            PersistedStateManager.SaveState(AutoFill: true);
+            AppStateManager.SaveState(AutoFill: true);
             AudioPathManager.AutoFill = true;
         }
 
         private void OnUnchecked(object sender, RoutedEventArgs e)
         {
-            PersistedStateManager.SaveState(AutoFill: false);
+            AppStateManager.SaveState(AutoFill: false);
             AudioPathManager.AutoFill = false;
         }
 
@@ -355,7 +355,7 @@ namespace bgmPlayer
             VolSlider.Value = Volume;
             VolValue.Text = Volume.ToString();
             AudioPlayer.SetVolume(Volume / AppConstants.VOLUME_SCALE);
-            PersistedStateManager.SaveState(Volume: Volume);
+            AppStateManager.SaveState(Volume: Volume);
         }
         private void UpdateAudioControlButton(AudioState audioState)
         {
