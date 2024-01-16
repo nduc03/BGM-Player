@@ -90,7 +90,7 @@ namespace bgmPlayer
 
         /// <summary>
         /// Play seamless BGM with optional intro segment.
-        /// If both <paramref name="introPath"/> and <paramref name="loopPath"/> is specified, play looped BGM with 
+        /// If both <paramref name="introPath"/> and <paramref name="loopPath"/> are specified, play looped BGM with 
         /// intro segment from <paramref name="introPath"/>. Note that two segments must have the same audio format.
         /// If intro segment is not needed, <paramref name="introPath"/> and <paramref name="loopPath"/> have the same
         /// purpose, set one path and leave the remaining param to <c>string.Empty</c> or <c>null</c>.
