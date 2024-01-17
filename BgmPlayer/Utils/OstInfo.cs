@@ -8,7 +8,7 @@ namespace bgmPlayer
         public readonly string? Artist;
         public readonly string? EventName;
 
-        public OstInfo(string title, string translatedTitle, string? artist = null, string? eventName = null)
+        public OstInfo(string title, string? translatedTitle, string? artist = null, string? eventName = null)
         {
             Title = title;
             TranslatedTitle = translatedTitle;

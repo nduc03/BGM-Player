@@ -43,6 +43,7 @@ namespace bgmPlayer
         /// <returns></returns>
         public static OstInfo? GetArknightsOstInfo(string? ParsedInGameFileName)
         {
+            if (ParsedInGameFileName == null) return null;
             return ParsedInGameFileName switch
             {
                 "m_act29side_bat2_loop"  => new OstInfo("Der Hexenkönig", "Lappy", "Zwillingstürme im Herbst"),
@@ -91,8 +92,28 @@ namespace bgmPlayer
                 "m_sys_tech"             => new OstInfo("Vigilo", eventName:"Vigilo"),
 
                 "stmkgt_mix"             => new OstInfo("Wecgas fore tham Cynge, Searu fore tham Ethle", "LJCH", "Episode 11: Return to Mist"),
-                _ => null,
+                _ => GetArknightsOstInfoFromJson(ParsedInGameFileName),
             };;
+        }
+
+        // Json Format Sample
+        // {
+        //    "m_bat_act27side_1": {
+        //      "Title": "Effervescence",
+        //      "Artist": "Kirara Magic",
+        //      "EventName": "So Long, Adele"
+        //    }
+        // }
+        public static OstInfo? GetArknightsOstInfoFromJson(string ParsedInGameFileName)
+        {
+            var data = OstList.Data;
+            if (data == null) return null;
+            var Title = data[ParsedInGameFileName]?["Title"]?.GetValue<string>();
+            if (string.IsNullOrEmpty(Title)) return null;
+            var TranslatedTitle = data[ParsedInGameFileName]?["TranslatedTitle"]?.GetValue<string>();
+            var Artist = data[ParsedInGameFileName]?["Artist"]?.GetValue<string>();
+            var EventName = data[ParsedInGameFileName]?["EventName"]?.GetValue<string>();
+            return new OstInfo(Title, TranslatedTitle, Artist, EventName);
         }
 #endif
 
