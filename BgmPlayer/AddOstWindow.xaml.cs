@@ -21,9 +21,14 @@ namespace bgmPlayer
 #if ME
             var InGameName = in_game_name.Text.Trim();
             var Title = title.Text.Trim();
-            var TranlatedTitle = title.Text == string.Empty ? null : title.Text.Trim();
-            var Artist = artist.Text == string.Empty ? null : title.Text.Trim();
-            var EventName = event_name.Text == string.Empty ? null : event_name.Text.Trim();
+            if (InGameName == string.Empty || Title == string.Empty)
+            {
+                MessageBox.Show("Required parts are not filled!");
+                return;
+            }
+            var TranlatedTitle = translated_title.Text.Trim() == string.Empty ? null : translated_title.Text.Trim();
+            var Artist = artist.Text.Trim() == string.Empty ? null : title.Text.Trim();
+            var EventName = event_name.Text.Trim() == string.Empty ? null : event_name.Text.Trim();
             OstList.AddOrReplaceContent(InGameName, Title, TranlatedTitle, Artist, EventName);
             MessageBox.Show("Done!");
             Close();
