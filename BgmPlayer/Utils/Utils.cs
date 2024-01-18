@@ -38,6 +38,9 @@ namespace bgmPlayer
         /// <summary>
         /// All the unofficial translation from arknights.fandom.com.
         /// All the official name from Hypergryph's public OST or Arknights global version by Yostar.
+        /// All the names in this function will take the higher priority when display the OST info
+        /// Only if OST info in this function does not exists, 
+        /// it will look up to dynamic OST info stored in Documents/BGM_Player_Data/ost_info.json
         /// </summary>
         /// <param name="ParsedInGameFileName"></param>
         /// <returns></returns>

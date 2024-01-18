@@ -12,9 +12,11 @@ namespace bgmPlayer
         private readonly Timer timer = Timer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
         private readonly AppState? initState;
+        private AddOstWindow? addOstWindow = null;
 
         private bool allowControlBySMTC = false;
         private int currentVolume = 100;
+        private bool addOstWindowClosed = true;
 
         public MainWindow()
         {
@@ -31,8 +33,10 @@ namespace bgmPlayer
             InitCheckbox();
             InitTimer();
 #if ME
+            menu_bar.Visibility = Visibility.Visible;
             InitBackgroundImage();
             InitTitleOption();
+            OstList.Init();
 #endif
 
             UpdateAudioControlButton(AudioPlayer.CurrentState);
@@ -121,6 +125,39 @@ namespace bgmPlayer
         #endregion
 
         #region Button handler
+        private void Reload_Click(object sender, RoutedEventArgs e)
+        {
+#if ME
+            if (AudioPlayer.IsPlaying)
+            {
+                if (MessageBox.Show(
+                            "Reload will stop the playing music.\nAre you sure?",
+                            "Confirmation",
+                            MessageBoxButton.YesNo
+                        ) == MessageBoxResult.No) return;
+                else Stop_Click(null, null);
+            }
+            OstList.ReloadContent();
+            MessageBox.Show("Reloaded!");
+#else
+            MessageBox.Show("Version not supported.");
+#endif
+        }
+
+        private void AddOst_Click(object sender, RoutedEventArgs e)
+        {
+            if (addOstWindow == null || addOstWindowClosed)
+            {
+                addOstWindow = new AddOstWindow();
+                addOstWindow.Closed += (sender, e) =>
+                {
+                    addOstWindowClosed = true;
+                };
+                addOstWindow.Show();
+                addOstWindowClosed = false;
+            }
+            else addOstWindow.Focus();
+        }
         private void Intro_Click(object sender, RoutedEventArgs e)
         {
             allowControlBySMTC = false;
@@ -201,7 +238,6 @@ namespace bgmPlayer
             timer.Reset();
         }
 
-
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
         {
             if (AudioPathManager.Intro == string.Empty) return;
@@ -248,7 +284,7 @@ namespace bgmPlayer
             SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
 #endif
         }
-        #endregion
+#endregion
 
         #region Taskbar handler
         private void TaskbarPlayPause_handler(object? sender, EventArgs? e)
@@ -330,7 +366,7 @@ namespace bgmPlayer
             GC.Collect();
         }
 #endif
-        #endregion
+#endregion
 
         #region Private helper methods
         private void AllowChooseFile(bool isAllow)

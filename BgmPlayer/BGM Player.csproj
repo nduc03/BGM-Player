@@ -20,7 +20,7 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
-		<AssemblyVersion>2.3.7</AssemblyVersion>
+		<AssemblyVersion>2.4.0</AssemblyVersion>
 		<UseWindowsForms>True</UseWindowsForms>
 		<WindowsPackageType>None</WindowsPackageType>
 		<Platforms>x64</Platforms>
