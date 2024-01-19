@@ -27,7 +27,7 @@ namespace bgmPlayer
                 return;
             }
             var TranlatedTitle = translated_title.Text.Trim() == string.Empty ? null : translated_title.Text.Trim();
-            var Artist = artist.Text.Trim() == string.Empty ? null : title.Text.Trim();
+            var Artist = artist.Text.Trim() == string.Empty ? null : artist.Text.Trim();
             var EventName = event_name.Text.Trim() == string.Empty ? null : event_name.Text.Trim();
             OstList.AddOrReplaceContent(InGameName, Title, TranlatedTitle, Artist, EventName);
             MessageBox.Show("Done!");
