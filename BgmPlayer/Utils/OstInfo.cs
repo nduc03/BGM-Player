@@ -3,17 +3,19 @@ namespace bgmPlayer
 {
     public readonly struct OstInfo
     {
-        public readonly string  Title;
-        public readonly string? TranslatedTitle;
-        public readonly string? Artist;
-        public readonly string? EventName;
+        public readonly string  Title { get; }
+        public readonly string? TranslatedTitle { get; }
+        public readonly string? Artist { get; }
+        public readonly string? EventName { get; }
+        public readonly bool IsDynamic { get; } // Todo add option to check the dynamic
 
-        public OstInfo(string title, string? translatedTitle, string? artist = null, string? eventName = null)
+        public OstInfo(string title, string? translatedTitle, string? artist = null, string? eventName = null, bool isDynamic = false)
         {
             Title = title;
             TranslatedTitle = translatedTitle;
             Artist = artist;
             EventName = eventName;
+            IsDynamic = isDynamic;
         }
         public OstInfo(string title, string? artist = null, string? eventName = null)
         {

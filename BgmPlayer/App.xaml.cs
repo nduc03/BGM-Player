@@ -22,6 +22,9 @@ namespace bgmPlayer
                 Current.Shutdown();
             }
             InitNotifyIcon();
+#if ME
+            OstList.CreateFolder();
+#endif
             base.OnStartup(e);
         }
 

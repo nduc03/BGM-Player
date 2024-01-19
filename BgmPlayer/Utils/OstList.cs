@@ -37,7 +37,7 @@ namespace bgmPlayer
             }
         }
         // Currently it only creates empty folder
-        public static bool Init()
+        public static bool CreateFolder()
         {
             try
             {

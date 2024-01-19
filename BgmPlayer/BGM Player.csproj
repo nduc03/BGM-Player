@@ -20,7 +20,7 @@
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<NoWin32Manifest>true</NoWin32Manifest>
-		<AssemblyVersion>2.4.0</AssemblyVersion>
+		<AssemblyVersion>2.4.1</AssemblyVersion>
 		<UseWindowsForms>True</UseWindowsForms>
 		<WindowsPackageType>None</WindowsPackageType>
 		<Platforms>x64</Platforms>
@@ -30,7 +30,7 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Me|x64'">
 		<Optimize>True</Optimize>
 		<DefineConstants>RELEASE</DefineConstants>
-		<DebugType>none</DebugType>
+		<DebugType>embedded</DebugType>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
@@ -40,7 +40,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DebugType>none</DebugType>
+		<DebugType>embedded</DebugType>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 

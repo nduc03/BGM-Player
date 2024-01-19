@@ -107,7 +107,7 @@ namespace bgmPlayer
         //      "EventName": "So Long, Adele"
         //    }
         // }
-        public static OstInfo? GetArknightsOstInfoFromJson(string ParsedInGameFileName)
+        private static OstInfo? GetArknightsOstInfoFromJson(string ParsedInGameFileName)
         {
             var data = OstList.Data;
             if (data == null) return null;
@@ -116,7 +116,7 @@ namespace bgmPlayer
             var TranslatedTitle = data[ParsedInGameFileName]?["TranslatedTitle"]?.GetValue<string>();
             var Artist = data[ParsedInGameFileName]?["Artist"]?.GetValue<string>();
             var EventName = data[ParsedInGameFileName]?["EventName"]?.GetValue<string>();
-            return new OstInfo(Title, TranslatedTitle, Artist, EventName);
+            return new OstInfo(Title, TranslatedTitle, Artist, EventName, true);
         }
 #endif
 

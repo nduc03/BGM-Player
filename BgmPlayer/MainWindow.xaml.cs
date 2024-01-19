@@ -36,7 +36,6 @@ namespace bgmPlayer
             menu_bar.Visibility = Visibility.Visible;
             InitBackgroundImage();
             InitTitleOption();
-            OstList.Init();
 #endif
 
             UpdateAudioControlButton(AudioPlayer.CurrentState);
@@ -156,7 +155,11 @@ namespace bgmPlayer
                 addOstWindow.Show();
                 addOstWindowClosed = false;
             }
-            else addOstWindow.Focus();
+            else
+            {
+                if (addOstWindow.WindowState == WindowState.Minimized) addOstWindow.WindowState = WindowState.Normal;
+                addOstWindow.Focus();
+            }
         }
         private void Intro_Click(object sender, RoutedEventArgs e)
         {

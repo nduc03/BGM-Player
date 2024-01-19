@@ -8,7 +8,10 @@
         Title="Add or replace OST infomation" Height="300" Width="400" ResizeMode="CanMinimize">
     <StackPanel>
         <Label Content="In game name (required):"/>
-        <TextBox Width="250" x:Name="in_game_name"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBox Width="180" x:Name="in_game_name"/>
+            <Button Content="Get current" Width="70" Margin="0" x:Name="current" Click="Current_Click"/>
+        </StackPanel>
         <Label Content="OST Title (required):"/>
         <TextBox Width="250" x:Name="title"/>
         <Label Content="Translated Title:"/>
@@ -17,6 +20,10 @@
         <TextBox Width="250" x:Name="artist"/>
         <Label Content="Event name:"/>
         <TextBox Width="250" x:Name="event_name"/>
-        <Button Content="Submit" Width="60" Margin="10" x:Name="submit" Click="Submit_Click"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            
+            <Button Content="Check" Width="60" Margin="10" x:Name="check" Click="Check_Click"/>
+            <Button Content="Submit" Width="60" Margin="10" x:Name="submit" Click="Submit_Click"/>
+        </StackPanel>
     </StackPanel>
 </Window>
