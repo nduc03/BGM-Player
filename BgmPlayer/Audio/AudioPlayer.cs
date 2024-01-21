@@ -9,7 +9,7 @@ using Windows.Media;
 namespace bgmPlayer
 {
     /// <summary>
-    /// Wrapper of NAudio library for bgmPlayer
+    /// Organized helper class for managing NAudio fearture for bgmPlayer
     /// Provide set of functions to manage and control music by using NAudio library.
     /// </summary>
     public static class AudioPlayer
@@ -142,7 +142,14 @@ namespace bgmPlayer
         {
             if (outputDevice == null) return AudioPlayerState.FAILED;
             SetVolume(volume);
-            outputDevice.Play();
+            try
+            {
+                outputDevice.Play();
+            }
+            catch
+            {
+                return AudioPlayerState.FAILED;
+            }
             SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
             CurrentState = AudioState.PLAY;
             StateChanged?.Invoke(AudioState.PLAY);
@@ -184,30 +191,20 @@ namespace bgmPlayer
         /// </summary>
         public static AudioPlayerState SetVolume(float Volume)
         {
-            volume = Math.Clamp(Volume, 0.0f, 1.0f);
             if (outputDevice == null)
             {
                 Debug.WriteLine("SetVolume: outputDevice = null");
                 return AudioPlayerState.FAILED;
             }
-
-            // Decided to do not delete this old code because it is fun
-            // Old normal code:
-            // switch (Volume)
-            // {
-            //     case <= 0: outputDevice.Volume = 0; break;
-            //     case > 1: outputDevice.Volume = 1; break;
-            //     default: outputDevice.Volume = Volume; break;
-            // }
-            // Visual Studio suggested this new and fun code:
-            // outputDevice.Volume = Volume switch
-            // {
-            //     <= 0 => 0, // wtf is this :))
-            //     > 1 => 1,
-            //     _ => Volume,
-            // };
-            // Better new code:
-            outputDevice.Volume = Math.Clamp(Volume, 0.0f, 1.0f);
+            try
+            {
+                outputDevice.Volume = Math.Clamp(Volume, 0.0f, 1.0f);
+            }
+            catch
+            {
+                return AudioPlayerState.FAILED;
+            }
+            volume = Math.Clamp(Volume, 0.0f, 1.0f);
 
             return AudioPlayerState.OK;
         }

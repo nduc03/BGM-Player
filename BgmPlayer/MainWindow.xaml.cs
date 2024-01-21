@@ -48,6 +48,7 @@ namespace bgmPlayer
         #region Initialize
         private void InitVolume()
         {
+            int previousVolume = currentVolume; // save the previous value to rollback when error happen.
             if (initState == null)
                 Debug.WriteLine("InitVolume: config data is null, set volume to default value.");
             else if (initState.Volume == null)
@@ -57,8 +58,13 @@ namespace bgmPlayer
             else
                 currentVolume = (int)AppConstants.VOLUME_SCALE;
 
+            if (AudioPlayer.SetVolume(currentVolume / AppConstants.VOLUME_SCALE) != AudioPlayerState.OK)
+            {
+                MessageBox.Show("Audio device error!");
+                currentVolume = previousVolume;
+                return;
+            }
             VolSlider.Value = currentVolume;
-            AudioPlayer.SetVolume(currentVolume / AppConstants.VOLUME_SCALE);
         }
 
         private void InitCheckbox()
