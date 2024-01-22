@@ -2,6 +2,7 @@
 using NAudio.Wave;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows;
 using Windows.Media;
@@ -34,7 +35,8 @@ namespace bgmPlayer
         public static bool IsPlaying { get => CurrentState == AudioState.PLAY; }
         public static bool IsPaused { get => CurrentState == AudioState.PAUSE; }
 
-        private static void Initialize()
+        [MemberNotNull(nameof(outputDevice))]
+        private static void Initialize(IWaveProvider stream)
         {
             if (outputDevice != null)
             {
@@ -44,8 +46,9 @@ namespace bgmPlayer
             outputDevice = new()
             {
                 DesiredLatency = 400,
-                NumberOfBuffers = 2
+                NumberOfBuffers = 2,
             };
+            outputDevice.Init(stream);
             SetVolume(volume);
         }
 
@@ -57,22 +60,20 @@ namespace bgmPlayer
         {
             if (!File.Exists(audioPath))
             {
-                MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return AudioPlayerState.FAILED;
             }
             try
             {
-                Initialize();
+                IWaveProvider stream;
                 if (audioPath.EndsWith(".ogg"))
                 {
-                    VorbisLoopStream loopStream = new(audioPath);
-                    outputDevice!.Init(loopStream);
+                    stream = new VorbisLoopStream(audioPath);
                 }
                 else
                 {
-                    LoopStream loopStream = new(new AudioFileReader(audioPath));
-                    outputDevice!.Init(loopStream);
+                    stream = new LoopStream(new AudioFileReader(audioPath));
                 }
+                Initialize(stream);
                 outputDevice.Play();
                 SMTCManager.Enable();
                 SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
@@ -107,19 +108,16 @@ namespace bgmPlayer
             }
             try
             {
-                Initialize();
+                IWaveProvider bgmStream;
                 if (introPath.EndsWith(".ogg") && loopPath.EndsWith(".ogg"))
                 {
-                    VorbisBGMLoopStream bgmLoopStream = new(introPath, loopPath);
-                    outputDevice!.Init(bgmLoopStream);
+                    bgmStream = new VorbisBGMLoopStream(introPath, loopPath);
                 }
                 else
                 {
-                    BGMLoopStream bgmLoopStream = new(new AudioFileReader(introPath), new AudioFileReader(loopPath));
-                    outputDevice!.Init(bgmLoopStream);
-
+                    bgmStream = new BGMLoopStream(new AudioFileReader(introPath), new AudioFileReader(loopPath));
                 }
-                SetVolume(volume);
+                Initialize(bgmStream);
                 outputDevice.Play();
                 SMTCManager.Enable();
                 SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
@@ -191,22 +189,28 @@ namespace bgmPlayer
         /// </summary>
         public static AudioPlayerState SetVolume(float Volume)
         {
+            volume = Math.Clamp(Volume, 0.0f, 1.0f);
+
+            if (!ChangeVolume()) return AudioPlayerState.FAILED;
+
+            return AudioPlayerState.OK;
+        }
+
+        private static bool ChangeVolume()
+        {
             if (outputDevice == null)
             {
-                Debug.WriteLine("SetVolume: outputDevice = null");
-                return AudioPlayerState.FAILED;
+                return false;
             }
             try
             {
-                outputDevice.Volume = Math.Clamp(Volume, 0.0f, 1.0f);
+                outputDevice.Volume = volume;
+                return true;
             }
             catch
             {
-                return AudioPlayerState.FAILED;
+                return false;
             }
-            volume = Math.Clamp(Volume, 0.0f, 1.0f);
-
-            return AudioPlayerState.OK;
         }
     }
 }

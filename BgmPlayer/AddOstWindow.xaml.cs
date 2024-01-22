@@ -23,7 +23,7 @@ namespace bgmPlayer
             var OstTitle = title.Text.Trim();
             if (InGameName == string.Empty || OstTitle == string.Empty)
             {
-                MessageBox.Show("Required parts are not filled!");
+                MessageBox.Show("Required parts are missing!");
                 return;
             }
             var ost = Utils.GetArknightsOstInfo(InGameName);

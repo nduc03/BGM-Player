@@ -17,6 +17,7 @@ namespace bgmPlayer
     {
         // the list file is saved at user's documents folder instead of app folder
         // so the list will be kept even when the app is deleted
+        // it also has auto backup by OneDrive
         private static readonly string ostInfoPath = Path.Combine(SpecialDirectories.MyDocuments, AppConstants.OST_INFO_RELATIVE_PATH);
         private static JsonNode? data = GetContent();
         public static JsonNode? Data
@@ -42,8 +43,12 @@ namespace bgmPlayer
             try
             {
                 var folder = Path.GetDirectoryName(ostInfoPath);
-                if (folder != null) Directory.CreateDirectory(folder);
-                return true;
+                if (folder != null)
+                {
+                    Directory.CreateDirectory(folder);
+                    return true;
+                }
+                return false;
             }
             catch
             {
