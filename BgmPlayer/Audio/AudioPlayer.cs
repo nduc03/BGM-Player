@@ -189,6 +189,8 @@ namespace bgmPlayer
         /// </summary>
         public static AudioPlayerState SetVolume(float Volume)
         {
+            // even if failed to get the outputDevice the volume state still update
+            // so when init device again, it will set to correct volume
             volume = Math.Clamp(Volume, 0.0f, 1.0f);
 
             if (!ChangeVolume()) return AudioPlayerState.FAILED;

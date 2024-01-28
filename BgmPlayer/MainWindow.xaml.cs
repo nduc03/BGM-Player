@@ -209,13 +209,13 @@ namespace bgmPlayer
 
             if (AudioPlayer.IsPaused)
             {
-                try
+                if (AudioPlayer.Continue() == AudioPlayerState.OK)
                 {
-                    AudioPlayer.Continue();
                     UpdateAudioControlButton(AudioState.PLAY);
                     timer.Start();
+
                 }
-                catch (NAudio.MmException)
+                else
                 {
                     MessageBox.Show(AppConstants.AUDIO_DEVICE_ERROR_MSG, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     Stop_Click(null, null);
