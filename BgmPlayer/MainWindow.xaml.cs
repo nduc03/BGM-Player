@@ -127,15 +127,13 @@ namespace bgmPlayer
         private void Reload_Click(object sender, RoutedEventArgs e)
         {
 #if ME
-            if (AudioPlayer.IsPlaying)
-            {
-                if (MessageBox.Show(
-                            "Reload will stop the playing music.\nAre you sure?",
-                            "Confirmation",
-                            MessageBoxButton.YesNo
-                        ) == MessageBoxResult.No) return;
-                else Stop_Click(null, null);
-            }
+            if (AudioPlayer.IsPlaying && 
+                MessageBox.Show(
+                    "Reload will stop the playing music.\nAre you sure?",
+                    "Confirmation",
+                    MessageBoxButton.YesNo
+                ) == MessageBoxResult.No) return;
+            Stop_Click(null, null);
             OstList.ReloadContent();
             MessageBox.Show("Reloaded!");
 #else
@@ -188,48 +186,41 @@ namespace bgmPlayer
                 MessageBox.Show(AppConstants.FILE_MISSING, AppConstants.USER_ERROR_TITLE);
                 return;
             }
-            if (AudioPlayer.IsStopped)
+            switch (AudioPlayer.CurrentState)
             {
-                AllowChooseFile(false);
-                UpdateAudioControlButton(AudioState.PLAY);
-                allowControlBySMTC = true;
-                TaskbarChangeIconToPause();
-                SetVolume(currentVolume);
-                
-                
-                if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
-                {
-                    MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Stop_Click(null, null);
-                    return;
-                }
-                timer.Start(); // Moved this after AudioPlayer.PlayBGM call, because sometimes opening stream from disk takes too much time which makes timer inaccurate
-                return;
-            }
-
-            if (AudioPlayer.IsPaused)
-            {
-                if (AudioPlayer.Continue() == AudioPlayerState.OK)
-                {
+                case AudioState.STOP:
+                    AllowChooseFile(false);
                     UpdateAudioControlButton(AudioState.PLAY);
-                    timer.Start();
+                    allowControlBySMTC = true;
+                    TaskbarChangeIconToPause();
+                    SetVolume(currentVolume);
 
-                }
-                else
-                {
-                    MessageBox.Show(AppConstants.AUDIO_DEVICE_ERROR_MSG, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Stop_Click(null, null);
-                }
-                return;
-            }
-
-            if (AudioPlayer.IsPlaying)
-            {
-                AudioPlayer.Pause();
-                UpdateAudioControlButton(AudioState.PAUSE);
-                TaskbarChangeIconToPlay();
-                timer.Stop();
-                return;
+                    if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
+                    {
+                        MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Stop_Click(null, null);
+                        return;
+                    }
+                    timer.Start(); // Moved this after AudioPlayer.PlayBGM call, because sometimes opening stream from disk takes too much time which makes timer inaccurate
+                    break;
+                case AudioState.PAUSE:
+                    if (AudioPlayer.Continue() == AudioPlayerState.OK)
+                    {
+                        UpdateAudioControlButton(AudioState.PLAY);
+                        timer.Start();
+                    }
+                    else
+                    {
+                        MessageBox.Show(AppConstants.AUDIO_DEVICE_ERROR_MSG, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Stop_Click(null, null);
+                    }
+                    break;
+                case AudioState.PLAY:
+                    AudioPlayer.Pause();
+                    UpdateAudioControlButton(AudioState.PAUSE);
+                    TaskbarChangeIconToPlay();
+                    timer.Stop();
+                    break;
             }
         }
 

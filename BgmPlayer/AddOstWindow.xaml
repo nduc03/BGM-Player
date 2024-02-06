@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:bgmPlayer"
         mc:Ignorable="d"
-        Title="Add or replace OST infomation" Height="300" Width="400" ResizeMode="CanMinimize">
+        Title="Add or edit OST infomation" Height="350" Width="400" ResizeMode="CanMinimize">
     <StackPanel>
         <Label Content="In game name (required):"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -21,9 +21,10 @@
         <Label Content="Event name:"/>
         <TextBox Width="250" x:Name="event_name"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            
             <Button Content="Check" Width="60" Margin="10" x:Name="check" Click="Check_Click"/>
+            <Button Content="Edit" Width="60" Margin="10" x:Name="edit" Click="Edit_Click"/>
             <Button Content="Submit" Width="60" Margin="10" x:Name="submit" Click="Submit_Click"/>
         </StackPanel>
+            <Button Content="Open OST file in VS code" Width="220" Margin="10" x:Name="open" Click="Open_Click"/>
     </StackPanel>
 </Window>

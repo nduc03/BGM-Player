@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.IO;
 using System.Windows;
 using Windows.Foundation;
@@ -20,6 +21,14 @@ namespace bgmPlayer
         }
         public static string? MusicTitle { get; private set; }
         public static string? WindowTitle { get; private set; }
+
+        public static MediaPlaybackStatus PlaybackStatus
+        {
+            set
+            {
+                smtc.PlaybackStatus = value;
+            }
+        }
 
         private static readonly Windows.Media.Playback.MediaPlayer mediaPlayer = new();
         private static readonly SystemMediaTransportControls smtc = mediaPlayer.SystemMediaTransportControls;
@@ -49,11 +58,6 @@ namespace bgmPlayer
             {
                 IsEnable = false;
             };
-        }
-
-        public static void UpdateStatus(MediaPlaybackStatus playbackStatus)
-        {
-            smtc.PlaybackStatus = playbackStatus;
         }
 
         /// <summary>

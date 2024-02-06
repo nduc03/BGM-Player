@@ -17,8 +17,13 @@ namespace bgmPlayer
     {
         private static WaveOutEvent? outputDevice;
         private static float volume = 1f;
+        private static AudioState currentState = AudioState.STOP;
 
-        public static AudioState CurrentState = AudioState.STOP;
+        public static AudioState CurrentState
+        {
+            get => currentState;
+            private set { currentState = value; }
+        }
 
         public delegate void PlayState(AudioState state);
         public static event PlayState? StateChanged;
@@ -76,7 +81,7 @@ namespace bgmPlayer
                 Initialize(stream);
                 outputDevice.Play();
                 SMTCManager.Enable();
-                SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
+                SMTCManager.PlaybackStatus = MediaPlaybackStatus.Playing;
                 CurrentState = AudioState.PLAY;
                 StateChanged?.Invoke(AudioState.PLAY);
                 SMTCManager.UpdateTitle(audioPath);
@@ -120,7 +125,7 @@ namespace bgmPlayer
                 Initialize(bgmStream);
                 outputDevice.Play();
                 SMTCManager.Enable();
-                SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
+                SMTCManager.PlaybackStatus = MediaPlaybackStatus.Playing;
                 CurrentState = AudioState.PLAY;
                 StateChanged?.Invoke(AudioState.PLAY);
                 SMTCManager.UpdateTitle(introPath, loopPath);
@@ -148,7 +153,7 @@ namespace bgmPlayer
             {
                 return AudioPlayerState.FAILED;
             }
-            SMTCManager.UpdateStatus(MediaPlaybackStatus.Playing);
+            SMTCManager.PlaybackStatus = MediaPlaybackStatus.Playing;
             CurrentState = AudioState.PLAY;
             StateChanged?.Invoke(AudioState.PLAY);
             return AudioPlayerState.OK;
@@ -161,7 +166,7 @@ namespace bgmPlayer
         {
             if (outputDevice == null) return AudioPlayerState.FAILED;
             outputDevice.Pause();
-            SMTCManager.UpdateStatus(MediaPlaybackStatus.Paused);
+            SMTCManager.PlaybackStatus = MediaPlaybackStatus.Paused;
             CurrentState = AudioState.PAUSE;
             StateChanged?.Invoke(AudioState.PAUSE);
             return AudioPlayerState.OK;
@@ -178,7 +183,7 @@ namespace bgmPlayer
                 outputDevice.Dispose();
                 outputDevice = null;
             }
-            SMTCManager.UpdateStatus(MediaPlaybackStatus.Stopped);
+            SMTCManager.PlaybackStatus = MediaPlaybackStatus.Stopped;
             CurrentState = AudioState.STOP;
             StateChanged?.Invoke(AudioState.STOP);
         }

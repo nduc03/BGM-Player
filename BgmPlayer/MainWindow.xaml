@@ -18,7 +18,7 @@
     </Window.TaskbarItemInfo>
     <DockPanel>
         <Menu DockPanel.Dock="Top" x:Name="menu_bar" Visibility="Hidden">
-            <MenuItem Header="Add/replace OST title" Click="AddOst_Click"/>
+            <MenuItem Header="Add/edit OST title" Click="AddOst_Click"/>
             <MenuItem Header="Reload OST title" Click="Reload_Click"/>
         </Menu>
 

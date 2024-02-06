@@ -18,7 +18,7 @@ namespace bgmPlayer
         // the list file is saved at user's documents folder instead of app folder
         // so the list will be kept even when the app is deleted
         // it also has auto backup by OneDrive
-        private static readonly string ostInfoPath = Path.Combine(SpecialDirectories.MyDocuments, AppConstants.OST_INFO_RELATIVE_PATH);
+        public static readonly string FilePath = Path.Combine(SpecialDirectories.MyDocuments, AppConstants.OST_INFO_RELATIVE_PATH);
         private static JsonNode? data = GetContent();
         public static JsonNode? Data
         {
@@ -26,11 +26,11 @@ namespace bgmPlayer
         }
         private static JsonNode? GetContent()
         {
-            if (!File.Exists(ostInfoPath)) return null;
+            if (!File.Exists(FilePath)) return null;
 
             try
             {
-                return JsonNode.Parse(File.ReadAllText(ostInfoPath));
+                return JsonNode.Parse(File.ReadAllText(FilePath));
             }
             catch
             {
@@ -42,7 +42,7 @@ namespace bgmPlayer
         {
             try
             {
-                var folder = Path.GetDirectoryName(ostInfoPath);
+                var folder = Path.GetDirectoryName(FilePath);
                 if (folder != null)
                 {
                     Directory.CreateDirectory(folder);
@@ -80,7 +80,7 @@ namespace bgmPlayer
             if (EventName != null) node["EventName"] = EventName;
 
             data[InGameName] = node;
-            File.WriteAllText(ostInfoPath, data.ToJsonString());
+            File.WriteAllText(FilePath, data.ToJsonString());
         }
     }
 }
