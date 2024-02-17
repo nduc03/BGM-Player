@@ -1,27 +1,23 @@
+// Sample template for extended ost_info
 {
-    "m_bat_act27side_1": {
-      "Title": "Effervescence",
-      "Artist": "Kirara Magic",
-      "EventName": "So Long, Adele"
-    },
-    "m_bat_act27side_2": {
-      "Title": "Counting Sheep",
-      "Artist": "Obadiah Brown-Beach",
-      "EventName": "So Long, Adele"
-    },
-    "m_bat_act27sideboss": {
-      "Title": "Sheepnado Decimates Nomadic City",
-      "Artist": "Obadiah Brown-Beach, Elvin Shen",
-      "EventName": "So Long, Adele"
-    },
-    "m_sys_act27side_day_loop": {
-      "Title": "Misty Memory (Day Version)",
-      "Artist": "Elvin Shen, Erik Castro, David Lin feat. ZOEE",
-      "EventName": "So Long, Adele"
-    },
-    "m_sys_act27side_night": {
-      "Title": "Misty Memory (Night Version)",
-      "Artist": "Elvin Shen, Erik Castro, David Lin feat. ZOEE",
-      "EventName": "So Long, Adele"
-    }
+  "m_bat_act27side_1": {
+    "Title": "Effervescence",
+    "Artist": "Kirara Magic",
+    "EventName": "So Long, Adele"
+  },
+  "m_bat_act27side_2": {
+    "Title": "Counting Sheep",
+    "Artist": "Obadiah Brown-Beach",
+    "EventName": "So Long, Adele"
+  },
+  "m_bat_sfsui": {
+    "Title": "滁杯照影",
+    "TranslatedTitle": "Shadow on the Murky Wine",
+    "Artist": "Sterling Maffe, Matthew Carl Earl",
+    "EventName": "Invitation to Wine"
+  },
+  "m_act31side_sys": {
+    "Title": "\u8D74\u5927\u8352",
+    "EventName": "Here a People Sows"
+  }
 }

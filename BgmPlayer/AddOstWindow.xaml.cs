@@ -4,9 +4,6 @@ using System.Windows;
 
 namespace bgmPlayer
 {
-    /// <summary>
-    /// Interaction logic for AddOstWindow.xaml
-    /// </summary>
     public partial class AddOstWindow : Window
     {
         public AddOstWindow()
@@ -46,7 +43,7 @@ namespace bgmPlayer
             var TranlatedTitle = translated_title.Text.Trim() == string.Empty ? null : translated_title.Text.Trim();
             var Artist = artist.Text.Trim() == string.Empty ? null : artist.Text.Trim();
             var EventName = event_name.Text.Trim() == string.Empty ? null : event_name.Text.Trim();
-            OstList.AddOrReplaceContent(InGameName, OstTitle, TranlatedTitle, Artist, EventName);
+            ExtendedOstInfoMangaer.AddOrReplaceContent(InGameName, OstTitle, TranlatedTitle, Artist, EventName);
             if (MessageBox.Show("Done! Close window?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes) Close();
         }
 
@@ -92,7 +89,7 @@ namespace bgmPlayer
             ProcessStartInfo process = new()
             {
                 FileName = "code",
-                Arguments = $"\"{OstList.FilePath}\"",
+                Arguments = $"\"{ExtendedOstInfoMangaer.FilePath}\"",
                 WindowStyle = ProcessWindowStyle.Hidden,
                 UseShellExecute = true
             };

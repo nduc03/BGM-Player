@@ -134,7 +134,7 @@ namespace bgmPlayer
                     MessageBoxButton.YesNo
                 ) == MessageBoxResult.No) return;
             Stop_Click(null, null);
-            OstList.ReloadContent();
+            ExtendedOstInfoMangaer.ReloadContent();
             MessageBox.Show("Reloaded!");
 #else
             MessageBox.Show("Version not supported.");

@@ -23,7 +23,7 @@ namespace bgmPlayer
             }
             InitNotifyIcon();
 #if ME
-            OstList.CreateFolder();
+            ExtendedOstInfoMangaer.CreateFolder();
 #endif
             base.OnStartup(e);
         }

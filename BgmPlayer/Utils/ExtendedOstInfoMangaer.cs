@@ -5,15 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace bgmPlayer
 {
-    // Json Format Sample
-    // {
-    //    "m_bat_act27side_1": {
-    //      "Title": "Effervescence",
-    //      "Artist": "Kirara Magic",
-    //      "EventName": "So Long, Adele"
-    //    }
-    // }
-    public static class OstList
+    public static class ExtendedOstInfoMangaer
     {
         // the list file is saved at user's documents folder instead of app folder
         // so the list will be kept even when the app is deleted
@@ -37,7 +29,7 @@ namespace bgmPlayer
                 return null;
             }
         }
-        // Currently it only creates empty folder
+
         public static bool CreateFolder()
         {
             try

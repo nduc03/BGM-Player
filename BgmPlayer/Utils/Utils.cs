@@ -109,7 +109,7 @@ namespace bgmPlayer
         // }
         private static OstInfo? GetArknightsOstInfoFromJson(string ParsedInGameFileName)
         {
-            var data = OstList.Data;
+            var data = ExtendedOstInfoMangaer.Data;
             if (data == null) return null;
             var Title = data[ParsedInGameFileName]?["Title"]?.GetValue<string>();
             if (string.IsNullOrEmpty(Title)) return null;
