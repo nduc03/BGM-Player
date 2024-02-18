@@ -1,10 +1,10 @@
 ﻿using NAudio.Extras;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Windows;
 using Windows.Media;
 
 namespace bgmPlayer
@@ -18,6 +18,8 @@ namespace bgmPlayer
         private static WaveOutEvent? outputDevice;
         private static float volume = 1f;
         private static AudioState currentState = AudioState.STOP;
+        private static FadeInOutSampleProvider? fadeStream;
+        private static System.Timers.Timer? fadeTimer;
 
         public static AudioState CurrentState
         {
@@ -40,7 +42,7 @@ namespace bgmPlayer
         public static bool IsPlaying { get => CurrentState == AudioState.PLAY; }
         public static bool IsPaused { get => CurrentState == AudioState.PAUSE; }
 
-        [MemberNotNull(nameof(outputDevice))]
+        [MemberNotNull(new string[] { nameof(outputDevice), nameof(fadeStream) })]
         private static void Initialize(IWaveProvider stream)
         {
             if (outputDevice != null)
@@ -53,7 +55,8 @@ namespace bgmPlayer
                 DesiredLatency = 400,
                 NumberOfBuffers = 2,
             };
-            outputDevice.Init(stream);
+            fadeStream = new FadeInOutSampleProvider(new WaveToSampleProvider(stream));
+            outputDevice.Init(fadeStream);
             SetVolume(volume);
         }
 
@@ -184,8 +187,30 @@ namespace bgmPlayer
                 outputDevice = null;
             }
             SMTCManager.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            if (currentState != AudioState.STOP) StateChanged?.Invoke(AudioState.STOP);
             CurrentState = AudioState.STOP;
-            StateChanged?.Invoke(AudioState.STOP);
+        }
+
+        /// <summary>
+        /// Fade audio before stopped.
+        /// </summary>
+        public static void StopFade(int second)
+        {
+            fadeStream?.BeginFadeOut(second * 1000);
+
+            fadeTimer = new()
+            {
+                Interval = second * 1000,
+                AutoReset = false
+            };
+            
+            fadeTimer.Elapsed += (sender, args) =>
+            {
+                Stop();
+                fadeTimer.Stop();
+                fadeTimer.Dispose();
+            };
+            fadeTimer.Start();
         }
 
         /// <summary>

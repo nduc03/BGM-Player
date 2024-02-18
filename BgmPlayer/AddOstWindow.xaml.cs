@@ -17,6 +17,7 @@ namespace bgmPlayer
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
+#if ME
             var InGameName = in_game_name.Text.Trim();
             var OstTitle = title.Text.Trim();
             if (InGameName == string.Empty || OstTitle == string.Empty)
@@ -45,10 +46,12 @@ namespace bgmPlayer
             var EventName = event_name.Text.Trim() == string.Empty ? null : event_name.Text.Trim();
             ExtendedOstInfoMangaer.AddOrReplaceContent(InGameName, OstTitle, TranlatedTitle, Artist, EventName);
             if (MessageBox.Show("Done! Close window?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes) Close();
+#endif
         }
 
         private void Check_Click(object sender, RoutedEventArgs e)
         {
+#if ME
             var inGameName = in_game_name.Text.Trim();
             if (inGameName == string.Empty) return;
             var ost = Utils.GetArknightsOstInfo(inGameName);
@@ -67,10 +70,12 @@ namespace bgmPlayer
                     """;
                 MessageBox.Show(info);
             }
+#endif
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+#if ME
             var inGameName = in_game_name.Text.Trim();
             if (inGameName == string.Empty) return;
             var ost = Utils.GetArknightsOstInfo(inGameName);
@@ -82,10 +87,12 @@ namespace bgmPlayer
                 artist.Text = ost.Value.Artist ?? string.Empty;
                 event_name.Text = ost.Value.EventName ?? string.Empty;
             }
+#endif
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
+#if ME
             ProcessStartInfo process = new()
             {
                 FileName = "code",
@@ -105,6 +112,7 @@ namespace bgmPlayer
                     Process.Start(process);
                 }
             }
+#endif
         }
 
         private void Current_Click(object sender, RoutedEventArgs e)

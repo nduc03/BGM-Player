@@ -13,6 +13,7 @@ namespace bgmPlayer
         private readonly DispatcherTimer dispatcherTimer;
         private readonly AppState? initState;
         private AddOstWindow? addOstWindow = null;
+        private System.Timers.Timer? fadeTimeout;
 
         private bool allowControlBySMTC = false;
         private int currentVolume = 100;
@@ -227,11 +228,34 @@ namespace bgmPlayer
         private void Stop_Click(object? sender, RoutedEventArgs? e)
         {
             AudioPlayer.Stop();
+            play_pause_button.IsEnabled = true;
             AllowChooseFile(true);
             UpdateAudioControlButton(AudioState.STOP);
             TaskbarChangeIconToPlay();
             timer.Stop();
             timer.Reset();
+        }
+
+        private void StopFade_Click(object? sender, RoutedEventArgs? e)
+        {
+            AudioPlayer.StopFade(3);
+            play_pause_button.IsEnabled = false;
+            stop_button.IsEnabled = false;
+            fadeTimeout = new()
+            {
+                Interval = 3000,
+                AutoReset = false
+            };
+            fadeTimeout.Elapsed += (s, args) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Stop_Click(sender, e);
+                });
+                fadeTimeout.Stop();
+                fadeTimeout.Dispose();
+            };
+            fadeTimeout.Start();
         }
 
         private void RemoveIntro_Click(object sender, RoutedEventArgs e)
@@ -397,16 +421,19 @@ namespace bgmPlayer
                     play_pause_button.Content = "Pause";
                     TaskbarChangeIconToPause();
                     stop_button.IsEnabled = true;
+                    stopfade_button.IsEnabled = true;
                     break;
                 case AudioState.PAUSE:
                     play_pause_button.Content = "Play";
                     TaskbarChangeIconToPlay();
                     stop_button.IsEnabled = true;
+                    stopfade_button.IsEnabled = true;
                     break;
                 case AudioState.STOP:
                     play_pause_button.Content = "Play";
                     TaskbarChangeIconToPlay();
                     stop_button.IsEnabled = false;
+                    stopfade_button.IsEnabled = false;
                     break;
             }
         }
