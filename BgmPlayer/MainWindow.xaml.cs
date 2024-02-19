@@ -325,7 +325,7 @@ namespace bgmPlayer
         private void TaskbarStop_handler(object? sender, EventArgs? e)
         {
             if (!AudioPlayer.IsStopped)
-                Stop_Click(sender, null);
+                StopFade_Click(sender, null);
         }
         #endregion
 
