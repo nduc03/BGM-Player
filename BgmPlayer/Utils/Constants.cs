@@ -24,6 +24,7 @@
         public const float VOLUME_SCALE = 100f;
         public const int MOUSE_WHEEL_SCALE = 120;
         public const int SAVE_DATA_DELAY = 1000;
+        public const int STOP_FADE_DURATION = 5;
 
         public const string THUMBNAIL_HASH = "133036E793F11F8ABE38F1B9020998C0";
 #if ME

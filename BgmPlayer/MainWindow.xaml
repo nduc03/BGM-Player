@@ -60,7 +60,7 @@
                     <StackPanel Orientation="Vertical" Height="Auto" Width="Auto" Margin="0,0,0,0">
                         <Button x:Name="play_pause_button" Content="Play" Margin="0,10,0,0" VerticalAlignment="Top" Height="34" Width="100" Click="PlayPause_Click"/>
                         <Button x:Name="stop_button" Content="Stop" Margin="0,10,0,0" VerticalAlignment="Top" Width="100" Height="32" IsEnabled="False" Click="Stop_Click"/>
-                        <Button x:Name="stopfade_button" Content="Stop in 3 seconds" Margin="0,10,0,0" VerticalAlignment="Top" Width="100" Height="32" IsEnabled="False" Click="StopFade_Click"/>
+                        <Button x:Name="stopfade_button" Content="Stop in %d seconds" Margin="0,10,0,0" VerticalAlignment="Top" Width="100" Height="32" IsEnabled="False" Click="StopFade_Click"/>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" x:Name="TitleOption" Visibility="Collapsed" Height="Auto" Width="Auto" Margin="20,0,0,0">
                         <Label Content="Title preference"/>

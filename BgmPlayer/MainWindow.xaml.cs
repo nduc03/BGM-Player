@@ -42,6 +42,7 @@ namespace bgmPlayer
             UpdateAudioControlButton(AudioPlayer.CurrentState);
             AllowChooseFile(AudioPlayer.IsStopped);
             Title = SMTCManager.WindowTitle ?? SMTCManager.MusicTitle ?? AppConstants.DEFAULT_MUSIC_TITLE;
+            stopfade_button.Content = stopfade_button.Content?.ToString()?.Replace("%d", AppConstants.STOP_FADE_DURATION.ToString());
 
             AudioPlayer.StateChanged += UpdateAudioControlButton;
         }
@@ -238,12 +239,12 @@ namespace bgmPlayer
 
         private void StopFade_Click(object? sender, RoutedEventArgs? e)
         {
-            AudioPlayer.StopFade(3);
+            AudioPlayer.StopFade(AppConstants.STOP_FADE_DURATION);
             play_pause_button.IsEnabled = false;
             stop_button.IsEnabled = false;
             fadeTimeout = new()
             {
-                Interval = 3000,
+                Interval = AppConstants.STOP_FADE_DURATION * 1000,
                 AutoReset = false
             };
             fadeTimeout.Elapsed += (s, args) =>
