@@ -1,5 +1,4 @@
-﻿using NAudio.Wave;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
 using Windows.Foundation;
@@ -76,8 +75,7 @@ namespace bgmPlayer
             if (info == null)
             {
                 updater.MusicProperties.Artist = string.Empty;
-                MusicTitle ??= AppConstants.DEFAULT_MUSIC_TITLE;
-                WindowTitle = null;
+                WindowTitle = MusicTitle;
             }
             else
             {
@@ -87,8 +85,7 @@ namespace bgmPlayer
             }
 #endif
             updater.MusicProperties.Title = MusicTitle;
-            if (Application.Current.MainWindow != null)
-                Application.Current.MainWindow.Title = WindowTitle ?? MusicTitle;
+            Application.Current.MainWindow.Title = WindowTitle;
             updater.Update();
         }
 

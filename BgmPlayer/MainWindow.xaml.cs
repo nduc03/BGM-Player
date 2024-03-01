@@ -213,7 +213,7 @@ namespace bgmPlayer
                     }
                     else
                     {
-                        MessageBox.Show(AppConstants.AUDIO_DEVICE_ERROR_MSG, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                         Stop_Click(null, null);
                     }
                     break;
