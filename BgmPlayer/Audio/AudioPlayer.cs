@@ -1,4 +1,5 @@
-﻿using NAudio.Extras;
+﻿using NAudio;
+using NAudio.Extras;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System;
@@ -19,7 +20,9 @@ namespace bgmPlayer
         private static float volume = 1f;
         private static AudioState currentState = AudioState.STOP;
         private static FadeInOutSampleProvider? fadeStream;
+        private static IWaveProvider? stream;
         private static System.Timers.Timer? fadeTimer;
+        private static long pausedPosition = 0;
 
         public static AudioState CurrentState
         {
@@ -72,7 +75,6 @@ namespace bgmPlayer
             }
             try
             {
-                IWaveProvider stream;
                 if (audioPath.EndsWith(".ogg"))
                 {
                     stream = new VorbisLoopStream(audioPath);
@@ -116,16 +118,15 @@ namespace bgmPlayer
             }
             try
             {
-                IWaveProvider bgmStream;
                 if (introPath.EndsWith(".ogg") && loopPath.EndsWith(".ogg"))
                 {
-                    bgmStream = new VorbisBGMLoopStream(introPath, loopPath);
+                    stream = new VorbisBGMLoopStream(introPath, loopPath);
                 }
                 else
                 {
-                    bgmStream = new BGMLoopStream(new AudioFileReader(introPath), new AudioFileReader(loopPath));
+                    stream = new BGMLoopStream(new AudioFileReader(introPath), new AudioFileReader(loopPath));
                 }
-                Initialize(bgmStream);
+                Initialize(stream);
                 outputDevice.Play();
                 SMTCManager.Enable();
                 SMTCManager.PlaybackStatus = MediaPlaybackStatus.Playing;
@@ -152,8 +153,18 @@ namespace bgmPlayer
             {
                 outputDevice.Play();
             }
-            catch
+            catch (MmException)
             {
+                if (stream == null) return AudioPlayerState.FAILED;
+                Initialize(stream);
+                if (stream is Stream s) s.Position = pausedPosition;
+                else return AudioPlayerState.FAILED;
+                outputDevice.Play();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
                 return AudioPlayerState.FAILED;
             }
             SMTCManager.PlaybackStatus = MediaPlaybackStatus.Playing;
@@ -167,8 +178,9 @@ namespace bgmPlayer
         /// </summary>
         public static AudioPlayerState Pause()
         {
-            if (outputDevice == null) return AudioPlayerState.FAILED;
+            if (outputDevice == null || stream == null) return AudioPlayerState.FAILED;
             outputDevice.Pause();
+            pausedPosition = (stream as Stream)?.Position ?? 0;
             SMTCManager.PlaybackStatus = MediaPlaybackStatus.Paused;
             CurrentState = AudioState.PAUSE;
             StateChanged?.Invoke(AudioState.PAUSE);
