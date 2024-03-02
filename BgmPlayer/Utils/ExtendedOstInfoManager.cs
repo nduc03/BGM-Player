@@ -5,7 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace bgmPlayer
 {
-    public static class ExtendedOstInfoMangaer
+    public static class ExtendedOstInfoManager
     {
         // the list file is saved at user's documents folder instead of app folder
         // so the list will be kept even when the app is deleted

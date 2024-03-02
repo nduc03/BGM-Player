@@ -103,7 +103,7 @@ namespace bgmPlayer
 
         private static OstInfo? GetArknightsOstInfoFromJson(string ParsedFileName)
         {
-            System.Text.Json.Nodes.JsonNode? data = ExtendedOstInfoMangaer.Data;
+            System.Text.Json.Nodes.JsonNode? data = ExtendedOstInfoManager.Data;
             if (data == null) return null;
             var Title = data[ParsedFileName]?["Title"]?.GetValue<string>();
             if (string.IsNullOrEmpty(Title)) return null;

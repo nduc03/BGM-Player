@@ -69,13 +69,13 @@ namespace bgmPlayer
         {
             if (!isInitialized) return;
             MusicTitle = Utils.GetBgmFileName(IntroPath, LoopPath, AppConstants.DEFAULT_MUSIC_TITLE);
+            WindowTitle = MusicTitle;
 #if ME
             int? titleOption = AppStateManager.LoadState()?.TitleOption;
             OstInfo? info = Utils.GetArknightsOstInfo(MusicTitle);
             if (info == null)
             {
                 updater.MusicProperties.Artist = string.Empty;
-                WindowTitle = MusicTitle;
             }
             else
             {
