@@ -101,17 +101,9 @@ namespace bgmPlayer
             };;
         }
 
-        // Json Format Sample
-        // {
-        //    "m_bat_act27side_1": {
-        //      "Title": "Effervescence",
-        //      "Artist": "Kirara Magic",
-        //      "EventName": "So Long, Adele"
-        //    }
-        // }
         private static OstInfo? GetArknightsOstInfoFromJson(string ParsedFileName)
         {
-            var data = ExtendedOstInfoMangaer.Data;
+            System.Text.Json.Nodes.JsonNode? data = ExtendedOstInfoMangaer.Data;
             if (data == null) return null;
             var Title = data[ParsedFileName]?["Title"]?.GetValue<string>();
             if (string.IsNullOrEmpty(Title)) return null;

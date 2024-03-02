@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:bgmPlayer"
         mc:Ignorable="d"
-        Title="Add or edit OST infomation" Height="350" Width="400" ResizeMode="CanMinimize">
+        Title="Add or edit OST infomation" Height="390" Width="400" ResizeMode="CanMinimize">
     <StackPanel>
         <Label Content="In game name (required):"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -20,6 +20,8 @@
         <TextBox Width="250" x:Name="artist"/>
         <Label Content="Event name:"/>
         <TextBox Width="250" x:Name="event_name"/>
+        <Label Content="Translation Source (requires Tranlated Title to be filled):"/>
+        <TextBox Width="250" x:Name="trans_source"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="Check" Width="60" Margin="10" x:Name="check" Click="Check_Click"/>
             <Button Content="Edit" Width="60" Margin="10" x:Name="edit" Click="Edit_Click"/>

@@ -44,7 +44,8 @@ namespace bgmPlayer
             var TranlatedTitle = translated_title.Text.Trim() == string.Empty ? null : translated_title.Text.Trim();
             var Artist = artist.Text.Trim() == string.Empty ? null : artist.Text.Trim();
             var EventName = event_name.Text.Trim() == string.Empty ? null : event_name.Text.Trim();
-            ExtendedOstInfoMangaer.AddOrReplaceContent(InGameName, OstTitle, TranlatedTitle, Artist, EventName);
+            var Transource = trans_source.Text.Trim() == string.Empty ? null : trans_source.Text.Trim();
+            ExtendedOstInfoMangaer.AddOrEditContent(InGameName, OstTitle, TranlatedTitle, Artist, EventName, Transource);
             if (MessageBox.Show("Done! Close window?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes) Close();
 #endif
         }
@@ -67,6 +68,7 @@ namespace bgmPlayer
                     Artist: {ost.Value.Artist ?? "No info"}
                     Event Name: {ost.Value.EventName ?? "No info"}
                     Can Modify: {(ost.Value.IsDynamic ? "Yes" : "No")}
+                    Translation Source: {((ost.Value.TranslatedTitle != null) ? (ExtendedOstInfoMangaer.Data?[inGameName]?["TranslationSource"] ?? "Unknown") : "Not applicable")}
                     """;
                 MessageBox.Show(info);
             }
@@ -86,6 +88,8 @@ namespace bgmPlayer
                 translated_title.Text = ost.Value.TranslatedTitle ?? string.Empty;
                 artist.Text = ost.Value.Artist ?? string.Empty;
                 event_name.Text = ost.Value.EventName ?? string.Empty;
+                if (translated_title.Text != string.Empty) 
+                    trans_source.Text = ExtendedOstInfoMangaer.Data?[inGameName]?["TranslationSource"]?.ToString() ?? string.Empty;
             }
 #endif
         }

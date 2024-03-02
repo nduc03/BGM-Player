@@ -53,12 +53,13 @@ namespace bgmPlayer
             data = GetContent();
         }
 
-        public static void AddOrReplaceContent(
+        public static void AddOrEditContent(
             string InGameName, 
             string Title, 
             string? TranslatedTitle = null, 
             string? Artist = null, 
-            string? EventName = null
+            string? EventName = null,
+            string? TranslationSource = null
             )
         {
             data ??= GetContent() ?? new JsonObject();
@@ -70,6 +71,7 @@ namespace bgmPlayer
             if (TranslatedTitle != null) node["TranslatedTitle"] = TranslatedTitle;
             if (Artist != null) node["Artist"] = Artist;
             if (EventName != null) node["EventName"] = EventName;
+            if (TranslationSource != null) node["TranslationSource"] = TranslationSource;
 
             data[InGameName] = node;
             File.WriteAllText(FilePath, data.ToJsonString());
