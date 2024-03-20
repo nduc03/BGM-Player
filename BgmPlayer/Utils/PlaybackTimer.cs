@@ -3,13 +3,14 @@ using System.Diagnostics;
 
 namespace bgmPlayer
 {
-    public class Timer
+    public class PlaybackTimer
     {
+        public static PlaybackTimer Instance { get => lazyInstance.Value; }
+
         private readonly Stopwatch stopWatch;
         #region Singleton declaration
-        private static readonly Lazy<Timer> instance = new(() => new Timer());
-        public static Timer Instance { get => instance.Value; }
-        private Timer()
+        private static readonly Lazy<PlaybackTimer> lazyInstance = new(() => new PlaybackTimer());
+        private PlaybackTimer()
         {
             stopWatch = new Stopwatch();
         }

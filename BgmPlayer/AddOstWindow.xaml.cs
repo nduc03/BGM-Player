@@ -20,7 +20,14 @@ namespace bgmPlayer
 #if ME
             var InGameName = in_game_name.Text.Trim();
             var OstTitle = title.Text.Trim();
-            if (InGameName == string.Empty || OstTitle == string.Empty)
+            var TranlatedTitle = translated_title.Text.Trim() == string.Empty ? null : translated_title.Text.Trim();
+            var Artist = artist.Text.Trim() == string.Empty ? null : artist.Text.Trim();
+            var EventName = event_name.Text.Trim() == string.Empty ? null : event_name.Text.Trim();
+            var Transource = trans_source.Text.Trim() == string.Empty ? null : trans_source.Text.Trim();
+
+            if (InGameName == string.Empty || OstTitle == string.Empty
+                || (Transource != null && TranlatedTitle == null) // add translated source without adding translated title
+                )
             {
                 MessageBox.Show("Required parts are missing!");
                 return;
@@ -34,17 +41,14 @@ namespace bgmPlayer
                     return;
                 }
                 var confirm = MessageBox.Show(
-                        "This OST info is already existed. Do you want to replace?", 
+                        "This OST info is already existed. Do you want to replace?",
                         "Confirmation!",
-                        MessageBoxButton.YesNo, 
+                        MessageBoxButton.YesNo,
                         MessageBoxImage.Warning
                     );
                 if (confirm == MessageBoxResult.No) return;
             }
-            var TranlatedTitle = translated_title.Text.Trim() == string.Empty ? null : translated_title.Text.Trim();
-            var Artist = artist.Text.Trim() == string.Empty ? null : artist.Text.Trim();
-            var EventName = event_name.Text.Trim() == string.Empty ? null : event_name.Text.Trim();
-            var Transource = trans_source.Text.Trim() == string.Empty ? null : trans_source.Text.Trim();
+
             ExtendedOstInfoManager.AddOrEditContent(InGameName, OstTitle, TranlatedTitle, Artist, EventName, Transource);
             if (MessageBox.Show("Done! Close window?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes) Close();
 #endif
@@ -88,7 +92,7 @@ namespace bgmPlayer
                 translated_title.Text = ost.Value.TranslatedTitle ?? string.Empty;
                 artist.Text = ost.Value.Artist ?? string.Empty;
                 event_name.Text = ost.Value.EventName ?? string.Empty;
-                if (translated_title.Text != string.Empty) 
+                if (translated_title.Text != string.Empty)
                     trans_source.Text = ExtendedOstInfoManager.Data?[inGameName]?["TranslationSource"]?.ToString() ?? string.Empty;
             }
 #endif

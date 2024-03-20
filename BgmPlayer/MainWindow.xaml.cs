@@ -9,7 +9,7 @@ namespace bgmPlayer
 {
     public partial class MainWindow : Window
     {
-        private readonly Timer timer = Timer.Instance;
+        private readonly PlaybackTimer timer = PlaybackTimer.Instance;
         private readonly DispatcherTimer dispatcherTimer;
         private readonly AppState? initState;
         private AddOstWindow? addOstWindow = null;

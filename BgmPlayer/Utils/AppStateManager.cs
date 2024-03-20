@@ -56,9 +56,9 @@ namespace bgmPlayer
         /// <summary>
         /// Experimental.
         /// Save the app state to disk.
-        /// <para>If <c>updateMode</c> is set to <c>UpdateMode.Update</c>, only save non-null property in <c>state</c></para>
+        /// <para>If <c>updateMode</c> is set to <c>UpdateMode.Update</c>, only save non-null property in <c>newState</c></para>
         /// </summary>
-        public static void SaveState(AppState currentState, UpdateMode updateMode = UpdateMode.Update)
+        public static void SaveState(AppState newState, UpdateMode updateMode = UpdateMode.Update)
         {
             // TODO: Make this function more convenient to use then delete the other SaveState above
             if (updateMode == UpdateMode.Update)
@@ -68,7 +68,7 @@ namespace bgmPlayer
                 foreach (var stateProp in typeof(AppState).GetProperties())
                 {
                     hasUpdate = true;
-                    var stateVal = stateProp.GetValue(currentState);
+                    var stateVal = stateProp.GetValue(newState);
                     if (stateVal != null) stateProp.SetValue(data, stateVal);
                 }
                 if (hasUpdate)
@@ -79,8 +79,8 @@ namespace bgmPlayer
             }
             else
             {
-                dataCache = currentState;
-                FileHelper.ApplyState(currentState);
+                dataCache = newState;
+                FileHelper.ApplyState(newState);
             }
         }
     }

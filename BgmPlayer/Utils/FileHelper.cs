@@ -1,18 +1,19 @@
 ﻿using System.IO;
 using System.Text.Json;
+using System.Timers;
 
 namespace bgmPlayer
 {
     public static class FileHelper
     {
-        private static System.Timers.Timer? timer = null;
+        private static Timer? timer = null;
         private static object? data = null;
 
         public static void ApplyState(AppState state)
         {
             if (timer == null)
             {
-                timer = new System.Timers.Timer
+                timer = new Timer
                 {
                     Interval = AppConstants.SAVE_DATA_DELAY,
                     AutoReset = false

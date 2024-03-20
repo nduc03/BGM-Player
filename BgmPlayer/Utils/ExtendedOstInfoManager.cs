@@ -9,6 +9,7 @@ namespace bgmPlayer
     {
         // the list file is saved at user's documents folder instead of app folder
         // so the list will be kept even when the app is deleted
+        // it will share this OST info between all instances that are in the version have this feature
         // it also has auto backup by OneDrive
         public static readonly string FilePath = Path.Combine(SpecialDirectories.MyDocuments, AppConstants.OST_INFO_RELATIVE_PATH);
         private static JsonNode? data = GetContent();
