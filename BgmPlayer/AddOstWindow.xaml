@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Add or edit OST infomation" Height="390" Width="400" ResizeMode="CanMinimize">
     <StackPanel>
-        <Label Content="In game name (required):"/>
+        <Label Content="File name (required):"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBox Width="180" x:Name="in_game_name"/>
             <Button Content="Get current" Width="70" Margin="0" x:Name="current" Click="Current_Click"/>
@@ -27,6 +27,6 @@
             <Button Content="Edit" Width="60" Margin="10" x:Name="edit" Click="Edit_Click"/>
             <Button Content="Submit" Width="60" Margin="10" x:Name="submit" Click="Submit_Click"/>
         </StackPanel>
-            <Button Content="Open OST file in VS code" Width="220" Margin="10" x:Name="open" Click="Open_Click"/>
+            <Button Content="Open OST data file" Width="220" Margin="10" x:Name="open" Click="Open_Click"/>
     </StackPanel>
 </Window>

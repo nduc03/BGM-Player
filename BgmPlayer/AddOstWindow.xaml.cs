@@ -101,24 +101,18 @@ namespace bgmPlayer
         private void Open_Click(object sender, RoutedEventArgs e)
         {
 #if ME
-            ProcessStartInfo process = new()
-            {
-                FileName = "code",
-                Arguments = $"\"{ExtendedOstInfoManager.FilePath}\"",
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = true
-            };
             try
             {
-                Process.Start(process);
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = $"\"{ExtendedOstInfoManager.FilePath}\"",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = true
+                });
             }
             catch (Win32Exception)
             {
-                if (MessageBox.Show("Cannot open VS code, try open in notepad instead?", "Error", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                {
-                    process.FileName = "notepad";
-                    Process.Start(process);
-                }
+                MessageBox.Show("Cannot open the file!");
             }
 #endif
         }
