@@ -239,6 +239,7 @@ namespace bgmPlayer
 
         private void StopFade_Click(object? sender, RoutedEventArgs? e)
         {
+            if (fadeTimeout == null) return;
             AudioPlayer.StopFade(AppConstants.STOP_FADE_DURATION);
             play_pause_button.IsEnabled = false;
             stop_button.IsEnabled = false;
@@ -255,6 +256,7 @@ namespace bgmPlayer
                 });
                 fadeTimeout.Stop();
                 fadeTimeout.Dispose();
+                fadeTimeout = null;
             };
             fadeTimeout.Start();
         }

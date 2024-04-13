@@ -208,6 +208,7 @@ namespace bgmPlayer
         /// </summary>
         public static void StopFade(int second)
         {
+            if (fadeTimer == null) return;
             fadeStream?.BeginFadeOut(second * 1000);
 
             fadeTimer = new()
@@ -221,6 +222,7 @@ namespace bgmPlayer
                 Stop();
                 fadeTimer.Stop();
                 fadeTimer.Dispose();
+                fadeTimer = null;
             };
             fadeTimer.Start();
         }
