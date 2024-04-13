@@ -18,6 +18,7 @@ namespace bgmPlayer
         private bool allowControlBySMTC = false;
         private int currentVolume = 100;
         private bool addOstWindowClosed = true;
+        private bool isFading = false;
 
         public MainWindow()
         {
@@ -239,10 +240,12 @@ namespace bgmPlayer
 
         private void StopFade_Click(object? sender, RoutedEventArgs? e)
         {
-            if (fadeTimeout == null) return;
+            if (fadeTimeout != null) return;
             AudioPlayer.StopFade(AppConstants.STOP_FADE_DURATION);
             play_pause_button.IsEnabled = false;
             stop_button.IsEnabled = false;
+            stopfade_button.IsEnabled = false;
+            isFading = true;
             fadeTimeout = new()
             {
                 Interval = AppConstants.STOP_FADE_DURATION * 1000,
@@ -252,11 +255,12 @@ namespace bgmPlayer
             {
                 Dispatcher.Invoke(() =>
                 {
+                    isFading = false;
+                    fadeTimeout.Stop();
+                    fadeTimeout.Dispose();
+                    fadeTimeout = null;
                     Stop_Click(sender, e);
                 });
-                fadeTimeout.Stop();
-                fadeTimeout.Dispose();
-                fadeTimeout = null;
             };
             fadeTimeout.Start();
         }
@@ -312,6 +316,7 @@ namespace bgmPlayer
         #region Taskbar handler
         private void TaskbarPlayPause_handler(object? sender, EventArgs? e)
         {
+            if (isFading) return;
             if ((AudioPlayer.IsPaused || AudioPlayer.IsStopped) && SMTCManager.IsEnable)
             {
                 TaskbarChangeIconToPause();
@@ -327,8 +332,14 @@ namespace bgmPlayer
 
         private void TaskbarStop_handler(object? sender, EventArgs? e)
         {
-            if (!AudioPlayer.IsStopped)
-                StopFade_Click(sender, null);
+            if (AudioPlayer.IsStopped) return;
+            if (isFading) return;
+            if (AudioPlayer.IsPaused)
+            {
+                Stop_Click(sender, null);
+                return;
+            }
+            StopFade_Click(sender, null);
         }
         #endregion
 
