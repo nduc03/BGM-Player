@@ -11,15 +11,14 @@ namespace bgmPlayer
         private int playingSection = 0;
         private int loopSection = -1;
 
-        private int PlayingSection
+        public static MixedLoopStream CreateBGMLoopStream(WaveStream introStream, WaveStream loopStream)
         {
-            get => Math.Clamp(playingSection, 0, streams.Count);
-            set
-            {
-                playingSection = Math.Clamp(value, 0, streams.Count);
-            }
+            var stream = new MixedLoopStream(introStream);
+            stream.AddSection(loopStream);
+            stream.AutoNextSection = true;
+            stream.LoopSection = 1;
+            return stream;
         }
-        private WaveStream CurrentStream { get => streams[PlayingSection]; }
 
         public void AddSection(WaveStream streamSection)
         {
@@ -116,12 +115,14 @@ namespace bgmPlayer
             }
             base.Dispose(disposing);
         }
-
-        public static MixedLoopStream CreateBGMLoopStream(WaveStream introStream, WaveStream loopStream)
+        private int PlayingSection
         {
-            var stream = new MixedLoopStream(introStream);
-            stream.AddSection(loopStream);
-            return stream;
+            get => Math.Clamp(playingSection, 0, streams.Count);
+            set
+            {
+                playingSection = Math.Clamp(value, 0, streams.Count);
+            }
         }
+        private WaveStream CurrentStream { get => streams[PlayingSection]; }
     }
 }
