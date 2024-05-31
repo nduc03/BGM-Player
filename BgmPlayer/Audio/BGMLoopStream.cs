@@ -19,5 +19,11 @@ namespace bgmPlayer
             else
                 return base.Read(buffer, offset, count);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            loopStream.Dispose();
+            base.Dispose(disposing);
+        }
     }
 }

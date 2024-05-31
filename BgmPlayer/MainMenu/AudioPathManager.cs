@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
@@ -36,11 +37,11 @@ namespace bgmPlayer
         }
         public static string Loop
         {
-            get { return LoopPath.FileName;}
+            get { return LoopPath.FileName; }
             set
             {
                 if (value != string.Empty && !ExtRegex().IsMatch(value)) return;
-                LoopPath.FileName = (File.Exists(value) || value == string.Empty) ? value : Loop;
+                if (File.Exists(value) || value == string.Empty) LoopPath.FileName = value; else return;
                 UpdateGUI();
                 if (AutoFill) TryAutoSetIntro();
                 if (value != string.Empty) CheckAllEmpty();
