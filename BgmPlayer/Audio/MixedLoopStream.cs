@@ -48,9 +48,10 @@ namespace bgmPlayer
         public bool AutoNextSection { get; set; } = false;
 
         /// <summary>
-        /// Getter returns the section that will be looped. 
-        /// If AutoNextSection is false, this will alsways return the current section.
-        /// <para>Setter: sets the section that will be looped (0-based index). Set to -1 to disable loop at any section.</para>
+        /// Getter returns the section that will be looped.
+        /// If AutoNextSection is false, this will always return the current section.
+        /// <para>Setter: sets the section that will be looped (0-based index).
+        /// Set to -1 to disable loop at a section, instead it combines all the streams into one section and loop that entire section.</para>
         /// </summary>
         public int LoopSection
         {
