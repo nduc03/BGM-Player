@@ -10,6 +10,7 @@ namespace bgmPlayer
     {
         private readonly FadeInOutSampleProvider stream;
         private readonly LoopStream disposableStream;
+
         private const int FADE_MAX_DURATION_MS = 10000;
         private bool isStopped = false;
 
@@ -49,7 +50,7 @@ namespace bgmPlayer
                 timer.Interval = fadeMilisecond;
                 timer.Start();
             }
-            else isStopped = false;
+            else isStopped = true;
         }
 
         public int Read(float[] buffer, int offset, int count)
@@ -67,6 +68,4 @@ namespace bgmPlayer
             disposableStream.Dispose();
         }
     }
-
-
 }
