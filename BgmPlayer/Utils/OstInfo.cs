@@ -7,7 +7,7 @@ namespace bgmPlayer
         public readonly string? TranslatedTitle { get; }
         public readonly string? Artist { get; }
         public readonly string? EventName { get; }
-        public readonly bool IsDynamic { get; } // Todo add option to check the dynamic
+        public readonly bool IsDynamic { get; }
 
         public OstInfo(string title, string? translatedTitle, string? artist = null, string? eventName = null, bool isDynamic = false)
         {

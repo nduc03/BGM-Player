@@ -200,8 +200,8 @@ namespace bgmPlayer
 
                     if (AudioPlayer.PlayBGM(AudioPathManager.Intro, AudioPathManager.Loop) == AudioPlayerState.FAILED)
                     {
-                        MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                         Stop_Click(null, null);
+                        MessageBox.Show("AudioPlayer.PlayBGM failed to play", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                     timer.Start(); // Moved this after AudioPlayer.PlayBGM call, because sometimes opening stream from disk takes too much time which makes timer inaccurate
@@ -214,8 +214,8 @@ namespace bgmPlayer
                     }
                     else
                     {
-                        MessageBox.Show("Unknown error!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                         Stop_Click(null, null);
+                        MessageBox.Show("AudioPlayer.Continue does not return OK", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     break;
                 case AudioState.PLAY:
