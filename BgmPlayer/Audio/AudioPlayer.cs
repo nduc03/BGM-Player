@@ -45,7 +45,7 @@ namespace bgmPlayer
         public static bool IsPlaying { get => CurrentState == AudioState.PLAY; }
         public static bool IsPaused { get => CurrentState == AudioState.PAUSE; }
 
-        [MemberNotNull(new string[] { nameof(outputDevice), nameof(fadeStream) })]
+        [MemberNotNull([nameof(outputDevice), nameof(fadeStream)])]
         private static void Initialize(IWaveProvider stream)
         {
             if (outputDevice != null)
