@@ -117,7 +117,7 @@ namespace bgmPlayer
         public static bool IsValidCache()
         {
             if (!File.Exists(AppConstants.THUMBNAIL_CACHE_LOCATION)) return false;
-            var md5 = MD5.Create();
+            using var md5 = MD5.Create();
             var expectedHash = AppConstants.THUMBNAIL_HASH;
 #if ME
             expectedHash = AppConstants.THUMBNAIL_ME_HASH;

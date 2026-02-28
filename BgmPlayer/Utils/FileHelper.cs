@@ -6,49 +6,68 @@ namespace bgmPlayer
 {
     public static class FileHelper
     {
+        private static readonly object _lock = new();
         private static Timer? timer = null;
         private static object? data = null;
 
         public static void ApplyState(AppState state)
         {
-            if (timer == null)
+            lock (_lock)
             {
-                timer = new Timer
+                if (timer == null)
                 {
-                    Interval = AppConstants.SAVE_DATA_DELAY,
-                    AutoReset = false
-                };
-                timer.Elapsed += (sender, args) =>
-                {
-                    SaveData(AppConstants.SAVED_STATE_FILE_NAME);
-                    timer.Stop();
-                    timer.Dispose();
-                    timer = null;
-                };
-                timer.Start();
+                    timer = new Timer
+                    {
+                        Interval = AppConstants.SAVE_DATA_DELAY,
+                        AutoReset = false
+                    };
+                    timer.Elapsed += (sender, args) =>
+                    {
+                        SaveData(AppConstants.SAVED_STATE_FILE_NAME);
+                        timer.Stop();
+                        timer.Dispose();
+                        timer = null;
+                    };
+                    timer.Start();
+                }
+                data = state;
             }
-            data = state;
         }
 
         public static void InstantSaveState()
         {
-            SaveData(AppConstants.SAVED_STATE_FILE_NAME);
-            if (timer != null)
+            lock (_lock)
             {
-                timer.Stop();
-                timer.Dispose();
-                timer = null;
+                SaveData(AppConstants.SAVED_STATE_FILE_NAME);
+                if (timer != null)
+                {
+                    timer.Stop();
+                    timer.Dispose();
+                    timer = null;
+                }
             }
         }
 
         private static void SaveData(string filename)
         {
-            if (data != null)
-            {
-                Directory.CreateDirectory(AppConstants.DATA_FOLDER);
-                File.WriteAllText(Path.Combine(AppConstants.DATA_FOLDER, filename), JsonSerializer.Serialize(data));
-                data = null;
-            }
+            if (data == null) return;
+
+            Directory.CreateDirectory(AppConstants.DATA_FOLDER);
+
+            var json = JsonSerializer.Serialize(data);
+
+            WriteFileAtomic(Path.Combine(AppConstants.DATA_FOLDER, filename), json);
+
+            data = null;
+        }
+
+        private static void WriteFileAtomic(string path, string content)
+        {
+            var tempFile = path + ".tmp";
+
+            File.WriteAllText(tempFile, content);
+
+            File.Move(tempFile, path, true);
         }
     }
 }

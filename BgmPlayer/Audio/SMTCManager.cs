@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using Windows.Foundation;
 using Windows.Media;
@@ -33,7 +34,7 @@ namespace bgmPlayer
         private static readonly SystemMediaTransportControls smtc = mediaPlayer.SystemMediaTransportControls;
         private static readonly SystemMediaTransportControlsDisplayUpdater updater = smtc.DisplayUpdater;
 
-        // only used for keeping thumbnail img file from not being closed to prevent potential bug
+        // only used to prevent thumbnail img file from being closed to prevent potential bug (may never happen)
         private static object? keepThumbnailOpen = null; 
         private static bool isInitialized = false;
 
@@ -50,7 +51,7 @@ namespace bgmPlayer
             smtc.ButtonPressed += OnPlayPause;
             updater.Type = MediaPlaybackType.Music;
             updater.MusicProperties.Title = AppConstants.DEFAULT_MUSIC_TITLE;
-            UpdateThumbnail();
+            _ = UpdateThumbnail();
             smtc.IsEnabled = true;
             isInitialized = true;
             AudioPathManager.AllEmpty += () =>
@@ -61,7 +62,7 @@ namespace bgmPlayer
 
         /// <summary>
         /// If only 1 path is provided, order of IntroPath and LoopPath is not important,
-        /// both will work the same.
+        /// they will work the same.
         /// </summary>
         /// <param name="IntroPath"></param>
         /// <param name="LoopPath"></param>
@@ -89,11 +90,11 @@ namespace bgmPlayer
             updater.Update();
         }
 
-        public static async void UpdateThumbnail()
+        public static async Task UpdateThumbnail()
         {
             if (!isInitialized) return;
-            // Create temp file as a workaround since creating thumbnail
-            // from RandomAccessStreamReference.CreateFromStream doesn't work
+            // Create temp file as a workaround since creating thumbnail from
+            // RandomAccessStreamReference.CreateFromStream doesn't work
             if (!Utils.IsValidCache())
             {
                 Directory.CreateDirectory(AppConstants.CACHE_FOLDER).Attributes = FileAttributes.Hidden;
@@ -102,13 +103,13 @@ namespace bgmPlayer
 #if ME
                 imgUri = "img/schwarz.jpg";
 #endif
-                var stream = Application.GetResourceStream(new Uri(imgUri, UriKind.Relative)).Stream;
+                using var stream = Application.GetResourceStream(new Uri(imgUri, UriKind.Relative)).Stream;
                 stream.CopyTo(file);
             }
             keepThumbnailOpen ??= File.Open(AppConstants.THUMBNAIL_CACHE_LOCATION, FileMode.Open, FileAccess.Read, FileShare.Read);
             updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(
                 await Windows.Storage.StorageFile.GetFileFromPathAsync(
-                        AppDomain.CurrentDomain.BaseDirectory + AppConstants.THUMBNAIL_CACHE_LOCATION.Replace("/", "\\")
+                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConstants.THUMBNAIL_CACHE_LOCATION.Replace("/", "\\"))
                     )
             );
             updater.Update();

@@ -198,6 +198,15 @@ namespace bgmPlayer
                 outputDevice.Dispose();
                 outputDevice = null;
             }
+            if (fadeStream != null)
+            {
+                fadeStream = null;
+            }
+            if (stream != null)
+            {
+                (stream as IDisposable)?.Dispose();
+                stream = null;
+            }
             SMTCManager.PlaybackStatus = MediaPlaybackStatus.Stopped;
             if (currentState != AudioState.STOP) StateChanged?.Invoke(AudioState.STOP);
             CurrentState = AudioState.STOP;
@@ -214,7 +223,7 @@ namespace bgmPlayer
 
             fadeTimer = new()
             {
-                Interval = second * 1000,
+                Interval = second * 1000 + 100,
                 AutoReset = false
             };
 

@@ -9,9 +9,9 @@ namespace bgmPlayer
         private static AppState? dataCache = null;
 
         /// <summary>
-        /// Used to get the <c>PersistedState</c> or just to cached <c>PersistedState</c> to RAM when initialize app
+        /// Used to get the <c>AppState</c> or just to cached <c>AppState</c> to RAM when initialize app
         /// </summary>
-        /// <returns><c>PersistedState</c> object or <c>null</c> when saved state file does not exist</returns>
+        /// <returns><c>AppState</c> object or <c>null</c> when saved state file does not exist</returns>
         public static AppState? LoadState()
         {
             if (dataCache != null) return dataCache;

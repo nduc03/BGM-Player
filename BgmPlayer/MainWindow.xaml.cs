@@ -30,7 +30,7 @@ namespace bgmPlayer
             AudioPathManager.InitTextBlock(IntroField, LoopField);
             SMTCManager.InitSMTC(OnPlayPause);
             SMTCManager.UpdateTitle(AudioPathManager.Intro, AudioPathManager.Loop);
-            SMTCManager.UpdateThumbnail();
+            using var _ = SMTCManager.UpdateThumbnail();
             InitVolume();
             InitCheckbox();
             InitTimer();
